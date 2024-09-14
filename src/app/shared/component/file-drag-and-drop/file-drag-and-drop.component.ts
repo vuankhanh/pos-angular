@@ -4,7 +4,7 @@ import { NgxFileDropEntry, NgxFileDropModule } from 'ngx-file-drop';
 import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { GalleryComponent } from '@daelmaak/ngx-gallery';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MaterialModule } from '../../module/material';
 import { MatchHeightDirective } from '../../directive/match-height.directive';
 import { IRequestParamsWithFiles } from '../../interface/request.interface';
@@ -65,11 +65,9 @@ export class FileDragAndDropComponent implements OnInit {
 
   constructor(formBuilder: FormBuilder) {
     this.formGroup = formBuilder.group({
-      alternateName: [''],
-      description: [''],
+      name: ['', Validators.required],
       files: [this.files, filesArrayValidator]
     });
-
   }
 
   ngOnInit(): void {
@@ -156,18 +154,18 @@ export class FileDragAndDropComponent implements OnInit {
     })
   }
 
-  editFiles(): void {
-    this.isEditing = true;
-  }
-
   upload() {
     const value = this.formGroup.value;
     const paramsWithFiles: IRequestParamsWithFiles = {
-      alternateName: value.alternateName,
-      description: value.description,
+      name: value.name,
       files: value.files
     }
     this.uploadFiles.emit(paramsWithFiles);
+  }
+
+  resetForm() {
+    this.isEditing = true;
+    this.formGroup.reset();
   }
 
   ngOnDestroy() {

@@ -127,7 +127,7 @@ export class AlbumDetailComponent {
   }
 
   private updateItemIndexChangeRequest(galleryItemIndexChanged: Array<string>): Observable<IAlbum> {
-    const detailParams: DetailParams = {id: this.albumDetail._id!};
+    const detailParams: DetailParams = { id: this.albumDetail._id!};
     return this.albumService.itemIndexChange(detailParams, galleryItemIndexChanged)
   }
 

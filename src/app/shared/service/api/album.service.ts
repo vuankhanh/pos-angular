@@ -12,6 +12,7 @@ export class AlbumService {
   constructor(
     private httpClient: HttpClient
   ) { }
+
   getAll(page?: number, size?: number) {
     let params = new HttpParams();
     if (page != undefined) {
@@ -22,22 +23,23 @@ export class AlbumService {
     }
     return this.httpClient.get<IAlbumResponse>(this.url, { params });
   }
-  getAllData() {
-    let page = 1;
-    return this.getAll().pipe(
-      expand(res => {
-        page++;
-        const metaData = res.metaData;
-        const paging = metaData.paging;
-        return page <= paging.totalPages && res ? this.getAll(page) : EMPTY
-      }),
-      toArray(),
-      map((arr: Array<IAlbumResponse>) => {
-        const data = arr.map(res => res.metaData.data).flat();
-        return data
-      })
-    );
-  }
+
+  // getAllData() {
+  //   let page = 1;
+  //   return this.getAll().pipe(
+  //     expand(res => {
+  //       page++;
+  //       const metaData = res.metaData;
+  //       const paging = metaData.paging;
+  //       return page <= paging.totalPages && res ? this.getAll(page) : EMPTY
+  //     }),
+  //     toArray(),
+  //     map((arr: Array<IAlbumResponse>) => {
+  //       const data = arr.map(res => res.metaData.data).flat();
+  //       return data
+  //     })
+  //   );
+  // }
 
   getDetail(detailParams: DetailParams) {
     let params = new HttpParams();
@@ -46,16 +48,16 @@ export class AlbumService {
     }
     return this.httpClient.get<IAlbumDetailRespone>(this.url + '/detail', { params });
   }
-  create(name: string, description: string, files: Array<Blob>) {
+
+  create(name: string, files: Array<Blob>) {
     let params = new HttpParams();
     params = params.append('name', name)
     const formData = new FormData();
     if (files.length) {
       for (let [index, file] of files.entries()) {
-        formData.append('many-files', file);
+        formData.append('files', file);
       }
     }
-    formData.append('description', description);
     return this.httpClient.post<IAlbumDetailRespone>(this.url, formData, { params });
   }
 

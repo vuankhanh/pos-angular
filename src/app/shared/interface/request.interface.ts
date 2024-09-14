@@ -1,5 +1,4 @@
 export interface IRequestParamsWithFiles {
-  alternateName: string;
-  description: string;
+  name: string;
   files: Array<File>;
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { GalleryComponent, GalleryItem, GalleryItemEvent } from '@daelmaak/ngx-gallery';
 import { GalleryDomManipulatorDirective } from '../../directive/gallery-dom-manipulator.directive';
@@ -28,7 +28,7 @@ import { IGalleryItem } from '../../interface/gallery.interface';
   styleUrl: './gallery-custom-thumbs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GalleryCustomThumbsComponent implements AfterViewInit, OnDestroy {
+export class GalleryCustomThumbsComponent implements OnChanges, AfterViewInit, OnDestroy {
   @ViewChild(GalleryComponent) galleryComponent!: GalleryComponent;
   @ViewChild(MatMenuTrigger) matMenuTrigger!: MatMenuTrigger;
   @ViewChild('thumbsElement') thumbsElement!: ElementRef<HTMLDivElement>;
@@ -46,6 +46,22 @@ export class GalleryCustomThumbsComponent implements AfterViewInit, OnDestroy {
   menuTopLeftPosition = { x: '0', y: '0' };
 
   private subscription: Subscription = new Subscription();
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['items']) {
+      const previousValue = changes['items'].previousValue;
+      const currentValue = changes['items'].currentValue;
+
+      if (currentValue && previousValue !== currentValue) {
+        const items: GalleryItem[] = currentValue;
+        //Vì trong trường hợp nếu xóa phần tử cuối cùng của mảng thì sẽ cần chỉnh lại selectedIndex
+        if (items.length && items.length === this.selectedIndex) {
+          this.selectedIndex--;
+          this.galleryComponent.select(this.selectedIndex);
+        }
+      }
+    }
+  }
 
   ngAfterViewInit(): void {
     this.subscription.add(
