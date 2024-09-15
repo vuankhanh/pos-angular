@@ -1,0 +1,16 @@
+<div class="container">
+  <app-search (search)="onSearch($event)"></app-search>
+  <mat-list>
+    @for (customer of customers; track $index) {
+    <mat-list-item [routerLink]="customer._id">
+      <mat-icon matListItemIcon>contacts</mat-icon>
+      <div matListItemTitle>{{ customer.name }}</div>
+      <div matListItemLine>{{ customer.phoneNumber }}</div>
+    </mat-list-item>
+    }
+  </mat-list>
+  @if(pagination.totalItems){
+  <mat-paginator [length]="pagination.totalItems" [pageIndex]="pagination.page - 1" [pageSize]="pagination.size"
+    [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)"></mat-paginator>
+  }
+</div>

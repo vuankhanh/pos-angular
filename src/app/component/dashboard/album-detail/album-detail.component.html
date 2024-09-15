@@ -1,32 +1,43 @@
 <ng-container *ngIf="albumDetail">
   <div class="container">
-    <mat-list-item>
-      <mat-icon matListItemIcon>photo_library</mat-icon>
-      <div matListItemTitle>{{albumDetail.name}}</div>
-      <div matListItemLine>{{albumDetail.createdAt | date: 'dd/MM/yyyy'}}</div>
-      <!-- <div matListItemMeta (click)="update(albumDetail)">
-        <button mat-icon-button>
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div> -->
-    </mat-list-item>
-    <ng-container *ngIf="galleryItems.length">
-      <app-gallery-custom-thumbs [items]="galleryItems"
-        (itemTemporaryDeletionEvent)="handleItemTemporaryDeletion($event)"
-        (itemIndexChangedEvent)="handleitemIndexChanged($event)"></app-gallery-custom-thumbs>
-    </ng-container>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>photo_library</mat-icon>
+          {{albumDetail.name}}
+        </mat-card-title>
+        <mat-card-subtitle>{{albumDetail.createdAt | date: 'dd/MM/yyyy'}}</mat-card-subtitle>
+      </mat-card-header>
+  
+      <mat-card-content>
+        <ng-container *ngIf="galleryItems.length">
+          <app-gallery-custom-thumbs [items]="galleryItems"
+            (itemTemporaryDeletionEvent)="handleItemTemporaryDeletion($event)"
+            (itemIndexChangedEvent)="handleitemIndexChanged($event)"></app-gallery-custom-thumbs>
+        </ng-container>
+        @if(galleryItemTemporarilyDeleted.length){
+          <div class=" media-item">
+            <div class="media-title">Danh sách xóa tạm {{'('+galleryItemTemporarilyDeleted.length+')'}}</div>
+            <div class="media-value">
+              <app-gallery-item-temporarily-deleted [galleryItemTemporarilyDeleted]="galleryItemTemporarilyDeleted"
+                (galleryItemRestore)="onGalleryItemRestore($event)"></app-gallery-item-temporarily-deleted>
+            </div>
+          </div>
+          }
+      </mat-card-content>
+      <mat-card-actions>
+        <div class="example-button-row">
+          <button mat-raised-button color="primary" (click)="update()" [disabled]="galleryItemTemporarilyDeleted.length === 0 && galleryItemIndexChanged.length === 0">
+            Cập nhật
+            <mat-icon>sync</mat-icon>
+          </button>
+          <button mat-raised-button color="warn" (click)="remove()">
+            Xóa
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
   </div>
-  @if(galleryItemTemporarilyDeleted.length){
-  <div class=" media-item">
-    <div class="media-title">Danh sách xóa tạm {{'('+galleryItemTemporarilyDeleted.length+')'}}</div>
-    <div class="media-value">
-      <app-gallery-item-temporarily-deleted [galleryItemTemporarilyDeleted]="galleryItemTemporarilyDeleted"
-        (galleryItemRestore)="onGalleryItemRestore($event)"></app-gallery-item-temporarily-deleted>
-    </div>
-  </div>
-  }
-  <button mat-raised-button color="primary" (click)="update()" [disabled]="galleryItemTemporarilyDeleted.length === 0 && galleryItemIndexChanged.length === 0">
-    Cập nhật
-    <mat-icon>sync</mat-icon>
-  </button>
+  
 </ng-container>

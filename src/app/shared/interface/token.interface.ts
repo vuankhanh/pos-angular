@@ -1,6 +1,6 @@
-import { Success } from "./success.interface"
+import { ISuccess } from "./success.interface"
 
-export type Token = IAccessToken & IRefreshToken
+export type TToken = IAccessToken & IRefreshToken
 
 export interface IAccessToken {
   accessToken: string
@@ -10,10 +10,10 @@ export interface IRefreshToken {
   refreshToken: string
 }
 
-export interface ITokenResponse extends Success {
-  metaData: Token
+export interface ITokenResponse extends ISuccess {
+  metaData: TToken
 }
 
-export interface IRefreshTokenResponse extends Success {
+export interface IRefreshTokenResponse extends ISuccess {
   metaData: IAccessToken
 }

@@ -18,7 +18,9 @@
       bottom: 0;
     }
   }
-  .content-container{
-    padding: 15px;
+  mat-sidenav-content{
+    .content-container{
+      height: 100%;
+    }
   }
 }

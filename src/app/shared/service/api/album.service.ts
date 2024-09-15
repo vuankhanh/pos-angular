@@ -21,32 +21,19 @@ export class AlbumService {
     if (size != undefined) {
       params = params.append('size', size)
     }
-    return this.httpClient.get<IAlbumResponse>(this.url, { params });
+    return this.httpClient.get<IAlbumResponse>(this.url, { params }).pipe(
+      map(res => res.metaData)
+    );
   }
 
-  // getAllData() {
-  //   let page = 1;
-  //   return this.getAll().pipe(
-  //     expand(res => {
-  //       page++;
-  //       const metaData = res.metaData;
-  //       const paging = metaData.paging;
-  //       return page <= paging.totalPages && res ? this.getAll(page) : EMPTY
-  //     }),
-  //     toArray(),
-  //     map((arr: Array<IAlbumResponse>) => {
-  //       const data = arr.map(res => res.metaData.data).flat();
-  //       return data
-  //     })
-  //   );
-  // }
-
-  getDetail(detailParams: DetailParams) {
+  getDetail(detailParams: DetailParams): Observable<IAlbum> {
     let params = new HttpParams();
     for (const [k, v] of Object.entries(detailParams)) {
       params = params.append(k, v)
     }
-    return this.httpClient.get<IAlbumDetailRespone>(this.url + '/detail', { params });
+    return this.httpClient.get<IAlbumDetailRespone>(this.url + '/detail', { params }).pipe(
+      map(res => res.metaData)
+    );
   }
 
   create(name: string, files: Array<Blob>) {
@@ -93,6 +80,10 @@ export class AlbumService {
     return this.httpClient.patch<IAlbumDetailRespone>(this.url + '/item-index-change', { newItemIndexChange }, { params }).pipe(
       map(res => res.metaData)
     );
+  }
+
+  delete(id: string) {
+    return this.httpClient.delete<IAlbumDetailRespone>(this.url+'/'+id);
   }
 }
 

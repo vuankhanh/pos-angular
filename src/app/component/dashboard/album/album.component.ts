@@ -51,9 +51,9 @@ export class AlbumComponent {
   private getAll(page: number, size: number) {
     this.subscription.add(
       this.albumService.getAll(page, size).subscribe(res => {
-        const metaData: Array<IAlbum> = res.metaData.data;
+        const metaData: Array<IAlbum> = res.data;
         this.albums = metaData;
-        this.pagination = res.metaData.paging;
+        this.pagination = res.paging;
       })
     )
   }
