@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ICustomer, ICustomerResponse } from '../../interface/customer.interface';
+import { ICustomer, ICustomerDetailRespone, ICustomerResponse } from '../../interface/customer.interface';
 import { map } from 'rxjs';
 
 @Injectable({
@@ -31,31 +31,31 @@ export class CustomerService {
   }
 
   getDetail(id: string){
-    return this.httpClient.get<ICustomerResponse>(this.url + '/'+ id).pipe(
+    return this.httpClient.get<ICustomerDetailRespone>(this.url + '/'+ id).pipe(
       map(res => res.metaData)
     );
   }
 
   create(data: ICustomer){
-    return this.httpClient.post<ICustomerResponse>(this.url, data).pipe(
+    return this.httpClient.post<ICustomerDetailRespone>(this.url, data).pipe(
       map(res => res.metaData)
     );
   }
 
   update(id: string, data: Partial<ICustomer>){
-    return this.httpClient.patch<ICustomerResponse>(this.url + '/' + id, data).pipe(
+    return this.httpClient.patch<ICustomerDetailRespone>(this.url + '/' + id, data).pipe(
       map(res => res.metaData)
     );
   }
 
   replace(id: string, data: ICustomer){
-    return this.httpClient.put<ICustomerResponse>(this.url + '/' + id, data).pipe(
+    return this.httpClient.put<ICustomerDetailRespone>(this.url + '/' + id, data).pipe(
       map(res => res.metaData)
     );
   }
 
   remove(id: string){
-    return this.httpClient.delete<ICustomerResponse>(this.url + '/' + id).pipe(
+    return this.httpClient.delete<ICustomerDetailRespone>(this.url + '/' + id).pipe(
       map(res => res.metaData)
     );
   }

@@ -1,1 +1,62 @@
-<p>customer-detail works!</p>
+@if (customer) {
+  <mat-card>
+    <mat-card-header>
+      <div class="button-group-header">
+        <div>
+          <button mat-icon-button color="primary" (click)="goBackAlbumList()">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </div>
+        <div>
+          <button mat-icon-button color="primary" (click)="editCustomer()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteCustomer()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-card-title>
+      {{ customer.name }}
+
+      @if(customer.level != 'NORMAL') {
+        <span [ngClass]="{
+          'vip-customer': customer.level === 'VIP',
+          'super-vip-customer': customer.level === 'SUPER_VIP'
+        }">{{customer.level}}</span>
+      }
+    </mat-card-title>
+      <mat-card class="mat-card-child">
+        <mat-card-content>
+          <mat-card-subtitle>Thông tin liên hệ</mat-card-subtitle>
+          <div class="list-item-container">
+            <mat-icon>phone</mat-icon>
+            @if(customer.phoneNumber; as phoneNumber) {
+              <span>{{ phoneNumber }}</span>
+            }@else {
+              <span class="additional-text-element" (click)="editCustomer('phoneNumber')">Thêm số điện thoại</span>
+            }
+          </div>
+          <div class="list-item-container">
+            <mat-icon>location_on</mat-icon>
+            @if(customer.address; as address) {
+              <span>{{ address }}</span>
+            }@else {
+              <span class="additional-text-element" (click)="editCustomer('address')">Thêm địa chỉ</span>
+            }
+          </div>
+          <div class="list-item-container">
+            <mat-icon>email</mat-icon>
+            @if(customer.email; as email) {
+              <span>{{ email }}</span>
+            }@else{
+              <span class="additional-text-element" (click)="editCustomer('email')">Thêm email</span>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-card-content>
+  </mat-card>
+}

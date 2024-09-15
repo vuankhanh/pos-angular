@@ -1,0 +1,54 @@
+@if (formGroup) {
+<mat-card>
+  <mat-card-header>
+    <div class="button-group-header">
+      <button mat-icon-button color="primary" (click)="goBackAlbumDetail()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-card-title>{{ customer?.name }}</mat-card-title>
+    <form #customerEditForm [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="container">
+      <mat-form-field>
+        <mat-icon matPrefix>contacts</mat-icon>
+        <input #formElement matInput placeholder="Tên" formControlName="name">
+        <mat-error *ngIf="formGroup.get('name')!.hasError('required')">Tên không được để trống</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-icon matPrefix>call</mat-icon>
+        <input #formElement matInput placeholder="Số điện thoại" formControlName="phoneNumber">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-icon matPrefix>location_on</mat-icon>
+        <input #formElement matInput placeholder="Địa chỉ" formControlName="address">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-icon matPrefix>mail</mat-icon>
+        <input #formElement matInput placeholder="Email" formControlName="email">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-icon matPrefix>cakes</mat-icon>
+        <input #formElement matInput [matDatepicker]="picker" placeholder="Ngày sinh" formControlName="dob">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-icon matPrefix>apartment</mat-icon>
+        <input #formElement matInput placeholder="Công ty" formControlName="company">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-icon matPrefix>description</mat-icon>
+        <textarea #formElement matInput placeholder="Ghi chú" formControlName="note" cdkTextareaAutosize
+          cdkAutosizeMinRows="3" cdkAutosizeMaxRows="9"></textarea>
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="primary" type="button" (click)="onSubmit()"
+      [disabled]="formGroup.invalid || !isFormChanged()">
+      {{ customer?._id ? 'Lưu' : 'Tạo' }}
+    </button>
+  </mat-card-actions>
+</mat-card>
+}

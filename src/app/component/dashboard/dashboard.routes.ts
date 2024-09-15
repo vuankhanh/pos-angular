@@ -4,6 +4,8 @@ import { AlbumComponent } from "./album/album.component";
 import { AlbumDetailComponent } from "./album-detail/album-detail.component";
 import { CustomerComponent } from "./customer/customer.component";
 import { CustomerDetailComponent } from "./customer-detail/customer-detail.component";
+import { CustomerEditComponent } from "./customer-edit/customer-edit.component";
+import { ProductComponent } from "./product/product.component";
 
 
 export const routes: Routes = [
@@ -33,9 +35,18 @@ export const routes: Routes = [
         component: CustomerComponent
       },
       {
-        path: 'customer/:route',
+        path: 'customer/:id',
         title: 'Khách hàng',
         component: CustomerDetailComponent
+      },
+      {
+        path: 'customer/edit/:id',
+        component: CustomerEditComponent
+      },
+      {
+        path: 'product',
+        title: 'Sản phẩm',
+        component: ProductComponent
       }
     ]
   }

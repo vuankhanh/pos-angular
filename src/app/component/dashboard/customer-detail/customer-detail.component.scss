@@ -1,0 +1,27 @@
+mat-card{
+  max-width: 700px;
+  mat-card-header{
+    .button-group-header{
+      width: 100%;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  mat-card-content{
+    .mat-card-child{
+      max-width: 500px;
+    }
+  }
+}
+.list-item-container{
+  mat-icon{
+    margin-right: 10px;
+  }
+  .additional-text-element{
+    color: #0b57d0;
+    cursor: pointer;
+  }
+}

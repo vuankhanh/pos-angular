@@ -25,7 +25,8 @@ export class DashboardComponent {
   breakpointDetection$: Observable<boolean> = of(false);
   menu = [
     { name: 'Album', route: 'album' },
-    { name: 'Khách hàng', route: 'customer' }
+    { name: 'Khách hàng', route: 'customer' },
+    { name: 'Sản phẩm', route: 'product' },
   ]
 
   title$ = this.routerEventService.getRouteTitle$();

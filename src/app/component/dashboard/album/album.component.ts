@@ -10,6 +10,7 @@ import { SetBaseUrlPipe } from '../../../shared/pipe/set-base-url.pipe';
 import { RouterLink } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
 import { IPagination } from '../../../shared/interface/pagination.interface';
+import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
 
 @Component({
   selector: 'app-album',
@@ -35,16 +36,18 @@ export class AlbumComponent {
     totalPages: 0
   }
   pageSizeOptions: number[] = [2, 5, 10, 25, 100];
-
+  breakpointDetection$ = this.breakpointDetectionService.detection$()
   private subscription: Subscription = new Subscription();
   constructor(
     private albumService: AlbumService,
-    private dialog: MatDialog
+    private breakpointDetectionService: BreakpointDetectionService,
   ) {
 
   }
 
   ngOnInit() {
+    console.log('AlbumComponent');
+    
     this.getAll(this.pagination.page, this.pagination.size);
   }
 
