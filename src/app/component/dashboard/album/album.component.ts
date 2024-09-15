@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
 import { IPagination } from '../../../shared/interface/pagination.interface';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
+import { paginationConstant } from '../../../constant/pagination.constant';
 
 @Component({
   selector: 'app-album',
@@ -29,14 +30,9 @@ export class AlbumComponent {
   @ViewChild(FileDragAndDropComponent) childComponentRef!: FileDragAndDropComponent;
   imageMIMETypes: Array<string> = ['image/png', 'image/jpeg', 'image/jpg'];
   albums: Array<IAlbum> = [];
-  pagination: IPagination = {
-    page: 1,
-    size: 2,
-    totalItems: 0,
-    totalPages: 0
-  }
+  pagination: IPagination = paginationConstant;
   pageSizeOptions: number[] = [2, 5, 10, 25, 100];
-  breakpointDetection$ = this.breakpointDetectionService.detection$()
+  breakpointDetection$ = this.breakpointDetectionService.detection$();
   private subscription: Subscription = new Subscription();
   constructor(
     private albumService: AlbumService,

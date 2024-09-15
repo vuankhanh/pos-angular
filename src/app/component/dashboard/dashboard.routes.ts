@@ -6,6 +6,7 @@ import { CustomerComponent } from "./customer/customer.component";
 import { CustomerDetailComponent } from "./customer-detail/customer-detail.component";
 import { CustomerEditComponent } from "./customer-edit/customer-edit.component";
 import { ProductComponent } from "./product/product.component";
+import { ProductDetailComponent } from "./product-detail/product-detail.component";
 
 
 export const routes: Routes = [
@@ -47,6 +48,11 @@ export const routes: Routes = [
         path: 'product',
         title: 'Sản phẩm',
         component: ProductComponent
+      },
+      {
+        path: 'product/:id',
+        title: 'Sản phẩm',
+        component: ProductDetailComponent
       }
     ]
   }

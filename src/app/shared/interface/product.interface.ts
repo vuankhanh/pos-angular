@@ -1,3 +1,4 @@
+import { IAlbum } from "./album.interface";
 import { IMongodbDocument } from "./mongo.interface";
 import { IPagination } from "./pagination.interface";
 import { ISuccess } from "./success.interface";
@@ -7,6 +8,8 @@ export interface IProduct {
   price: number;
   availability: boolean;
   unit: string;
+  albumId: string;
+  albumDetail: IAlbum;
   description?: string;
   usageInstructions?: string;
   brand?: string;

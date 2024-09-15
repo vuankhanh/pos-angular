@@ -6,12 +6,19 @@ import { IPagination } from '../../../shared/interface/pagination.interface';
 import { paginationConstant } from '../../../constant/pagination.constant';
 import { MatCommonModule } from '@angular/material/core';
 import { MaterialModule } from '../../../shared/module/material';
+import { SetBaseUrlPipe } from '../../../shared/pipe/set-base-url.pipe';
+import { CurrencyCustomPipe } from '../../../shared/pipe/currency-custom.pipe';
+import { Router } from '@angular/router';
+import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
 
 @Component({
   selector: 'app-product',
   standalone: true,
   imports: [
     MatCommonModule,
+
+    SetBaseUrlPipe,
+    CurrencyCustomPipe,
 
     MaterialModule
   ],
@@ -21,10 +28,15 @@ import { MaterialModule } from '../../../shared/module/material';
 export class ProductComponent implements OnInit, OnDestroy {
   products?: TProductModel[];
   pagination: IPagination = paginationConstant;
-
+  
+  breakpointDetection$ = this.breakpointDetectionService.detection$();
+  displayedColumns: string[] = ['thumbnail', 'name', 'price', 'availability', 'unit', 'action'];
+  
   subscription: Subscription = new Subscription();
   constructor(
-    private productService: ProductService
+    private router: Router,
+    private productService: ProductService,
+    private breakpointDetectionService: BreakpointDetectionService,
   ) {
   }
 
@@ -39,6 +51,19 @@ export class ProductComponent implements OnInit, OnDestroy {
         this.pagination = res.paging;
       })
     );
+  }
+
+  onViewEvent(element: TProductModel) {
+    console.log(element);
+    this.router.navigate(['/product', element._id]);
+  }
+
+  onOrderEvent(element: TProductModel) {
+    console.log(element);
+  }
+
+  onEditEvent(element: TProductModel) {
+    console.log(element);
   }
 
   ngOnDestroy(): void {
