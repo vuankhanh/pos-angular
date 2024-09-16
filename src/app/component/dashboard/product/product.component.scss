@@ -2,14 +2,29 @@
   padding: 15px;
   box-sizing: border-box;
 
+  section:not(:first-child) {
+    margin-top: 15px;
+  }
+
+  section {
+    .group-button-row {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
   .table-container {
     width: 100%;
     height: 100%;
     overflow: auto;
+
     table[mat-table] {
-      th, td {
+
+      th,
+      td {
         padding: 0 10px;
       }
+
       th[mat-header-cell] {
         text-wrap: nowrap;
       }
@@ -23,7 +38,9 @@
       }
 
 
-      .mat-column-price, .mat-column-availability, .mat-column-unit{
+      .mat-column-price,
+      .mat-column-availability,
+      .mat-column-unit {
         text-wrap: nowrap;
       }
 
@@ -50,16 +67,17 @@
 
 @media screen and (max-width: 599px) {
   .container {
-    padding: 0;
+    padding: 15px 0;
+
     .table-container {
       table[mat-table] {
-        .mat-column-thumbnail{
-          img{
+        .mat-column-thumbnail {
+          img {
             max-width: 120px;
           }
         }
       }
     }
-  } 
-  
+  }
+
 }

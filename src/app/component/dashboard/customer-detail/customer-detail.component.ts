@@ -58,8 +58,8 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
   }
 
   editCustomer(elementFocus?: string) {
-    this.router.navigate(['/customer/edit', this.customer?._id], {
-      queryParams: { elementFocus }
+    this.router.navigate(['/customer-edit'], {
+      queryParams: { elementFocus, _id: this.customer?._id }
     });
   }
 

@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AlbumService, DetailParams } from '../../../shared/service/api/album.service';
 import { SetBaseUrlPipe } from '../../../shared/pipe/set-base-url.pipe';
-import { IAlbum, IAlbumDetailRespone, IMedia } from '../../../shared/interface/album.interface';
+import { TAlbumModel, TMediaModel } from '../../../shared/interface/album.interface';
 import { filter, map, Observable, Subscription, switchMap } from 'rxjs';
 import { IGalleryItem } from '../../../shared/interface/gallery.interface';
 import { GalleryCustomThumbsComponent } from '../../../shared/component/gallery-custom-thumbs/gallery-custom-thumbs.component';
@@ -30,7 +30,7 @@ import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.int
   styleUrl: './album-detail.component.scss'
 })
 export class AlbumDetailComponent {
-  albumDetail!: IAlbum;
+  albumDetail!: TAlbumModel;
   galleryItems: IGalleryItem[] = [];
   galleryItemTemporarilyDeleted: IGalleryItem[] = [];
   galleryItemIndexChanged: Array<string> = [];
@@ -58,8 +58,7 @@ export class AlbumDetailComponent {
     this.subscription.add(
       albumDetail$.subscribe({
         next: res => {
-          const metaData: IAlbum = res;
-          this.albumDetail = metaData;
+          this.albumDetail = res;
           this.initImages(this.albumDetail.media)
         },
         error: error => {
@@ -69,7 +68,7 @@ export class AlbumDetailComponent {
     )
   }
 
-  private initImages(medias: Array<IMedia>): Array<IGalleryItem> {
+  private initImages(medias: Array<TMediaModel>): Array<IGalleryItem> {
     this.galleryItems = medias.map(media => {
       const src = this.setBaseUrlPipe.transform(media.url);
       const thumbSrc = this.setBaseUrlPipe.transform(media.thumbnailUrl);
@@ -115,7 +114,7 @@ export class AlbumDetailComponent {
     
   }
 
-  private updateRequest(filesWillRemove: Array<string>, galleryItemIndexChanged: Array<string>): Observable<IAlbum> {
+  private updateRequest(filesWillRemove: Array<string>, galleryItemIndexChanged: Array<string>) {
     if(filesWillRemove.length > 0 && galleryItemIndexChanged.length > 0){
       return this.updateRemoveFilesRequest(filesWillRemove).pipe(
         switchMap(() => this.updateItemIndexChangeRequest(galleryItemIndexChanged))
@@ -127,16 +126,16 @@ export class AlbumDetailComponent {
       if(galleryItemIndexChanged.length > 0){
         return this.updateItemIndexChangeRequest(galleryItemIndexChanged);
       }
-      return new Observable<IAlbum>();
+      return new Observable<TAlbumModel>();
     }
   }
 
-  private updateRemoveFilesRequest(filesWillRemove: Array<string>): Observable<IAlbum> {
+  private updateRemoveFilesRequest(filesWillRemove: Array<string>) {
     const detailParams: DetailParams = {id: this.albumDetail._id!};
     return this.albumService.removeFiles(detailParams, filesWillRemove);
   }
 
-  private updateItemIndexChangeRequest(galleryItemIndexChanged: Array<string>): Observable<IAlbum> {
+  private updateItemIndexChangeRequest(galleryItemIndexChanged: Array<string>) {
     const detailParams: DetailParams = { id: this.albumDetail._id!};
     return this.albumService.itemIndexChange(detailParams, galleryItemIndexChanged)
   }

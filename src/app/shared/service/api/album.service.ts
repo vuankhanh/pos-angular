@@ -13,8 +13,11 @@ export class AlbumService {
     private httpClient: HttpClient
   ) { }
 
-  getAll(page?: number, size?: number) {
+  getAll(name?: string, page?: number, size?: number) {
     let params = new HttpParams();
+    if (name != undefined) {
+      params = params.append('name', name)
+    }
     if (page != undefined) {
       params = params.append('page', page)
     }
@@ -26,7 +29,7 @@ export class AlbumService {
     );
   }
 
-  getDetail(detailParams: DetailParams): Observable<IAlbum> {
+  getDetail(detailParams: DetailParams) {
     let params = new HttpParams();
     for (const [k, v] of Object.entries(detailParams)) {
       params = params.append(k, v)
@@ -48,7 +51,7 @@ export class AlbumService {
     return this.httpClient.post<IAlbumDetailRespone>(this.url, formData, { params });
   }
 
-  addNewFiles(detailParams: DetailParams, files: Array<Blob>): Observable<IAlbum> {
+  addNewFiles(detailParams: DetailParams, files: Array<Blob>) {
     let params = new HttpParams();
     for (const [k, v] of Object.entries(detailParams)) {
       params = params.append(k, v)
@@ -62,7 +65,7 @@ export class AlbumService {
     );
   }
 
-  removeFiles(detailParams: DetailParams, filesWillRemove: Array<string>): Observable<IAlbum> {
+  removeFiles(detailParams: DetailParams, filesWillRemove: Array<string>) {
     let params = new HttpParams();
     for (const [k, v] of Object.entries(detailParams)) {
       params = params.append(k, v)
@@ -72,7 +75,7 @@ export class AlbumService {
     );
   }
 
-  itemIndexChange(detailParams: DetailParams, newItemIndexChange: Array<string>): Observable<IAlbum> {
+  itemIndexChange(detailParams: DetailParams, newItemIndexChange: Array<string>) {
     let params = new HttpParams();
     for (const [k, v] of Object.entries(detailParams)) {
       params = params.append(k, v)

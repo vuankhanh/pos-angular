@@ -53,8 +53,11 @@ export class ProductComponent implements OnInit, OnDestroy {
     );
   }
 
+  onCreateEvent() {
+    this.router.navigate(['/product-edit']);
+  }
+
   onViewEvent(element: TProductModel) {
-    console.log(element);
     this.router.navigate(['/product', element._id]);
   }
 
@@ -63,7 +66,11 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   onEditEvent(element: TProductModel) {
-    console.log(element);
+    this.router.navigate(['/product-edit'], {
+      queryParams: {
+        _id: element._id
+      }
+    });
   }
 
   ngOnDestroy(): void {

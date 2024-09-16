@@ -1,5 +1,13 @@
 <div class="container">
-  <app-search (search)="onSearch($event)"></app-search>
+  <section>
+    <div [ngClass]="(breakpointDetection$ | async) ? 'vertical-container' : 'horizontal-container'">
+      <app-search (search)="onSearch($event)"></app-search>
+      <button mat-raised-button color="primary" (click)="onCreateCustomer()">
+        <mat-icon>add</mat-icon>
+        Thêm khách hàng
+      </button>
+    </div>
+  </section>
   <mat-list>
     @for (customer of customers; track $index) {
     <mat-list-item [routerLink]="customer._id">

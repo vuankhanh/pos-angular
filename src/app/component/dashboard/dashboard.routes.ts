@@ -7,6 +7,7 @@ import { CustomerDetailComponent } from "./customer-detail/customer-detail.compo
 import { CustomerEditComponent } from "./customer-edit/customer-edit.component";
 import { ProductComponent } from "./product/product.component";
 import { ProductDetailComponent } from "./product-detail/product-detail.component";
+import { ProductEditComponent } from "./product-edit/product-edit.component";
 
 
 export const routes: Routes = [
@@ -41,7 +42,7 @@ export const routes: Routes = [
         component: CustomerDetailComponent
       },
       {
-        path: 'customer/edit/:id',
+        path: 'customer-edit',
         component: CustomerEditComponent
       },
       {
@@ -53,6 +54,10 @@ export const routes: Routes = [
         path: 'product/:id',
         title: 'Sản phẩm',
         component: ProductDetailComponent
+      },
+      {
+        path: 'product-edit',
+        component: ProductEditComponent
       }
     ]
   }

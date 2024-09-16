@@ -1,21 +1,3 @@
 <div class="container">
-  <app-file-drag-and-drop [isMultiple]="true" [acceptMIMETypes]="imageMIMETypes"
-    (uploadFiles)="handleFilesUploaded($event)"></app-file-drag-and-drop>
-
-  <mat-grid-list [cols]="(breakpointDetection$ | async) ? '2' : '6'">
-    <mat-grid-tile *ngFor="let album of albums" [routerLink]="album.route">
-      <img [src]="album.thumbnail | baseUrl" [alt]="album.description" loading="lazy">
-
-      <mat-grid-tile-footer>
-        <mat-list-item>
-          <div matListItemTitle style="color: white;">{{album.name}}</div>
-          <div matListItemLine style="color: white;">{{album.mediaItems}}</div>
-        </mat-list-item>
-      </mat-grid-tile-footer>
-    </mat-grid-tile>
-  </mat-grid-list>
-  @if(pagination.totalItems){
-  <mat-paginator [length]="pagination.totalItems" [pageIndex]="pagination.page - 1" [pageSize]="pagination.size"
-    [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)"></mat-paginator>
-  }
+  <app-album-show (chooseItemEvent)="handleChooseItem($event)"></app-album-show>
 </div>

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, Subject, Subscription, switchMap } from 'rxjs';
+import { combineLatest, map, of, Subject, Subscription, switchMap } from 'rxjs';
 import { CustomerService } from '../../../shared/service/api/customer.service';
 import { TCustomerModel } from '../../../shared/interface/customer.interface';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -35,12 +35,7 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
     private customerService: CustomerService
   ) { }
 
-  ngOnInit() {
-    this.customerId = this.activatedRoute.snapshot.paramMap.get('id');
-    if (!this.customerId) {
-      this.initForm();
-    }
-  }
+  ngOnInit() {}
 
   private initForm() {
     this.formGroup = this.formBuilder.group({
@@ -56,25 +51,41 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    if (this.customerId) {
-      combineLatest([this.activatedRoute.queryParams, this.customerService.getDetail(this.customerId)]).pipe(
-      ).subscribe({
-        next: ([params, res]) => {
-          if (params && res) {
-            const elementFocus = params['elementFocus'];
-            this.customer = res;
-            
-            this.initForm();
-            setTimeout(() => {
-              this.findAndFocusElement(elementFocus)
-            }, 150);
+    this.subscription.add(
+      this.activatedRoute.queryParamMap.pipe(
+        map(params =>{
+          const customerId = params.get('_id');
+          const elementFocus = params.get('elementFocus');
+  
+          return {customerId, elementFocus};
+        }),
+        switchMap(res => {
+          if(res.customerId) {
+            return this.customerService.getDetail(res.customerId).pipe(
+              map(customer => ({elementFocus: res.elementFocus, customer}))
+            )
           }
+          return of(null);
+        })
+      ).subscribe({
+        next: (res) => {
+          if(res){
+            const elementFocus = res.elementFocus;
+            this.customer = res?.customer;
+            
+            if(elementFocus) {
+              setTimeout(() => {
+                this.findAndFocusElement(elementFocus)
+              }, 150);
+            }
+          }
+          this.initForm();
         },
         error: error => {
           this.goBackAlbumDetail();
         }
-      });
-    }
+      })
+    )
   }
 
   private findAndFocusElement(elementFocus: string) {
@@ -102,10 +113,12 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBackAlbumDetail() {
-    this.router.navigate(['/customer', this.customer?._id]);
+    const commands = this.customer?._id ? ['/customer', this.customer?._id] : ['/customer'];
+    this.router.navigate(commands);
   };
 
   ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
 }

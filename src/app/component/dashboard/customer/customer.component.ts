@@ -9,7 +9,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { SearchComponent } from '../../../shared/component/search/search.component';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { paginationConstant } from '../../../constant/pagination.constant';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { MaterialModule } from '../../../shared/module/material';
+import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
 
 @Component({
   selector: 'app-customer',
@@ -20,9 +22,7 @@ import { RouterLink } from '@angular/router';
 
     SearchComponent,
 
-    MatIconModule,
-    MatListModule,
-    MatPaginatorModule
+    MaterialModule
   ],
   templateUrl: './customer.component.html',
   styleUrl: './customer.component.scss'
@@ -34,9 +34,12 @@ export class CustomerComponent {
 
   nameSearch: string = '';
 
+  breakpointDetection$ = this.breakpointDetectionService.detection$();
   subscription: Subscription = new Subscription();
   constructor(
-    private customerService: CustomerService
+    private router: Router,
+    private customerService: CustomerService,
+    private breakpointDetectionService: BreakpointDetectionService
   ) { }
 
   ngOnInit() {
@@ -56,6 +59,10 @@ export class CustomerComponent {
     this.pagination = paginationConstant
     this.nameSearch = value;
     this.getAll(this.nameSearch, this.pagination.page, this.pagination.size);
+  }
+
+  onCreateCustomer() {
+    this.router.navigate(['/customer-edit']);
   }
 
   handlePageEvent(event: PageEvent) {
