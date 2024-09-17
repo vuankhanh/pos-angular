@@ -1,3 +1,11 @@
 <div class="container">
+  <section>
+    <div class="vertical-container">
+      <button mat-raised-button color="primary" (click)="onCreateAlbum()">
+        <mat-icon>add</mat-icon>
+        Thêm Album
+      </button>
+    </div>
+  </section>
   <app-album-show (chooseItemEvent)="handleChooseItem($event)"></app-album-show>
 </div>

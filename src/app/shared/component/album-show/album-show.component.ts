@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Optional, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Optional, Output } from '@angular/core';
 import { MaterialModule } from '../../module/material';
 import { BreakpointDetectionService } from '../../service/breakpoint-detection.service';
 import { TAlbumModel } from '../../interface/album.interface';
@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlbumService } from '../../service/api/album.service';
 import { MatDialogRef } from '@angular/material/dialog';
+import { SearchComponent } from '../search/search.component';
 
 @Component({
   selector: 'app-album-show',
@@ -19,6 +20,8 @@ import { MatDialogRef } from '@angular/material/dialog';
     CommonModule,
     RouterLink,
 
+    SearchComponent,
+
     MaterialModule,
 
     SetBaseUrlPipe
@@ -26,7 +29,7 @@ import { MatDialogRef } from '@angular/material/dialog';
   templateUrl: './album-show.component.html',
   styleUrl: './album-show.component.scss'
 })
-export class AlbumShowComponent {
+export class AlbumShowComponent implements OnInit, OnDestroy {
   albums: Array<TAlbumModel> = [];
   pagination: IPagination = paginationConstant;
   nameSearch: string = '';
@@ -40,17 +43,10 @@ export class AlbumShowComponent {
     @Optional() private readonly dialogRef: MatDialogRef<AlbumShowComponent>,
     private albumService: AlbumService,
     private breakpointDetectionService: BreakpointDetectionService,
-  ) {
-
-  }
+  ) { }
 
   ngOnInit() {
     this.getAll(this.nameSearch, this.pagination.page, this.pagination.size);
-  }
-
-  ngAfterViewInit() {
-    console.log(this.dialogRef);
-    
   }
 
   private getAll(name: string, page: number, size: number) {
@@ -61,6 +57,11 @@ export class AlbumShowComponent {
         this.pagination = res.paging;
       })
     )
+  }
+
+  onSearch(name: string) {
+    this.nameSearch = name;
+    this.getAll(name, this.pagination.page, this.pagination.size);
   }
 
   onItemClick(album: TAlbumModel) {
@@ -76,5 +77,9 @@ export class AlbumShowComponent {
     this.pagination.size = event.pageSize;
 
     this.getAll(this.nameSearch, this.pagination.page, this.pagination.size);
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

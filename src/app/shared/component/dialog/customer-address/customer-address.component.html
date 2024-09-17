@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Cập nhật địa chỉ gửi hàng</h2>
+<mat-dialog-content>
+  <p>Nhập địa chỉ sẽ gửi hàng</p>
+  <form>
+    <mat-form-field>
+      <mat-label>Địa chỉ gửi hàng</mat-label>
+      <textarea matInput placeholder="Nhập địa chỉ" [formControl]="deliveryAddressControl" cdkTextareaAutosize cdkAutosizeMinRows="3"
+        cdkAutosizeMaxRows="9"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]>Hủy</button>
+  <button mat-button [mat-dialog-close]="deliveryAddressControl.value" [disabled]="deliveryAddressControl.invalid"
+    cdkFocusInitial>Cập nhật</button>
+</mat-dialog-actions>

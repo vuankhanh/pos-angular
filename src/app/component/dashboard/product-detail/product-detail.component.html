@@ -1,1 +1,48 @@
-<p>product-detail works!</p>
+@if(product){
+<div class="container">
+  <div class="button-group-header">
+    <button mat-icon-button color="primary" (click)="goBackProductList()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+  <mat-card class="product-detail-card">
+    <mat-card-header>
+      <mat-card-title >
+        <h3>{{ product.name }}</h3>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <div class="vertical-container">
+          <span>Ngày tạo: {{ product.createdAt | date: 'dd/MM/yyyy' }}</span>
+          <span>Ngày cập nhật: {{ product.updatedAt | date: 'dd/MM/yyyy' }}</span>
+        </div>
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="content-container horizontal-container">
+        <gallery [items]="galleryItems"></gallery>
+        <div class="product-info">
+          <p><strong>Giá:</strong> <span>{{ product.price | vndCurrency }}</span></p>
+          <p><strong>Tình trạng:</strong> <span>{{ product.availability ? 'Còn hàng' : 'Hết hàng' }}</span></p>
+          <p><strong>Đơn vị:</strong> <span>{{ product.unit }}</span></p>
+          <p><strong>Tên album:</strong> <span>{{ product.albumDetail.name }}</span></p>
+          <p><strong>Mô tả:</strong> <span>{{ product.description }}</span></p>
+          <p><strong>Hướng dẫn sử dụng:</strong> <span>{{ product.usageInstructions }}</span></p>
+          <p><strong>Đánh giá:</strong> <span>{{ product.rating }}</span></p>
+          <p><strong>Nhận xét:</strong> <span>{{ product.reviews }}</span></p>
+          <div class="group-button-container">
+            <button mat-raised-button color="primary" (click)="onOrderEvent()">
+              <mat-icon>add_shopping_cart</mat-icon>
+              Thêm vào đơn hàng
+            </button>
+            
+            <button mat-raised-button color="warn" (click)="onEditEvent()">
+              <mat-icon>edit</mat-icon>
+              Sửa lại
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+}

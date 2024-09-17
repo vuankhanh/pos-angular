@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, map, of, Subject, Subscription, switchMap } from 'rxjs';
 import { CustomerService } from '../../../shared/service/api/customer.service';
@@ -21,7 +21,6 @@ import { MaterialModule } from '../../../shared/module/material';
 })
 export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('formElement') formElements!: QueryList<ElementRef>;
-  customerId: string | null = null;
   customer?: TCustomerModel;
 
   formGroup!: FormGroup;
@@ -32,6 +31,7 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
+    private cdRef: ChangeDetectorRef,
     private customerService: CustomerService
   ) { }
 
@@ -48,6 +48,8 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
       note: [this.customer?.note],
       level: [this.customer?.level]
     });
+
+    this.cdRef.detectChanges();
   }
 
   ngAfterViewInit() {
@@ -100,8 +102,12 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSubmit() {
+    if (this.formGroup.invalid) {
+      return;
+    }
+    const api$ = this.customer?._id ? this.update() : this.create();
     this.subscription.add(
-      this.customerService.update(this.customerId!, this.formGroup.value).subscribe({
+      api$.subscribe({
         next: res => {
           this.goBackAlbumDetail();
         },
@@ -110,6 +116,21 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       })
     )
+  }
+
+  private create(){
+    return this.customerService.create(this.formGroup.value);
+  }
+
+  private update(){
+    const changedControls: { [key: string]: any } = {};
+    Object.keys(this.formGroup.controls).forEach(key => {
+      const control = this.formGroup.get(key);
+      if (control?.dirty) {
+        changedControls[key] = control.value;
+      }
+    });
+    return this.customerService.update(this.customer?._id!, changedControls);
   }
 
   goBackAlbumDetail() {

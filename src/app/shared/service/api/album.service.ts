@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { EMPTY, expand, map, Observable, toArray } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
 import { IAlbum, IAlbumDetailRespone, IAlbumResponse } from '../../interface/album.interface';
+import { IRequestParamsWithFiles } from '../../interface/request.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -48,14 +49,15 @@ export class AlbumService {
         formData.append('files', file);
       }
     }
-    return this.httpClient.post<IAlbumDetailRespone>(this.url, formData, { params });
+    return this.httpClient.post<IAlbumDetailRespone>(this.url, formData, { params }).pipe(
+      map(res => res.metaData)
+    );
   }
 
-  addNewFiles(detailParams: DetailParams, files: Array<Blob>) {
+  addNewFiles(id: string, files: Array<Blob>) {
     let params = new HttpParams();
-    for (const [k, v] of Object.entries(detailParams)) {
-      params = params.append(k, v)
-    }
+    params = params.append('id', id);
+
     const formData = new FormData();
     for (let file of files) {
       formData.append('files', file);
@@ -65,21 +67,19 @@ export class AlbumService {
     );
   }
 
-  removeFiles(detailParams: DetailParams, filesWillRemove: Array<string>) {
+  removeFiles(id: string, filesWillRemove: Array<string>) {
     let params = new HttpParams();
-    for (const [k, v] of Object.entries(detailParams)) {
-      params = params.append(k, v)
-    }
+    params = params.append('id', id);
+
     return this.httpClient.patch<IAlbumDetailRespone>(this.url + '/remove-files', { filesWillRemove }, { params }).pipe(
       map(res => res.metaData)
     );
   }
 
-  itemIndexChange(detailParams: DetailParams, newItemIndexChange: Array<string>) {
+  itemIndexChange(id: string, newItemIndexChange: Array<string>) {
     let params = new HttpParams();
-    for (const [k, v] of Object.entries(detailParams)) {
-      params = params.append(k, v)
-    }
+    params = params.append('id', id);
+
     return this.httpClient.patch<IAlbumDetailRespone>(this.url + '/item-index-change', { newItemIndexChange }, { params }).pipe(
       map(res => res.metaData)
     );

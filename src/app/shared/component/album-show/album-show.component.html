@@ -1,4 +1,5 @@
 <div class="container">
+  <app-search placeholder="Tìm Album" (search)="onSearch($event)"></app-search>
   <mat-grid-list [cols]="(breakpointDetection$ | async) ? '2' : '6'">
     <mat-grid-tile *ngFor="let album of albums" (click)="onItemClick(album)">
       <img [src]="album.thumbnail | baseUrl" [alt]="album.description" loading="lazy">

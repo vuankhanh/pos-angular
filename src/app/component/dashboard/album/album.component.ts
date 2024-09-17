@@ -27,26 +27,19 @@ export class AlbumComponent {
   
   constructor(
     private readonly router: Router
-  ) {
-
-  }
+  ) { }
 
   ngOnInit() {
     console.log('AlbumComponent');
-    
+  }
+
+  onCreateAlbum(){
+    this.router.navigate(['/album-edit']);
   }
 
   handleChooseItem(album: TAlbumModel){
     this.router.navigate([`/album/${album.route}`]);
   }
-
-  // handleFilesUploaded(params: IRequestParamsWithFiles): void {
-  //   this.albumService.create(params.name, params.files).subscribe(res => {
-  //     this.childComponentRef.resetForm();
-  //     const metaData: IAlbum = res.metaData;
-  //     this.albums.push(metaData);
-  //   });
-  // }
 
   ngOnDestroy() {}
 }

@@ -1,0 +1,28 @@
+.container{
+  padding: 15px;
+  box-sizing: border-box;
+
+  mat-card{
+    height: 100%;
+    mat-card-content{
+      height: 100%;
+      .content-container{
+        align-items: flex-start;
+        justify-content: space-between;
+        .bill-info, .customer-info{
+          border: 1px dashed #ccc;
+          border-radius: 4px;
+        }
+
+        .bill-info{
+          width: 100%;
+        }
+
+        .customer-info{
+          width: 400px;
+          margin-left: 15px;
+        }
+      }
+    }
+  }
+}

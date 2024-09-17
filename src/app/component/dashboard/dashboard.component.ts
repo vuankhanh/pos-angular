@@ -27,6 +27,7 @@ export class DashboardComponent {
     { name: 'Album', route: 'album' },
     { name: 'Khách hàng', route: 'customer' },
     { name: 'Sản phẩm', route: 'product' },
+    { name: 'Đơn hàng', route: 'order' }
   ]
 
   title$ = this.routerEventService.getRouteTitle$();

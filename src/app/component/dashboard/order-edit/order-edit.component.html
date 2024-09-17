@@ -1,0 +1,16 @@
+<div class="container">
+  <mat-card>
+    <mat-card-content>
+      <div class="content-container horizontal-container">
+        <div class="bill-info">
+          Thông tin đơn hàng
+          <order-bill-info></order-bill-info>
+        </div>
+
+        <div class="customer-info">
+          <order-customer-info (emitCustomer)="handleCustomer($event)"></order-customer-info>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

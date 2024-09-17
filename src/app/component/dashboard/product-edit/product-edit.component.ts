@@ -127,7 +127,9 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   }
 
   openAlbumDialog() {
-    const dialogRef = this.dialog.open(AlbumShowComponent);
+    const dialogRef = this.dialog.open(AlbumShowComponent, {
+      width: '800px'
+    });
     this.subscription.add(
       dialogRef.afterClosed().subscribe((result: TAlbumModel) => {
         if (result) {
@@ -151,7 +153,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
             return {
               src: this.setBaseUrlPipe.transform(media.url),
               thumbSrc: this.setBaseUrlPipe.transform(media.thumbnailUrl),
-              text: media.caption
+              text: media.caption,
+              video: media.type === 'video' ? true : false
             }
           })
           this.galleryItems = galleryItems;

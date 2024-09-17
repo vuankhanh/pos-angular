@@ -1,0 +1,94 @@
+form {
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.customer-info {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    &__title {
+      font-weight: bold;
+    }
+
+    &__action {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+
+    &__item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-top: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+
+      .horizontal-container {
+        justify-content: space-between;
+      }
+
+      &__label {
+        font-weight: bold;
+        color: #555;
+
+        mat-icon {
+          font-size: 16px;
+          height: 16px;
+          width: 16px;
+          padding: 6px;
+          border-radius: 100%;
+          cursor: pointer;
+        }
+      }
+
+      &__value {
+        color: #333;
+      }
+    }
+  }
+}
+
+.mat-autocomplete-panel {
+  .mat-option {
+    display: flex;
+    align-items: center;
+
+    .mat-list-item {
+      display: flex;
+      align-items: center;
+      width: 100%;
+
+      .mat-icon {
+        margin-right: 8px;
+      }
+
+      .mat-list-item-content {
+        display: flex;
+        flex-direction: column;
+
+        .mat-list-item-title {
+          font-weight: bold;
+        }
+
+        .mat-list-item-line {
+          color: #555;
+        }
+      }
+    }
+  }
+}

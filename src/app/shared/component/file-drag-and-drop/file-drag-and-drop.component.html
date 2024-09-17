@@ -1,6 +1,6 @@
 <div class="center" #childElement appMatchHeight>
 
-  <div *ngIf="!files.length || isEditing" class="file-drop-container" [@slideInOut]="'in'">
+  <div *ngIf="!files.length || isEditing" class="file-drop-container">
     <ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)" (onFileOver)="fileOver($event)"
       (onFileLeave)="fileLeave($event)" [dropZoneClassName]="'ngx-file-drop__drop-zone'" [multiple]="isMultiple"
       [accept]="accepts" [disabled]="!!(isDisabled$ | async)">
@@ -23,12 +23,7 @@
     }
   </div>
 
-  <div *ngIf="files.length && !isEditing" class="upload-table-container" [@slideInOut]="'in'">
-    <form [formGroup]="formGroup">
-      <mat-form-field>
-        <input matInput placeholder="Tên" formControlName="name" />
-      </mat-form-field>
-    </form>
+  <div *ngIf="files.length && !isEditing" class="upload-table-container">
     <!-- Upload table content -->
     <div class="upload-table">
       <table mat-table [dataSource]="files" class="mat-elevation-z8">
@@ -69,7 +64,7 @@
         Sửa lại
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-raised-button color="primary" (click)="upload()" [disabled]="formGroup.invalid">
+      <button mat-raised-button color="primary" (click)="upload()" [disabled]="filesControl.invalid">
         Đẩy lên
         <mat-icon>cloud_upload</mat-icon>
       </button>

@@ -4,10 +4,9 @@ import { NgxFileDropEntry, NgxFileDropModule } from 'ngx-file-drop';
 import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { GalleryComponent } from '@daelmaak/ngx-gallery';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../module/material';
 import { MatchHeightDirective } from '../../directive/match-height.directive';
-import { IRequestParamsWithFiles } from '../../interface/request.interface';
 import { filesArrayValidator } from '../../utitl/form-validator/files_array.validator';
 
 @Component({
@@ -50,7 +49,7 @@ export class FileDragAndDropComponent implements OnInit {
   @Input() isMultiple: boolean = false;
   @Input() acceptMIMETypes: Array<string> = [];
   
-  @Output() uploadFiles = new EventEmitter<IRequestParamsWithFiles>();
+  @Output() uploadFiles = new EventEmitter<Array<File>>();
 
   accepts!: string ;
   displayedColumns: string[] = ['name', 'media', 'type'];
@@ -61,14 +60,9 @@ export class FileDragAndDropComponent implements OnInit {
 
   isEditing: boolean = false;
 
-  formGroup: FormGroup;
+  filesControl: FormControl = new FormControl([this.files, filesArrayValidator]);
 
-  constructor(formBuilder: FormBuilder) {
-    this.formGroup = formBuilder.group({
-      name: ['', Validators.required],
-      files: [this.files, filesArrayValidator]
-    });
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.accepts = this.acceptMIMETypes.join(',');
@@ -89,7 +83,7 @@ export class FileDragAndDropComponent implements OnInit {
     }
 
     this.files = transformFile;
-    this.formGroup.patchValue({ files: this.files });
+    this.filesControl.patchValue(this.files);
     this.isEditing = false;
   }
 
@@ -155,17 +149,13 @@ export class FileDragAndDropComponent implements OnInit {
   }
 
   upload() {
-    const value = this.formGroup.value;
-    const paramsWithFiles: IRequestParamsWithFiles = {
-      name: value.name,
-      files: value.files
-    }
-    this.uploadFiles.emit(paramsWithFiles);
+    const files: Array<File> = this.filesControl.value;
+    this.uploadFiles.emit(files);
   }
 
   resetForm() {
     this.isEditing = true;
-    this.formGroup.reset();
+    this.filesControl.reset();
   }
 
   ngOnDestroy() {

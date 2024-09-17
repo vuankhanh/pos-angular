@@ -1,0 +1,56 @@
+@if (!orderCustomer) {
+<form class="example-form">
+  <mat-form-field class="example-full-width">
+    <mat-label>Tìm hoặc tạo một khách hàng</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input type="text" placeholder="Nhập tên hoặc số điện thoại" matInput [formControl]="cusNameSearchCtl"
+      [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option>
+        <button mat-button color="primary">Tạo mới</button>
+      </mat-option>
+      @for (option of filteredOptions$ | async; track option) {
+      <mat-option>
+        <mat-list-item (click)="onChooseCustomerEvent(option)">
+          <mat-icon matListItemIcon>contacts</mat-icon>
+          <div matListItemTitle>{{ option.name }}</div>
+          <div matListItemLine>{{ option.phoneNumber }}</div>
+        </mat-list-item>
+      </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+</form>
+}@else{
+  <div class="customer-info">
+    <div class="customer-info__header">
+      <div class="customer-info__header__title">Thông tin khách hàng</div>
+      <div class="customer-info__header__action">
+        <button mat-icon-button color="primary" (click)="onEditCustomerEvent()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="customer-info__content">
+      <div class="customer-info__content__item">
+        <div class="customer-info__content__item__label">Tên khách hàng</div>
+        <div class="customer-info__content__item__value">{{ orderCustomer.name }}</div>
+      </div>
+      <div class="customer-info__content__item">
+        <div class="customer-info__content__item__label">Số điện thoại</div>
+        <div class="customer-info__content__item__value">{{ orderCustomer.phoneNumber }}</div>
+      </div>
+      <div class="customer-info__content__item vertical-container">
+        <div class="customer-info__content__item__label">Địa chỉ</div>
+        <div class="customer-info__content__item__value">{{ orderCustomer.address }}</div>
+      </div>
+      <div class="customer-info__content__item vertical-container">
+        <div class="customer-info__content__item__label horizontal-container">
+          Địa chỉ gửi hàng
+          <mat-icon color="primary" (click)="editCustomerDeliveryAddress(orderCustomer.deliveryAddress)">edit</mat-icon>
+        </div>
+        <div class="customer-info__content__item__value">{{ orderCustomer.deliveryAddress }}</div>
+      </div>
+    </div>
+  </div>
+}

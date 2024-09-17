@@ -54,6 +54,12 @@
         }
       }
 
+      .mat-column-thumbnail{
+        img {
+          width: 200px;
+        }
+      }
+
       td[mat-cell]:last-child {
         text-align: right;
       }
