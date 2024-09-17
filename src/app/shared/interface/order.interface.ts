@@ -9,7 +9,6 @@ import { ISuccess } from "./success.interface";
 export type TOrderStatus = `${OrderStatus}`;
 
 export interface IOrder {
-  orderItems: IOrderItem[];
   status: TOrderStatus;
   customerId: string;
   customerDetail: TCustomerModel;
@@ -81,7 +80,7 @@ export class OrderItem implements IOrderItem {
     this.price = data.price;
     this.total = this.price * this.quantity;
   }
-  
+
   set updateQuantity(quantity: number) {
     this.quantity = quantity;
     this.total = this.price * this.quantity;
@@ -89,7 +88,6 @@ export class OrderItem implements IOrderItem {
 }
 
 export class Order implements IOrder {
-  orderItems: IOrderItem[];
   status: TOrderStatus;
   customerId: string;
   customerDetail: TCustomerModel;
@@ -100,7 +98,6 @@ export class Order implements IOrder {
   note?: string;
 
   constructor(data: IOrder) {
-    this.orderItems = data.orderItems;
     this.status = data.status;
     this.customerId = data.customerId;
     this.customerDetail = data.customerDetail;

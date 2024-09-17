@@ -1,21 +1,32 @@
-form{
-  .product-option {
-    display: flex;
-    align-items: center;
-    .thumbnail {
-      width: 40px;
-      height: 40px;
-      margin-right: 10px;
-    }
-    
-    .product-name {
-      flex-grow: 1;
-    }
-    
-    .product-price {
-      margin-left: auto;
-      font-weight: bold;
-    }
+.search-form-container {
+  max-width: 700px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.product-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+
+  .thumbnail {
+    width: 100px;
+  }
+
+  .product-name {
+    flex-grow: 1;
+  }
+
+  .product-price {
+    font-weight: bold;
+  }
+
+  >*:not(:first-child) {
+    margin-left: 10px;
   }
 }
 
@@ -60,7 +71,7 @@ form{
       }
     }
 
-    .mat-column-thumbnail{
+    .mat-column-thumbnail {
       img {
         width: 200px;
       }
@@ -72,6 +83,51 @@ form{
 
     .mat-mdc-table-sticky-border-elem-left {
       border-right: 1px solid #e0e0e0;
+    }
+  }
+}
+
+.footer-bill-container {
+  .footer-bill-content {
+    align-items: flex-start;
+    justify-content: space-between;
+    mat-form-field{
+      width: 300px;
+    }
+    .totals{
+      width: 250px;
+      margin: 0 0 0 10px;
+      &__item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+  
+        &__label {
+          flex: 0 0 150px; // Đặt chiều ngang mặc định cho tiêu đề
+          font-weight: bold;
+        }
+  
+        &__value {
+          flex: 1;
+          text-align: right;
+          text-wrap: nowrap;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 699px) {
+  .footer-bill-container {
+    .footer-bill-content {
+      flex-direction: column;
+      mat-form-field{
+        width: 100%;
+      }
+
+      .totals{
+        margin: 10px 0 0 0;
+      }
     }
   }
 }

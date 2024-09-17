@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>Nhập thông tin</h1>
+<div mat-dialog-content>
+  <p>{{'Nhập '+data.label}}</p>
+  @if(data.suffix === 'percentage') {
+    <input matInput type="number" [(ngModel)]="data.value" appOnlyNumber>
+    <span>{{' %'}}</span>
+  }@else {
+    <div>
+      <input matInput type="number" [limitedValue]="false" [(ngModel)]="data.value" appOnlyNumber [ngStyle]="{'width.px': '100'}">
+      <span>{{' ₫'}}</span>
+    </div>
+    <span>{{(data.value | vndCurrency)}}</span>
+  }
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Hủy</button>
+  <button mat-button (click)="onSave()" [disabled]="data.value <= 0">Lưu</button>
+</div>

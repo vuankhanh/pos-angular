@@ -12,17 +12,39 @@
         .bill-info, .customer-info{
           border: 1px dashed #ccc;
           border-radius: 4px;
+          background-color: #f9f9f9;
         }
 
         .bill-info{
           width: 100%;
+          height: 100%;
+          overflow-y: auto;
         }
 
         .customer-info{
           width: 400px;
-          margin-left: 15px;
+          margin: 0 0 0 15px;
         }
       }
     }
   }
+}
+
+@media screen and (max-width: 850px){
+  .container{
+    padding: 0;
+    mat-card{
+      height: unset;
+      mat-card-content{
+        .content-container{
+          flex-direction: column;
+          .customer-info{
+            width: 100%;
+            margin: 15px 0 0 0;
+          }
+        }
+      }
+    }
+  }
+  
 }

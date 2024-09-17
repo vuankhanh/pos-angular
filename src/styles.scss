@@ -87,3 +87,17 @@ body {
   font-weight: bold;
   text-transform: uppercase;
 }
+
+mat-card-content{
+  box-sizing: border-box;
+}
+
+.clickable {
+  cursor: pointer;
+  color: #1e90ff; /* Màu sắc của văn bản khi có thể click */
+  text-decoration: underline; /* Gạch chân văn bản */
+}
+
+.clickable:hover {
+  color: #104e8b; /* Màu sắc khi hover */
+}

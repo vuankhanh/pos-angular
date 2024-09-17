@@ -43,11 +43,6 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
       switchMap(() => this.getCustomer())
     );
-
-    this.getCustomerDetail('66e941ac5fd7b0ee8a0fe76b').subscribe((data) => {
-      this.orderCustomer = new Customer(data);
-      this.emitCustomer.emit(this.orderCustomer);
-    })
   }
 
   private getCustomer() {
@@ -64,10 +59,21 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   onChooseCustomerEvent(customer: TCustomerModel) {
     this.cusNameSearchCtl.reset();
     this.subscrioption.add(
-      this.getCustomerDetail(customer._id).subscribe((data) => {
-        this.orderCustomer = new Customer(data);
-        this.emitCustomer.emit(this.orderCustomer);
+      this.getCustomerDetail(customer._id).subscribe({
+        next: data => {
+          console.log('Customer Detail');
+          console.log(data);
+
+          this.orderCustomer = new Customer(data);
+
+          console.log('Order Customer');
+          console.log(this.orderCustomer);
+
+          this.emitCustomer.emit(this.orderCustomer);
+        },
+        error: (error) => { console.log(error) }
       })
+
     )
   }
 
@@ -76,15 +82,17 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   }
 
   editCustomerDeliveryAddress(deliveryAddress: string) {
-    this.dialog.open(CustomerAddressComponent,{
-      data: deliveryAddress,
-      width: '500px',
-    }).afterClosed().subscribe((data) => {
-      if (data) {
-        this.orderCustomer!.updateDeveryAddress = data;
-        this.emitCustomer.emit(this.orderCustomer);
-      }
-    });
+    this.subscrioption.add(
+      this.dialog.open(CustomerAddressComponent, {
+        data: deliveryAddress,
+        width: '500px',
+      }).afterClosed().subscribe((data) => {
+        if (data) {
+          this.orderCustomer!.updateDeveryAddress = data;
+          this.emitCustomer.emit(this.orderCustomer);
+        }
+      })
+    )
   }
 
   ngOnDestroy(): void {

@@ -7,7 +7,7 @@ import { GalleryComponent } from '@daelmaak/ngx-gallery';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../module/material';
 import { MatchHeightDirective } from '../../directive/match-height.directive';
-import { filesArrayValidator } from '../../utitl/form-validator/files_array.validator';
+import { filesArrayValidator } from '../../utitl/form-validator.util';
 
 @Component({
   selector: 'app-file-drag-and-drop',

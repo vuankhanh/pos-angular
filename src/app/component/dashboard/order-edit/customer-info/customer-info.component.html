@@ -10,8 +10,8 @@
         <button mat-button color="primary">Tạo mới</button>
       </mat-option>
       @for (option of filteredOptions$ | async; track option) {
-      <mat-option>
-        <mat-list-item (click)="onChooseCustomerEvent(option)">
+      <mat-option (click)="onChooseCustomerEvent(option)">
+        <mat-list-item>
           <mat-icon matListItemIcon>contacts</mat-icon>
           <div matListItemTitle>{{ option.name }}</div>
           <div matListItemLine>{{ option.phoneNumber }}</div>
