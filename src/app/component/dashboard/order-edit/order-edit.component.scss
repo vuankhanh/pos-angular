@@ -37,10 +37,13 @@
       height: unset;
       mat-card-content{
         .content-container{
-          flex-direction: column;
+          flex-direction: column-reverse;
+          .bill-info{
+            margin: 15px 0 0 0;
+          }
           .customer-info{
             width: 100%;
-            margin: 15px 0 0 0;
+            margin: 0;
           }
         }
       }

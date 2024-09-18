@@ -3,13 +3,16 @@
     <mat-card-content>
       <div class="content-container horizontal-container">
         <div class="bill-info">
-          <order-bill-info></order-bill-info>
+          <order-bill-info (emitBillInfo)="handleBillInfo($event)" (emitBillSubInfo)="handleSubBillInfo($event)"></order-bill-info>
         </div>
 
         <div class="customer-info">
-          <order-customer-info (emitCustomer)="handleCustomer($event)"></order-customer-info>
+          <order-customer-info [orderCustomer]="customer" (emitCustomer)="handleCustomer($event)"></order-customer-info>
         </div>
       </div>
     </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" [disabled]="!billInfo || !subBillInfo" (click)="save()">Lưu</button>
+    </mat-card-actions>
   </mat-card>
 </div>

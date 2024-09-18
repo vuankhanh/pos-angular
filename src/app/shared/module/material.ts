@@ -27,6 +27,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   imports: [CommonModule],
@@ -59,7 +60,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     ScrollingModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatSelectModule
   ]
 })
 export class MaterialModule { }

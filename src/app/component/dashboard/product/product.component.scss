@@ -9,7 +9,7 @@
   section {
     .group-button-row {
       display: flex;
-      justify-content: flex-end;
+      justify-content: center;
     }
   }
 
@@ -19,7 +19,6 @@
     overflow: auto;
 
     table[mat-table] {
-
       th,
       td {
         padding: 0 10px;

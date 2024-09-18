@@ -1,11 +1,18 @@
-import { IOrderItem } from "./order.interface";
+import { OrderItem, TOrderStatus } from "./order.interface";
+import { TPaymentMethod } from "./payment.interface";
 
 export interface IBill {
-  orderItems: IOrderItem[];
+  orderItems: OrderItem[];
   subTotal: number;
   deliveryFee: number;
   discount: number;
   total: number;
+}
+
+export interface IBillSubInfo {
+  orderStatus: TOrderStatus;
+  notes: string;
+  paymentMethod: TPaymentMethod;
 }
 
 export interface IFooterTotal {

@@ -1,4 +1,5 @@
 import { OrderStatus } from "../../constant/order.constant";
+import { IBill, IBillSubInfo } from "./bill.interface";
 import { ICustomerLevel, TCustomerModel } from "./customer.interface";
 import { IMongodbDocument } from "./mongo.interface";
 import { IPagination } from "./pagination.interface";
@@ -8,16 +9,14 @@ import { ISuccess } from "./success.interface";
 
 export type TOrderStatus = `${OrderStatus}`;
 
-export interface IOrder {
+export interface IBaseOrder {
   status: TOrderStatus;
-  customerId: string;
-  customerDetail: TCustomerModel;
-  paymentMethod?: TPaymentMethod;
-  deliveryAddress?: string;
+  paymentMethod: TPaymentMethod;
   note?: string;
 }
 
 export interface IOrderItem {
+  productThumbnail: string;
   productCode: string;
   productName: string;
   quantity: number;
@@ -25,7 +24,24 @@ export interface IOrderItem {
   price: number;
 }
 
-export type TOrder = IOrder & IMongodbDocument;
+export type TOrderModel = {
+  productName: string;
+  productThumbnail: string;
+  productQuantity: number;
+  total: number;
+} & IBaseOrder & IMongodbDocument;
+
+export type TOrderDetailModel = {
+  orderCode: string;
+  orderItems: Array<OrderItem>;
+  customerId?: string;
+  customerDetail: TCustomerModel;
+  deliveryAddress?: string;
+  subTotal: number;
+  deliveryFee: number;
+  discount: number;
+  total: number;
+}& IBaseOrder & IMongodbDocument
 export type TOrderItem = IOrderItem & IMongodbDocument;
 
 export class Customer implements TCustomerModel {
@@ -64,18 +80,18 @@ export class Customer implements TCustomerModel {
 }
 
 export class OrderItem implements IOrderItem {
-  thumbnail: string;
   productCode: string;
   productName: string;
+  productThumbnail: string;
   quantity: number = 1;
   unit: string;
   price: number;
   total: number;
 
   constructor(data: TProductModel) {
-    this.thumbnail = data.albumDetail.thumbnail;
     this.productCode = data.code;
     this.productName = data.name;
+    this.productThumbnail = data.albumDetail.thumbnail;
     this.unit = data.unit;
     this.price = data.price;
     this.total = this.price * this.quantity;
@@ -87,35 +103,35 @@ export class OrderItem implements IOrderItem {
   }
 }
 
-export class Order implements IOrder {
+export class Order implements IBaseOrder {
   status: TOrderStatus;
-  customerId: string;
-  customerDetail: TCustomerModel;
-  paymentMethod?: TPaymentMethod;
-  customerName?: string;
-  customerPhoneNumber?: string;
+  orderItems: Array<OrderItem>;
+  paymentMethod: TPaymentMethod;
+  deliveryFee: number;
+  discount: number;
+  customerId?: string;
   deliveryAddress?: string;
   note?: string;
 
-  constructor(data: IOrder) {
-    this.status = data.status;
-    this.customerId = data.customerId;
-    this.customerDetail = data.customerDetail;
-    this.paymentMethod = data.paymentMethod;
-    this.customerName = data.customerDetail.name;
-    this.customerPhoneNumber = data.customerDetail.phoneNumber;
-    this.deliveryAddress = data.deliveryAddress;
-    this.note = data.note;
+  constructor(billInfo: IBill, billSubInfo: IBillSubInfo, customer?: Customer) {
+    this.status = billSubInfo.orderStatus;
+    this.orderItems = billInfo.orderItems;
+    this.paymentMethod = billSubInfo.paymentMethod;
+    this.deliveryFee = billInfo.deliveryFee;
+    this.discount = billInfo.discount;
+    this.customerId = customer?._id;
+    this.deliveryAddress = customer?.deliveryAddress;
+    this.note = billSubInfo.notes;
   }
 }
 
 export interface IOrderResponse extends ISuccess {
   metaData: {
-    data: Array<TOrder>,
+    data: Array<TOrderModel>,
     paging: IPagination
   }
 }
 
 export interface IOrderDetailResponse {
-  metaData: TOrder
+  metaData: TOrderDetailModel
 }

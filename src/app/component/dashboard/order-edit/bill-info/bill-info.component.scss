@@ -6,6 +6,11 @@
   }
 }
 
+mat-option{
+  ::ng-deep .mdc-list-item__primary-text{
+    width: 100%;
+  }
+}
 .product-option {
   display: flex;
   align-items: center;
@@ -27,6 +32,7 @@
 
   >*:not(:first-child) {
     margin-left: 10px;
+    text-wrap: nowrap;
   }
 }
 
@@ -54,10 +60,9 @@
       text-align: right;
     }
 
-
+    .mat-column-quantity,
     .mat-column-price,
-    .mat-column-availability,
-    .mat-column-unit {
+    .mat-column-total {
       text-wrap: nowrap;
     }
 
@@ -91,11 +96,14 @@
   .footer-bill-content {
     align-items: flex-start;
     justify-content: space-between;
-    mat-form-field{
-      width: 300px;
+    .sub-info{
+      align-items: flex-start;
+      mat-form-field{
+        width: 300px;
+      }
     }
     .totals{
-      width: 250px;
+      width: 300px;
       margin: 0 0 0 10px;
       &__item {
         display: flex;
@@ -113,21 +121,42 @@
           text-wrap: nowrap;
         }
       }
+      mat-form-field{
+        width: 100%;
+        margin-top: 10px;
+      }
     }
   }
 }
 
 @media screen and (max-width: 699px) {
+  .table-container{
+    table[mat-table] {
+      .mat-column-thumbnail {
+        img {
+          max-width: 120px;
+        }
+      }
+    }
+  }
   .footer-bill-container {
     .footer-bill-content {
       flex-direction: column;
       mat-form-field{
-        width: 100%;
+        width: 100% !important;
       }
 
       .totals{
         margin: 10px 0 0 0;
       }
+    }
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .product-option {
+    .thumbnail {
+      display: none;
     }
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { IOrder, IOrderDetailResponse, IOrderResponse } from '../../interface/order.interface';
+import { IOrderDetailResponse, IOrderResponse, Order } from '../../interface/order.interface';
 import { map } from 'rxjs';
 
 @Injectable({
@@ -36,19 +36,19 @@ export class OrderService {
     );
   }
 
-  create(data: IOrder){
+  create(data: Order){
     return this.httpClient.post<IOrderDetailResponse>(this.url, data).pipe(
       map(res => res.metaData)
     );
   }
 
-  update(id: string, data: Partial<IOrder>){
+  update(id: string, data: Partial<Order>){
     return this.httpClient.patch<IOrderDetailResponse>(this.url + '/' + id, data).pipe(
       map(res => res.metaData)
     );
   }
 
-  replace(id: string, data: IOrder){
+  replace(id: string, data: Order){
     return this.httpClient.put<IOrderDetailResponse>(this.url + '/' + id, data).pipe(
       map(res => res.metaData)
     );

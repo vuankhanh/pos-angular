@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { TCustomerModel } from '../../../../shared/interface/customer.interface';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../../shared/module/material';
@@ -24,9 +24,9 @@ import { CustomerAddressComponent } from '../../../../shared/component/dialog/cu
   styleUrl: './customer-info.component.scss'
 })
 export class CustomerInfoComponent implements OnInit, OnDestroy {
+  @Input() orderCustomer?: Customer;
   @Output() emitCustomer = new EventEmitter<Customer>();
   cusNameSearchCtl = new FormControl('');
-  orderCustomer?: Customer;
 
   filteredOptions$!: Observable<TCustomerModel[]>;
 
@@ -61,14 +61,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     this.subscrioption.add(
       this.getCustomerDetail(customer._id).subscribe({
         next: data => {
-          console.log('Customer Detail');
-          console.log(data);
-
           this.orderCustomer = new Customer(data);
-
-          console.log('Order Customer');
-          console.log(this.orderCustomer);
-
           this.emitCustomer.emit(this.orderCustomer);
         },
         error: (error) => { console.log(error) }
