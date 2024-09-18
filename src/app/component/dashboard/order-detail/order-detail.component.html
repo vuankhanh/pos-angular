@@ -1,98 +1,147 @@
-<div>
+<div class="container">
+  <div class="button-group-header">
+    <button mat-icon-button color="primary" (click)="goBackOrderList()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
   @if (order) {
-  <div class="order-info">
-    <h3>Order Information</h3>
-    <p><strong>Order code:</strong> {{ order.orderCode }}</p>
-    <p><strong>Order Date:</strong> {{ order.createdAt }}</p>
-    <p><strong>Status:</strong> {{ order.status }}</p>
-  </div>
-  <div class="table-container">
-    <!-- 2. Hiển thị thông tin bảng order items -->
-    <table mat-table [dataSource]="order.orderItems" class="mat-elevation-z8">
-      <ng-container matColumnDef="thumbnail" [sticky]="breakpointDetection$ | async">
-        <th mat-header-cell *matHeaderCellDef> Ảnh </th>
-        <td mat-cell *matCellDef="let item">
-          <img [src]="item.productThumbnail | baseUrl" alt="{{ item.productName }}">
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Tên sản phẩm </th>
-        <td mat-cell *matCellDef="let item"> {{item.productName}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="quantity">
-        <th mat-header-cell *matHeaderCellDef> Số lượng </th>
-        <td mat-cell *matCellDef="let item">{{item.quantity}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="price">
-        <th mat-header-cell *matHeaderCellDef> Giá </th>
-        <td mat-cell *matCellDef="let item"> {{item.price | vndCurrency}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="total">
-        <th mat-header-cell *matHeaderCellDef> Tổng tiền </th>
-        <td mat-cell *matCellDef="let item"> {{item.total | vndCurrency}} </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  </div>
-  }
-
-  <!-- 3. Phần cuối hiển thị -->
-  <!-- <mat-card class="footer-bill-container">
-    <mat-card-content>
-      <div class="footer-bill-content horizontal-container">
-        <form [formGroup]="subInfoForm" class="sub-info vertical-container">
-          <mat-form-field>
-            <mat-label>Trạng thái</mat-label>
-            <mat-select formControlName="orderStatus">
-              @for (status of orderStatuses; track $index) {
-              <mat-option [value]="status"
-                selected="subInfoForm.get('orderStatus').value === value">{{status}}</mat-option>
+  <mat-card class="order-detail-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h3>{{ order.orderCode }}</h3>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <div class="vertical-container">
+          <span>Ngày tạo: {{ order.createdAt | date: 'dd/MM/yyyy' }}</span>
+          <span>Ngày cập nhật: {{ order.updatedAt | date: 'dd/MM/yyyy' }}</span>
+        </div>
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="order-detail-card-content">
+      <div class="content-container horizontal-container">
+        <div class="left-container">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                <h4>Thông tin hàng hóa</h4>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="info-list">
+                <div class="info-list__item">
+                  <div class="info-list__item__label">Trạng thái:</div>
+                  <div class="info-list__item__value">{{ order.status }}</div>
+                </div>
+              </div>
+              <section class="table-container mat-elevation-z8">
+                <!-- 2. Hiển thị thông tin bảng order items -->
+                <table mat-table [dataSource]="order.orderItems" class="mat-elevation-z8">
+                  <ng-container matColumnDef="thumbnail" [sticky]="breakpointDetection$ | async">
+                    <th mat-header-cell *matHeaderCellDef> Ảnh </th>
+                    <td mat-cell *matCellDef="let item">
+                      <img [src]="item.productThumbnail | baseUrl" alt="{{ item.productName }}">
+                    </td>
+                  </ng-container>
+            
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Tên sản phẩm </th>
+                    <td mat-cell *matCellDef="let item"> {{item.productName}} </td>
+                  </ng-container>
+            
+                  <ng-container matColumnDef="quantity">
+                    <th mat-header-cell *matHeaderCellDef> Số lượng </th>
+                    <td mat-cell *matCellDef="let item">{{item.quantity}}</td>
+                  </ng-container>
+            
+                  <ng-container matColumnDef="price">
+                    <th mat-header-cell *matHeaderCellDef> Giá </th>
+                    <td mat-cell *matCellDef="let item"> {{item.price | vndCurrency}} </td>
+                  </ng-container>
+            
+                  <ng-container matColumnDef="total">
+                    <th mat-header-cell *matHeaderCellDef> Tổng tiền </th>
+                    <td mat-cell *matCellDef="let item"> {{item.total | vndCurrency}} </td>
+                  </ng-container>
+            
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </section>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div class="right-container vertical-container">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                <h4>Thông tin khách hàng</h4>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @if (order.customerDetail; as customer) {
+                <div class="info-list">
+                  <div class="info-list__item">
+                    <div class="info-list__item__label">Tên khách hàng</div>
+                    <div class="info-list__item__value">{{ customer.name }}</div>
+                  </div>
+                  <div class="info-list__item">
+                    <div class="info-list__item__label">Số điện thoại</div>
+                    <div class="info-list__item__value">{{ customer.phoneNumber }}</div>
+                  </div>
+                  <div class="info-list__item info-list__item--special">
+                    <div class="info-list__item--special__label">Địa chỉ</div>
+                    <div class="info-list__item--special__value">{{ customer.address }}</div>
+                  </div>
+                  <div class="info-list__item info-list__item--special">
+                    <div class="info-list__item--special__label">Địa chỉ gửi hàng</div>
+                    <div class="info-list__item--special__value">{{ order.deliveryAddress }}</div>
+                  </div>
+                </div>
+              }@else {
+                Khách vãng lai
               }
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Ghi chú</mat-label>
-            <textarea matInput placeholder="Nhập ghi chú" formControlName="orderNote" cdkTextareaAutosize
-              cdkAutosizeMinRows="3" cdkAutosizeMaxRows="9"></textarea>
-          </mat-form-field>
-        </form>
-        <div class="totals">
-          <div class="totals__item">
-            <div class="totals__item__label">Tổng tiền hàng:</div>
-            <div class="totals__item__value">{{ subTotal | vndCurrency }}</div>
-          </div>
-          @if(footerTotalForm.value; as footerTotal) {
-          <div class="totals__item" (click)="openDialog('Phí vận chuyển', 'deliveryFee', 'currency')">
-            <div class="totals__item__label clickable">Phí vận chuyển:</div>
-            <div class="totals__item__value">{{ footerTotal.deliveryFee | vndCurrency }}</div>
-          </div>
-          <div class="totals__item " (click)="openDialog('Chiết khấu', 'discount', 'percentage')">
-            <div class="totals__item__label clickable">Chiết khấu:</div>
-            <div class="totals__item__value">{{ footerTotal.discount + '%' }}</div>
-          </div>
-          }
-          <div class="totals__item">
-            <div class="totals__item__label"><b>Tổng cộng:</b></div>
-            <div class="totals__item__value"><b>{{ totalPrice | vndCurrency }}</b></div>
-          </div>
-          <mat-form-field>
-            <mat-label>Hình thức thanh toán</mat-label>
-            <mat-select [formControl]="orderPaymentMethodControl">
-              @for (method of paymentMethods; track $index) {
-              <mat-option [value]="method" selected="orderPaymentMethodControl.value === value">
-                {{method === 'PENDING' ? 'Thanh toán sau' : method}}
-              </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+            </mat-card-content>
+          </mat-card>
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                <h4>Thông tin hóa đơn</h4>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="info-list">
+                <div class="info-list__item">
+                  <div class="info-list__item__label">Tổng tiền hàng:</div>
+                  <div class="info-list__item__value">{{ order.subTotal | vndCurrency }}</div>
+                </div>
+                <div class="info-list__item">
+                  <div class="info-list__item__label">Phí vận chuyển:</div>
+                  <div class="info-list__item__value">{{ order.deliveryFee | vndCurrency }}</div>
+                </div>
+                <div class="info-list__item ">
+                  <div class="info-list__item__label">Chiết khấu:</div>
+                  <div class="info-list__item__value">{{ order.discount + '%' }}</div>
+                </div>
+                <div class="info-list__item">
+                  <div class="info-list__item__label"><b>Tổng cộng:</b></div>
+                  <div class="info-list__item__value"><b>{{ order.total | vndCurrency }}</b></div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
       </div>
+      <div class="group-button-container">
+        <button mat-raised-button color="primary" (click)="onPrintEvent()">
+          <mat-icon>print</mat-icon>
+          In hóa đơn
+        </button>
+        <button mat-raised-button color="warn" (click)="onEditEvent()">
+          <mat-icon>edit</mat-icon>
+          Sửa lại
+        </button>
+      </div>
     </mat-card-content>
-  </mat-card> -->
+  </mat-card>
+  }
 </div>

@@ -1,0 +1,136 @@
+.container {
+  padding: 15px;
+  box-sizing: border-box;
+
+  mat-card {
+    mat-card-header {
+      mat-card-title {
+        h4 {
+          margin-top: 0;
+        }
+      }
+
+      mat-card-subtitle {
+        div {
+          align-items: flex-start;
+        }
+      }
+    }
+    mat-card-content{
+      .group-button-container{
+        margin-top: 15px;
+        button:not(:first-child){
+          margin-left: 10px;
+        }
+      }
+    }
+
+    .order-detail-card-content {
+      .content-container {
+        margin-top: 16px;
+        align-items: flex-start;
+
+        .left-container {
+          .table-container {
+            width: 100%;
+            max-height: 100%;
+            overflow: auto;
+
+            table[mat-table] {
+
+              .mat-column-quantity,
+              .mat-column-price,
+              .mat-column-total {
+                text-wrap: nowrap;
+              }
+            }
+          }
+        }
+
+        .right-container {
+          display: flex;
+          align-items: flex-start;
+          margin: 0 0 0 15px;
+          width: fit-content;
+
+          // padding: 15px;
+          // box-sizing: border-box;
+          mat-card {
+            width: 100%;
+
+            mat-card-content {
+              .info-list {
+                mat-form-field {
+                  width: 100%;
+                  margin-top: 10px;
+                }
+              }
+            }
+          }
+
+          >*:not(:first-child) {
+            margin-top: 15px;
+          }
+        }
+      }
+    }
+  }
+
+}
+
+@media screen and (max-width: 1024px) {
+  .container {
+    .order-detail-card-content {
+      .content-container {
+        height: fit-content;
+        flex-direction: column;
+        .left-container {
+          width: 100%;
+          mat-card {
+            mat-card-content{
+              .info-list {
+                width: 100%;
+              }
+            }
+          }
+        }
+
+        .right-container {
+          margin: 15px 0 0 0 !important;
+          width: 100% !important;
+
+          mat-card {
+            width: 100%;
+            mat-card-content {
+              .info-list {
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+}
+
+@media screen and (max-width: 599px) {
+  .container {
+    padding: 15px 0;
+    .order-detail-card-content {
+      .content-container {
+        .left-container {
+          .table-container {
+            table[mat-table] {
+              .mat-column-thumbnail {
+                img {
+                  width: 100px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

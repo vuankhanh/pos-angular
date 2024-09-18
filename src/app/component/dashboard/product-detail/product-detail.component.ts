@@ -34,12 +34,12 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   subscription: Subscription = new Subscription();
   constructor(
     private router: Router,
-    private activetedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private productService: ProductService,
     private gallerySerive: GalleryService
   ) {}
   ngOnInit() {
-    const customerDetail$ = this.activetedRoute.params.pipe(
+    const customerDetail$ = this.activatedRoute.params.pipe(
       map(params => {
         const id: string = params['id'] as string;
         return id;

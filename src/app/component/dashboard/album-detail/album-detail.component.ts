@@ -38,7 +38,7 @@ export class AlbumDetailComponent {
   private subscription: Subscription = new Subscription();
   constructor(
     private router: Router,
-    private activetedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private dialog: MatDialog,
     private albumService: AlbumService,
     private setBaseUrlPipe: SetBaseUrlPipe
@@ -47,7 +47,7 @@ export class AlbumDetailComponent {
   }
 
   ngOnInit() {
-    let albumDetail$ = this.activetedRoute.params.pipe(
+    let albumDetail$ = this.activatedRoute.params.pipe(
       tap(res=>console.log(res)),
       map(params => {
         const detailParams: DetailParams = {route: params['route'] as string};

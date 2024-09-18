@@ -42,52 +42,10 @@ mat-option{
   overflow: auto;
 
   table[mat-table] {
-
-    th,
-    td {
-      padding: 0 10px;
-    }
-
-    th[mat-header-cell] {
-      text-wrap: nowrap;
-    }
-
-    th[mat-header-cell]:not(:first-child):not(:last-child) {
-      text-align: center;
-    }
-
-    th[mat-header-cell]:last-child {
-      text-align: right;
-    }
-
     .mat-column-quantity,
     .mat-column-price,
     .mat-column-total {
       text-wrap: nowrap;
-    }
-
-    td[mat-cell]:not(:first-child):not(:last-child) {
-      text-align: center;
-
-      .action-group-button {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-      }
-    }
-
-    .mat-column-thumbnail {
-      img {
-        width: 200px;
-      }
-    }
-
-    td[mat-cell]:last-child {
-      text-align: right;
-    }
-
-    .mat-mdc-table-sticky-border-elem-left {
-      border-right: 1px solid #e0e0e0;
     }
   }
 }
@@ -102,25 +60,8 @@ mat-option{
         width: 300px;
       }
     }
-    .totals{
-      width: 300px;
+    .info-list{
       margin: 0 0 0 10px;
-      &__item {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-  
-        &__label {
-          flex: 0 0 150px; // Đặt chiều ngang mặc định cho tiêu đề
-          font-weight: bold;
-        }
-  
-        &__value {
-          flex: 1;
-          text-align: right;
-          text-wrap: nowrap;
-        }
-      }
       mat-form-field{
         width: 100%;
         margin-top: 10px;
@@ -146,7 +87,7 @@ mat-option{
         width: 100% !important;
       }
 
-      .totals{
+      .info-list{
         margin: 10px 0 0 0;
       }
     }

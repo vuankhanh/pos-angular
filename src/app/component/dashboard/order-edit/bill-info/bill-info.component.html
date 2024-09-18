@@ -87,24 +87,24 @@
               cdkAutosizeMinRows="3" cdkAutosizeMaxRows="9"></textarea>
           </mat-form-field>
         </form>
-        <div class="totals">
-          <div class="totals__item">
-            <div class="totals__item__label">Tổng tiền hàng:</div>
-            <div class="totals__item__value">{{ subTotal | vndCurrency }}</div>
+        <div class="info-list">
+          <div class="info-list__item">
+            <div class="info-list__item__label">Tổng tiền hàng:</div>
+            <div class="info-list__item__value">{{ subTotal | vndCurrency }}</div>
           </div>
           @if(footerTotalForm.value; as footerTotal) {
-          <div class="totals__item" (click)="openDialog('Phí vận chuyển', 'deliveryFee', 'currency')">
-            <div class="totals__item__label clickable">Phí vận chuyển:</div>
-            <div class="totals__item__value">{{ footerTotal.deliveryFee | vndCurrency }}</div>
+          <div class="info-list__item" (click)="openDialog('Phí vận chuyển', 'deliveryFee', 'currency')">
+            <div class="info-list__item__label clickable">Phí vận chuyển:</div>
+            <div class="info-list__item__value">{{ footerTotal.deliveryFee | vndCurrency }}</div>
           </div>
-          <div class="totals__item " (click)="openDialog('Chiết khấu', 'discount', 'percentage')">
-            <div class="totals__item__label clickable">Chiết khấu:</div>
-            <div class="totals__item__value">{{ footerTotal.discount + '%' }}</div>
+          <div class="info-list__item " (click)="openDialog('Chiết khấu', 'discount', 'percentage')">
+            <div class="info-list__item__label clickable">Chiết khấu:</div>
+            <div class="info-list__item__value">{{ footerTotal.discount + '%' }}</div>
           </div>
           }
-          <div class="totals__item">
-            <div class="totals__item__label"><b>Tổng cộng:</b></div>
-            <div class="totals__item__value"><b>{{ totalPrice | vndCurrency }}</b></div>
+          <div class="info-list__item">
+            <div class="info-list__item__label"><b>Tổng cộng:</b></div>
+            <div class="info-list__item__value"><b>{{ totalPrice | vndCurrency }}</b></div>
           </div>
           <mat-form-field>
             <mat-label>Hình thức thanh toán</mat-label>

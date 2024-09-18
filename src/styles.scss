@@ -101,3 +101,85 @@ mat-card-content{
 .clickable:hover {
   color: #104e8b; /* Màu sắc khi hover */
 }
+
+.info-list{
+  width: 300px;
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+
+    &__label {
+      flex: 0 0 150px; // Đặt chiều ngang mặc định cho tiêu đề
+      font-weight: bold;
+    }
+
+    &__value {
+      flex: 1;
+      text-align: right;
+      text-wrap: nowrap;
+    }
+
+    &--special {
+      flex-direction: column; // Change to column to allow items to stack vertically
+
+      &__label {
+        flex: 0 0 auto; // Allow the label to adjust its width
+        font-weight: bold;
+        margin-bottom: 5px; // Add some space between label and value
+      }
+
+      &__value {
+        text-align: left; // Align text to the left for better readability
+        word-wrap: break-word; // Allow long text to wrap
+      }
+    }
+  }
+  mat-form-field{
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+table[mat-table] {
+  th,
+  td {
+    padding: 0 10px;
+  }
+
+  th[mat-header-cell] {
+    text-wrap: nowrap;
+  }
+
+  th[mat-header-cell]:not(:first-child):not(:last-child) {
+    text-align: center;
+  }
+
+  th[mat-header-cell]:last-child {
+    text-align: right;
+  }
+
+  td[mat-cell]:not(:first-child):not(:last-child) {
+    text-align: center;
+
+    .action-group-button {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+  }
+
+  .mat-column-thumbnail {
+    img {
+      width: 200px;
+    }
+  }
+
+  td[mat-cell]:last-child {
+    text-align: right;
+  }
+
+  .mat-mdc-table-sticky-border-elem-left {
+    border-right: 1px solid #e0e0e0;
+  }
+}
