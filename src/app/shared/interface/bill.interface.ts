@@ -11,7 +11,7 @@ export interface IBill {
 
 export interface IBillSubInfo {
   orderStatus: TOrderStatus;
-  notes: string;
+  note: string;
   paymentMethod: TPaymentMethod;
 }
 

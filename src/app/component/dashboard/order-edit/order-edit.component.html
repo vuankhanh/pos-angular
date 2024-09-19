@@ -3,7 +3,8 @@
     <mat-card-content>
       <div class="content-container horizontal-container">
         <div class="bill-info">
-          <order-bill-info (emitBillInfo)="handleBillInfo($event)" (emitBillSubInfo)="handleSubBillInfo($event)"></order-bill-info>
+          <order-bill-info [order]="order" (emitBillInfo)="handleBillInfo($event)"
+            (emitBillSubInfo)="handleSubBillInfo($event)"></order-bill-info>
         </div>
 
         <div class="customer-info">
@@ -12,7 +13,12 @@
       </div>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button color="primary" [disabled]="!billInfo || !subBillInfo" (click)="save()">Lưu</button>
+      @if (order) {
+      <button mat-raised-button color="primary" [disabled]="updateButtonDisabled$ | async" (click)="save()">Cập
+        nhật</button>
+      }@else {
+      <button mat-raised-button color="primary" [disabled]="!billInfo || !subBillInfo" (click)="save()">Tạo mới</button>
+      }
     </mat-card-actions>
   </mat-card>
 </div>

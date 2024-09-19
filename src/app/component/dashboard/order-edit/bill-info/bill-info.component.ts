@@ -1,16 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/module/material';
 import { TProductModel } from '../../../../shared/interface/product.interface';
-import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, map, merge, Observable, startWith, Subscription, switchMap, tap } from 'rxjs';
-import { OrderItem, TOrderStatus } from '../../../../shared/interface/order.interface';
+import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, map, Observable, startWith, Subscription, switchMap } from 'rxjs';
+import { OrderItem, TOrderDetailModel } from '../../../../shared/interface/order.interface';
 import { ProductService } from '../../../../shared/service/api/product.service';
 import { SetBaseUrlPipe } from '../../../../shared/pipe/set-base-url.pipe';
 import { MatTable } from '@angular/material/table';
 import { CurrencyCustomPipe } from '../../../../shared/pipe/currency-custom.pipe';
 import { NumberInputComponent } from '../../../../shared/component/number-input/number-input.component';
-import { BillInfoUtil } from '../../../../shared/utitl/bill-info.util';
 import { numberValidator } from '../../../../shared/utitl/form-validator.util';
 import { MatDialog } from '@angular/material/dialog';
 import { FeeDiscountComponent } from '../../../../shared/component/dialog/fee-discount/fee-discount.component';
@@ -20,6 +19,8 @@ import { PaymentMethod } from '../../../../constant/payment.constant';
 import { TPaymentMethod } from '../../../../shared/interface/payment.interface';
 import { MatSelectChange } from '@angular/material/select';
 import { BreakpointDetectionService } from '../../../../shared/service/breakpoint-detection.service';
+import { BillInfoUtil } from '../../../../shared/utitl/order.util';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'order-bill-info',
@@ -42,19 +43,22 @@ import { BreakpointDetectionService } from '../../../../shared/service/breakpoin
   templateUrl: './bill-info.component.html',
   styleUrl: './bill-info.component.scss'
 })
-export class BillInfoComponent implements OnInit, OnDestroy {
+export class BillInfoComponent implements OnChanges, OnInit, OnDestroy {
   @ViewChild(MatTable) table?: MatTable<any>;
+
+  @Input() order?: TOrderDetailModel;
+
   @Output() emitBillInfo = new EventEmitter<IBill>();
   @Output() emitBillSubInfo = new EventEmitter<IBillSubInfo>();
-  
+
   nameOrProductCodeCtl: FormControl = new FormControl();
   filteredOptions$!: Observable<TProductModel[]>;
   breakpointDetection$ = this.breakpointDetectionService.detection$();
-  
+
   //Table
   orderItems$: BehaviorSubject<OrderItem[]> = new BehaviorSubject<OrderItem[]>([]);
   displayedColumns = ['thumbnail', 'name', 'quantity', 'price', 'total', 'actions'];
-  
+
   //Footer
   footerTotalForm: FormGroup = this.formBuilder.group({
     deliveryFee: [0, [Validators.min(0), numberValidator()]],
@@ -85,6 +89,24 @@ export class BillInfoComponent implements OnInit, OnDestroy {
     private breakpointDetectionService: BreakpointDetectionService,
   ) { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['order']) {
+      const previousValue = changes['order'].previousValue;
+      const currentValue = changes['order'].currentValue;
+      if (currentValue && previousValue !== currentValue) {
+        const order: TOrderDetailModel = currentValue;
+
+        this.orderItems$.next(cloneDeep(order.orderItems));
+        this.footerTotalForm.controls['deliveryFee'].setValue(order.deliveryFee);
+        this.footerTotalForm.controls['discount'].setValue(order.discount);
+
+        this.subInfoForm.controls['orderStatus'].setValue(order.status);
+        this.subInfoForm.controls['orderNote'].setValue(order.note);
+        this.subInfoForm.controls['paymentMethod'].setValue(order.paymentMethod);
+      }
+    }
+  }
+
   ngOnInit(): void {
     this.filteredOptions$ = this.nameOrProductCodeCtl.valueChanges.pipe(
       debounceTime(300),
@@ -99,12 +121,12 @@ export class BillInfoComponent implements OnInit, OnDestroy {
     const combineLastest$ = combineLatest([this.orderItems$, footerTotalForm$]);
     this.subscription.add(
       combineLastest$.subscribe(([orderItems, footerTotalValue]) => {
-        if(orderItems.length) {
+        if (orderItems.length) {
           const deliveryFee = footerTotalValue.deliveryFee;
           const discount = footerTotalValue.discount;
           this.subTotal = BillInfoUtil.calculateSubTotal(orderItems);
           this.totalPrice = BillInfoUtil.calculateFooterTotal(this.subTotal, deliveryFee, discount);
-  
+
           const billInfo: IBill = {
             orderItems,
             subTotal: this.subTotal,
@@ -123,7 +145,7 @@ export class BillInfoComponent implements OnInit, OnDestroy {
       ).subscribe((value) => {
         const billSubInfo: IBillSubInfo = {
           orderStatus: value.orderStatus,
-          notes: value.orderNote,
+          note: value.orderNote,
           paymentMethod: value.paymentMethod
         }
         this.emitBillSubInfo.emit(billSubInfo);
@@ -146,7 +168,8 @@ export class BillInfoComponent implements OnInit, OnDestroy {
   }
 
   quantityChange(value: number, orderItem: OrderItem) {
-    orderItem.updateQuantity = value;
+    orderItem.quantity = value;
+    orderItem.total = orderItem.price * orderItem.quantity;
     const orderItems = this.orderItems$.value;
     this.orderItems$.next(orderItems);
     this.table?.renderRows();

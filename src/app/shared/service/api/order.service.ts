@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { IOrderDetailResponse, IOrderResponse, Order } from '../../interface/order.interface';
+import { IOrderDetailResponse, IOrderResponse, Order, OrderItem } from '../../interface/order.interface';
 import { map } from 'rxjs';
 
 @Injectable({
@@ -54,9 +54,7 @@ export class OrderService {
     );
   }
 
-  remove(id: string){
-    return this.httpClient.delete<IOrderDetailResponse>(this.url + '/' + id).pipe(
-      map(res => res.metaData)
-    );
+  print(id: string){
+    return this.httpClient.post(this.url + '/' + id + '/print', null);
   }
 }

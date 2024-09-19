@@ -9,6 +9,7 @@ import { CurrencyCustomPipe } from '../../../shared/pipe/currency-custom.pipe';
 import { map, Subscription, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../../../shared/service/api/order.service';
+import { OrderStatus } from '../../../constant/order.constant';
 
 @Component({
   selector: 'app-order-detail',
@@ -69,7 +70,21 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   onPrintEvent() {
-
+    if (this.order) {
+      const validStatus = [OrderStatus.CONFIRMED, OrderStatus.SHIPPING, OrderStatus.COMPLETED].includes(this.order.status as OrderStatus)
+      if(validStatus){
+        this.subscription.add(
+          this.orderService.print(this.order?._id).subscribe({
+            next: res => {
+              console.log(res);
+            },
+            error: error => {
+              console.log(error);
+            }
+          })
+        )
+      }
+    }
   }
 
   onEditEvent(){

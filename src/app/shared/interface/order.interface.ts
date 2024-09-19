@@ -12,7 +12,7 @@ export type TOrderStatus = `${OrderStatus}`;
 export interface IBaseOrder {
   status: TOrderStatus;
   paymentMethod: TPaymentMethod;
-  note?: string;
+  note: string;
 }
 
 export interface IOrderItem {
@@ -35,7 +35,7 @@ export type TOrderDetailModel = {
   orderCode: string;
   orderItems: Array<OrderItem>;
   customerId?: string;
-  customerDetail: TCustomerModel;
+  customerDetail?: TCustomerModel;
   deliveryAddress?: string;
   subTotal: number;
   deliveryFee: number;
@@ -74,7 +74,7 @@ export class Customer implements TCustomerModel {
     this.deliveryAddress = data.address;
   }
 
-  set updateDeveryAddress(deliveryAddress: string) {
+  set updateDeliveryAddress(deliveryAddress: string) {
     this.deliveryAddress = deliveryAddress;
   }
 }
@@ -96,11 +96,6 @@ export class OrderItem implements IOrderItem {
     this.price = data.price;
     this.total = this.price * this.quantity;
   }
-
-  set updateQuantity(quantity: number) {
-    this.quantity = quantity;
-    this.total = this.price * this.quantity;
-  }
 }
 
 export class Order implements IBaseOrder {
@@ -111,7 +106,7 @@ export class Order implements IBaseOrder {
   discount: number;
   customerId?: string;
   deliveryAddress?: string;
-  note?: string;
+  note: string;
 
   constructor(billInfo: IBill, billSubInfo: IBillSubInfo, customer?: Customer) {
     this.status = billSubInfo.orderStatus;
@@ -121,7 +116,7 @@ export class Order implements IBaseOrder {
     this.discount = billInfo.discount;
     this.customerId = customer?._id;
     this.deliveryAddress = customer?.deliveryAddress;
-    this.note = billSubInfo.notes;
+    this.note = billSubInfo.note;
   }
 }
 

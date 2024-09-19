@@ -81,7 +81,7 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
         width: '500px',
       }).afterClosed().subscribe((data) => {
         if (data) {
-          this.orderCustomer!.updateDeveryAddress = data;
+          this.orderCustomer!.updateDeliveryAddress = data;
           this.emitCustomer.emit(this.orderCustomer);
         }
       })
