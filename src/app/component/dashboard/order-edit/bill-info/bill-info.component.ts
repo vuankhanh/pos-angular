@@ -183,7 +183,6 @@ export class BillInfoComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   handlePaymentMethodChange(event: MatSelectChange) {
-    console.log(event);
     const value = event.value as TPaymentMethod;
     this.subInfoForm.controls['paymentMethod'].setValue(value);
   }
@@ -205,10 +204,6 @@ export class BillInfoComponent implements OnChanges, OnInit, OnDestroy {
       })
     )
   }
-
-  // setPaymentMethod(method: TPaymentMethod) {
-  //   this.paymentMethod = method;
-  // }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();

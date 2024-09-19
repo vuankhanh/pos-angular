@@ -35,8 +35,11 @@ export type TOrderDetailModel = {
   orderCode: string;
   orderItems: Array<OrderItem>;
   customerId?: string;
-  customerDetail?: TCustomerModel;
-  deliveryAddress?: string;
+  customerDetail?: Customer;
+  customerPhoneNumber?: string;
+  customerName?: string;
+  customerAddress?: string;
+  customerDeliveryAddress?: string;
   subTotal: number;
   deliveryFee: number;
   discount: number;

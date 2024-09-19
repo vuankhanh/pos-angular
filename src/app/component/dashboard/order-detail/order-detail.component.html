@@ -94,7 +94,7 @@
                   </div>
                   <div class="info-list__item info-list__item--special">
                     <div class="info-list__item--special__label">Địa chỉ gửi hàng</div>
-                    <div class="info-list__item--special__value">{{ order.deliveryAddress }}</div>
+                    <div class="info-list__item--special__value">{{ order.customerDeliveryAddress }}</div>
                   </div>
                 </div>
               }@else {
@@ -132,7 +132,7 @@
         </div>
       </div>
       <div class="group-button-container">
-        <button mat-raised-button color="primary" (click)="onPrintEvent()">
+        <button mat-raised-button color="primary" (click)="onPrintEvent()" [disabled]="isPrintButtonDisabled$ | async">
           <mat-icon>print</mat-icon>
           In hóa đơn
         </button>

@@ -8,16 +8,16 @@
         </div>
 
         <div class="customer-info">
-          <order-customer-info [orderCustomer]="customer" (emitCustomer)="handleCustomer($event)"></order-customer-info>
+          <order-customer-info [order]="order" (emitCustomer)="handleCustomer($event)"></order-customer-info>
         </div>
       </div>
     </mat-card-content>
     <mat-card-actions>
       @if (order) {
-      <button mat-raised-button color="primary" [disabled]="updateButtonDisabled$ | async" (click)="save()">Cập
+      <button mat-raised-button color="primary" [disabled]="updateButtonDisabled$ | async" (click)="update()">Cập
         nhật</button>
       }@else {
-      <button mat-raised-button color="primary" [disabled]="!billInfo || !subBillInfo" (click)="save()">Tạo mới</button>
+      <button mat-raised-button color="primary" [disabled]="!billInfo || !subBillInfo" (click)="create()">Tạo mới</button>
       }
     </mat-card-actions>
   </mat-card>

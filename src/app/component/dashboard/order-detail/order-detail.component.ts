@@ -6,7 +6,7 @@ import { BreakpointDetectionService } from '../../../shared/service/breakpoint-d
 import { SetBaseUrlPipe } from '../../../shared/pipe/set-base-url.pipe';
 import { NumberInputComponent } from '../../../shared/component/number-input/number-input.component';
 import { CurrencyCustomPipe } from '../../../shared/pipe/currency-custom.pipe';
-import { map, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, map, Subscription, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../../../shared/service/api/order.service';
 import { OrderStatus } from '../../../constant/order.constant';
@@ -32,6 +32,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   order?: TOrderDetailModel;
   displayedColumns = ['thumbnail', 'name', 'quantity', 'price', 'total'];
 
+  isPrintButtonDisabled$ = new BehaviorSubject<boolean>(false);
+
   breakpointDetection$ = this.breakpointDetectionService.detection$();
 
   subscription: Subscription = new Subscription();
@@ -55,6 +57,10 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       customerDetail$.subscribe({
         next: res => {
           this.order = res;
+          const isDisable = !this.validStatus(this.order);
+          console.log(isDisable);
+          
+          this.isPrintButtonDisabled$.next(isDisable);
           console.log(this.order);
           
         },
@@ -71,7 +77,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
   onPrintEvent() {
     if (this.order) {
-      const validStatus = [OrderStatus.CONFIRMED, OrderStatus.SHIPPING, OrderStatus.COMPLETED].includes(this.order.status as OrderStatus)
+      const validStatus = this.validStatus(this.order);
       if(validStatus){
         this.subscription.add(
           this.orderService.print(this.order?._id).subscribe({
@@ -85,6 +91,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
         )
       }
     }
+  }
+
+  private validStatus(order: TOrderDetailModel): boolean {
+    const validStatus = [OrderStatus.CONFIRMED, OrderStatus.SHIPPING, OrderStatus.COMPLETED].includes(order.status as OrderStatus)
+    return validStatus;
   }
 
   onEditEvent(){

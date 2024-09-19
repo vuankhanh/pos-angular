@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { TCustomerModel } from '../../../../shared/interface/customer.interface';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../../shared/module/material';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map, Observable, Subscription, switchMap } from 'rxjs';
 import { CustomerService } from '../../../../shared/service/api/customer.service';
-import { Customer } from '../../../../shared/interface/order.interface';
+import { Customer, TOrderDetailModel } from '../../../../shared/interface/order.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomerAddressComponent } from '../../../../shared/component/dialog/customer-address/customer-address.component';
 
@@ -23,12 +23,13 @@ import { CustomerAddressComponent } from '../../../../shared/component/dialog/cu
   templateUrl: './customer-info.component.html',
   styleUrl: './customer-info.component.scss'
 })
-export class CustomerInfoComponent implements OnInit, OnDestroy {
-  @Input() orderCustomer?: Customer;
+export class CustomerInfoComponent implements OnChanges, OnInit, OnDestroy {
+  @Input() order?: TOrderDetailModel;
   @Output() emitCustomer = new EventEmitter<Customer>();
   cusNameSearchCtl = new FormControl('');
 
   filteredOptions$!: Observable<TCustomerModel[]>;
+  customer?: Customer;
 
   subscrioption: Subscription = new Subscription();
   constructor(
@@ -37,6 +38,22 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   ) {
 
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['order']) {
+      const previousValue = changes['order'].previousValue;
+      const currentValue = changes['order'].currentValue;
+
+      if (currentValue && previousValue !== currentValue) {
+        const order: TOrderDetailModel = currentValue;
+        if (order.customerDetail) {
+          this.customer = new Customer(order.customerDetail);
+          this.customer.updateDeliveryAddress = order.customerDeliveryAddress!;
+        }
+      }
+    }
+  }
+
   ngOnInit(): void {
     this.filteredOptions$ = this.cusNameSearchCtl.valueChanges.pipe(
       debounceTime(300),
@@ -52,8 +69,8 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
   }
 
   onEditCustomerEvent() {
-    this.orderCustomer = undefined;
-    this.emitCustomer.emit(this.orderCustomer);
+    this.customer = undefined;
+    this.emitCustomer.emit(this.customer);
   }
 
   onChooseCustomerEvent(customer: TCustomerModel) {
@@ -61,8 +78,8 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
     this.subscrioption.add(
       this.getCustomerDetail(customer._id).subscribe({
         next: data => {
-          this.orderCustomer = new Customer(data);
-          this.emitCustomer.emit(this.orderCustomer);
+          this.customer = new Customer(data);
+          this.emitCustomer.emit(this.customer);
         },
         error: (error) => { console.log(error) }
       })
@@ -81,8 +98,8 @@ export class CustomerInfoComponent implements OnInit, OnDestroy {
         width: '500px',
       }).afterClosed().subscribe((data) => {
         if (data) {
-          this.orderCustomer!.updateDeliveryAddress = data;
-          this.emitCustomer.emit(this.orderCustomer);
+          this.customer!.updateDeliveryAddress = data;
+          this.emitCustomer.emit(this.customer);
         }
       })
     )

@@ -1,4 +1,4 @@
-@if (!orderCustomer) {
+@if (!customer) {
 <form class="example-form">
   <mat-form-field class="example-full-width">
     <mat-label>Tìm hoặc tạo một khách hàng</mat-label>
@@ -34,22 +34,22 @@
     <div class="customer-info__content">
       <div class="customer-info__content__item">
         <div class="customer-info__content__item__label">Tên khách hàng</div>
-        <div class="customer-info__content__item__value">{{ orderCustomer.name }}</div>
+        <div class="customer-info__content__item__value">{{ customer.name }}</div>
       </div>
       <div class="customer-info__content__item">
         <div class="customer-info__content__item__label">Số điện thoại</div>
-        <div class="customer-info__content__item__value">{{ orderCustomer.phoneNumber }}</div>
+        <div class="customer-info__content__item__value">{{ customer.phoneNumber }}</div>
       </div>
       <div class="customer-info__content__item vertical-container">
         <div class="customer-info__content__item__label">Địa chỉ</div>
-        <div class="customer-info__content__item__value">{{ orderCustomer.address }}</div>
+        <div class="customer-info__content__item__value">{{ customer.address }}</div>
       </div>
       <div class="customer-info__content__item vertical-container">
         <div class="customer-info__content__item__label horizontal-container">
           Địa chỉ gửi hàng
-          <mat-icon color="primary" (click)="editCustomerDeliveryAddress(orderCustomer.deliveryAddress)">edit</mat-icon>
+          <mat-icon color="primary" (click)="editCustomerDeliveryAddress(customer.deliveryAddress)">edit</mat-icon>
         </div>
-        <div class="customer-info__content__item__value">{{ orderCustomer.deliveryAddress }}</div>
+        <div class="customer-info__content__item__value">{{ customer.deliveryAddress }}</div>
       </div>
     </div>
   </div>

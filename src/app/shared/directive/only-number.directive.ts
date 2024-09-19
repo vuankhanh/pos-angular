@@ -16,6 +16,7 @@ export class OnlyNumberDirective implements ControlValueAccessor {
   Còn nếu limitedValue = false thì không giới hạn giá trị nhập vào. Mặc định là true.
   */
   @Input() limitedValue: boolean = true;
+  @Input() allowZero: boolean = false;
   private onChange: (value: number) => void = () => { };
   private onTouched: () => void = () => { };
 
@@ -24,12 +25,19 @@ export class OnlyNumberDirective implements ControlValueAccessor {
   @HostListener('input', ['$event']) onInputChange(event: Event) {
     const input = event.target as HTMLInputElement;
     let value = input.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-
+    console.log(value);
+    
     // Remove leading zeros
     value = value.replace(/^0+/, '');
-
-    if (value === '' || value === '0') {
-      value = '1'; // Auto fill 1 if empty or 0
+    if(!this.allowZero){
+  
+      if (value === '' || value === '0') {
+        value = '1'; // Auto fill 1 if empty or 0
+      }
+    }else{
+      if (value === ''){
+        value = '0';
+      }
     }
 
     if (this.limitedValue && Number(value) > 999) {
