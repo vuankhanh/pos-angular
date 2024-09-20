@@ -73,8 +73,13 @@ export class OrderEditComponent implements OnInit, OnDestroy {
       switchMap(id => {
         return this.orderService.getDetail(id);
       })
-    ).subscribe(order => {
-      this.order = order;
+    ).subscribe({
+      next: res => {
+        this.order = res;
+      },
+      error: error => {
+        this.backToOrderDetail();
+      }
     });
   }
 
@@ -123,7 +128,8 @@ export class OrderEditComponent implements OnInit, OnDestroy {
   }
 
   backToOrderDetail() {
-    this.router.navigate(['/order', this.order?._id]);
+    const commands = this.order?._id ? ['/order', this.order?._id] : ['/order'];
+    this.router.navigate(commands);
   }
 
   ngOnDestroy(): void {

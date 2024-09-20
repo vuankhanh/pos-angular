@@ -17,6 +17,6 @@ export class AuthStateService {
   logout(){
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    this.router.navigate(['/admin/login']);
+    this.router.navigate(['/login']);
   }
 }

@@ -58,11 +58,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
         next: res => {
           this.order = res;
           const isDisable = !this.validStatus(this.order);
-          console.log(isDisable);
-          
-          this.isPrintButtonDisabled$.next(isDisable);
-          console.log(this.order);
-          
+          this.isPrintButtonDisabled$.next(isDisable); 
         },
         error: error => {
           this.goBackOrderList();

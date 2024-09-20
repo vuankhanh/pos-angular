@@ -53,7 +53,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
       this.activatedRoute.queryParamMap.pipe(
         map(params => {
           const customerId = params.get('_id');
-
+          
           return customerId;
         }),
         switchMap(customerId => {
