@@ -51,7 +51,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
           
         },
         error: error => {
-          this.goBackAlbumList();
+          this.goBackCustomerList();
         }
       })
     )
@@ -79,7 +79,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       switchMap(() => this.customerService.remove(this.customer!._id))
     ).subscribe({
       next: res => {
-        this.goBackAlbumList();
+        this.goBackCustomerList();
       },
       error: error => {
         console.error(error);
@@ -87,7 +87,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  goBackAlbumList() {
+  goBackCustomerList() {
     this.router.navigate(['/customer']);
   }
 

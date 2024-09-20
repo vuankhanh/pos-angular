@@ -32,6 +32,10 @@
                   <div class="info-list__item__label">Trạng thái:</div>
                   <div class="info-list__item__value">{{ order.status }}</div>
                 </div>
+                <div class="info-list__item">
+                  <div class="info-list__item__label">Thanh toán:</div>
+                  <div class="info-list__item__value">{{ order.paymentMethod === 'PENDING' ? 'Thanh toán sau' : order.paymentMethod }}</div>
+                </div>
               </div>
               <section class="table-container mat-elevation-z8">
                 <!-- 2. Hiển thị thông tin bảng order items -->

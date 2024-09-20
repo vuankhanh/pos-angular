@@ -108,7 +108,7 @@ export class Order implements IBaseOrder {
   deliveryFee: number;
   discount: number;
   customerId?: string;
-  deliveryAddress?: string;
+  customerDeliveryAddress?: string;
   note: string;
 
   constructor(billInfo: IBill, billSubInfo: IBillSubInfo, customer?: Customer) {
@@ -118,7 +118,7 @@ export class Order implements IBaseOrder {
     this.deliveryFee = billInfo.deliveryFee;
     this.discount = billInfo.discount;
     this.customerId = customer?._id;
-    this.deliveryAddress = customer?.deliveryAddress;
+    this.customerDeliveryAddress = customer?.deliveryAddress;
     this.note = billSubInfo.note;
   }
 }

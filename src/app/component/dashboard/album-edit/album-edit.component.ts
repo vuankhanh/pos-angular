@@ -4,16 +4,14 @@ import { FileDragAndDropComponent } from '../../../shared/component/file-drag-an
 import { IRequestParamsWithFiles } from '../../../shared/interface/request.interface';
 import { AlbumService, DetailParams } from '../../../shared/service/api/album.service';
 import { TAlbumModel, TMediaModel } from '../../../shared/interface/album.interface';
-import { filter, map, Observable, Subscription, switchMap } from 'rxjs';
+import { map, Observable, of, Subscription, switchMap } from 'rxjs';
 import { GalleryCustomThumbsComponent } from '../../../shared/component/gallery-custom-thumbs/gallery-custom-thumbs.component';
 import { GalleryItemTemporarilyDeletedComponent } from '../../../shared/component/gallery-item-temporarily-deleted/gallery-item-temporarily-deleted.component';
 import { MaterialModule } from '../../../shared/module/material';
 import { SetBaseUrlPipe } from '../../../shared/pipe/set-base-url.pipe';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { IGalleryItem } from '../../../shared/interface/gallery.interface';
-import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterEventService } from '../../../shared/service/router-event.service';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-album-edit',
@@ -49,36 +47,37 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private routerEventService: RouterEventService,
     private albumService: AlbumService,
     private setBaseUrlPipe: SetBaseUrlPipe
-  ) {
-    this.routerEventService.updateRouteTitle('Chỉnh sửa album');
-  }
+  ) { }
 
   ngOnInit() {
-    
-    this.activatedRoute.queryParamMap.pipe(
-      map(params => {
-        const customerRoute = params.get('route');
-        return customerRoute;
-      }),
-      filter(route => !!route),
-      switchMap(route => {
-        const detailParams: DetailParams = { route: route as string };
-        return this.albumService.getDetail(detailParams)
+    this.subscription.add(
+      this.activatedRoute.queryParamMap.pipe(
+        map(params => {
+          const customerRoute = params.get('route');
+          return customerRoute;
+        }),
+        switchMap(route => {
+          if (!route) {
+            return of(null);
+          }
+          const detailParams: DetailParams = { route: route as string };
+          return this.albumService.getDetail(detailParams)
+        })
+      ).subscribe({
+        next: res => {
+          if (res) {
+            this.albumDetail = res;
+            this.initImages(this.albumDetail.media);
+            this.nameControl.setValue(this.albumDetail.name);
+          }
+        },
+        error: error => {
+          this.goBackAlbumDetail();
+        }
       })
-    ).subscribe({
-      next: res => {
-        this.routerEventService.updateRouteTitle('Cập nhật album');
-        this.albumDetail = res;
-        this.initImages(this.albumDetail.media);
-        this.nameControl.setValue(this.albumDetail.name);
-      },
-      error: error => {
-        this.goBackAlbumDetail();
-      }
-    })
+    )
   }
 
   private initImages(medias: Array<TMediaModel>): Array<IGalleryItem> {
@@ -101,18 +100,18 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
 
   handleFilesUploaded(files: Array<File>): void {
     let api$: Observable<TAlbumModel>;
-    if(this.albumDetail){
+    if (this.albumDetail) {
       api$ = this.addNewFiles$(this.albumDetail._id!, files);
-    }else{
+    } else {
       this.nameControl.markAsTouched();
-      if(this.nameControl.invalid){
+      if (this.nameControl.invalid) {
         return;
       }
       const name = this.nameControl.value;
       const params: IRequestParamsWithFiles = { name, files };
       api$ = this.create$(params);
     }
-    
+
     this.subscription.add(
       api$.subscribe(res => {
         this.childComponentRef.resetForm();

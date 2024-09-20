@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, map, of, Subject, Subscription, switchMap } from 'rxjs';
+import { map, of, Subject, Subscription, switchMap } from 'rxjs';
 import { CustomerService } from '../../../shared/service/api/customer.service';
 import { TCustomerModel } from '../../../shared/interface/customer.interface';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';

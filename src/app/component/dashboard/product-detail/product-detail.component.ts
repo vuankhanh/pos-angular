@@ -52,8 +52,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
         next: res => {
           this.product = res;
           this.galleryItems = this.gallerySerive.transform(this.product.albumDetail.media);
-          console.log(this.product);
-          
         },
         error: error => {
           this.goBackProductList();

@@ -97,6 +97,31 @@ export class AlbumDetailComponent {
     });
   }
 
+  remove(){
+    const dialogData: TConfirmDialogData = {
+      title: 'Xóa Album',
+      message: 'Bạn có chắc chắn muốn xóa album này?',
+      confirmText: 'Xóa',
+      cancelText: 'Hủy',
+    }
+
+    const dialogRef = this.dialog.open(ConfirmComponent, {
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().pipe(
+      filter(result => result),
+      switchMap(() => this.albumService.delete(this.albumDetail!._id))
+    ).subscribe({
+      next: res => {
+        this.goBackAlbumList();
+      },
+      error: error => {
+        console.error(error);
+      }
+    });
+  }
+
   goBackAlbumList() {
     this.router.navigate(['/album']);
   }

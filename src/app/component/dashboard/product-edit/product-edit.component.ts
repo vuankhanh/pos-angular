@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { map, of, Subscription, switchMap } from 'rxjs';
 import { MaterialModule } from '../../../shared/module/material';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IProduct, TProductModel } from '../../../shared/interface/product.interface';
+import { TProductModel } from '../../../shared/interface/product.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../../shared/service/api/product.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,6 +30,7 @@ import { SetBaseUrlPipe } from '../../../shared/pipe/set-base-url.pipe';
   styleUrl: './product-edit.component.scss'
 })
 export class ProductEditComponent implements OnInit, OnDestroy {
+  title!: string;
   formGroup!: FormGroup;
 
   album?: TAlbumModel;
@@ -69,7 +70,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
             if(this.product.albumId) {
               this.getAlbumDetail(this.product.albumId);
             }
-          };
+          }
           this.initForm();
         },
         error: error => {
@@ -135,6 +136,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         if (result) {
           console.log(result);
           this.formGroup.get('albumId')?.setValue(result._id);
+          this.formGroup.get('albumId')?.markAsDirty();
           this.getAlbumDetail(result._id);
         }
       })

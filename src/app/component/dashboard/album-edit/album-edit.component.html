@@ -12,11 +12,12 @@
     </mat-card-header>
     <mat-card-content>
       <div class="horizontal-container">
-        @if(galleryItems.length){
         <div class="album-container">
+          @if(galleryItems.length){
           <app-gallery-custom-thumbs [items]="galleryItems"
             (itemTemporaryDeletionEvent)="handleItemTemporaryDeletion($event)"
             (itemIndexChangedEvent)="handleitemIndexChanged($event)"></app-gallery-custom-thumbs>
+          }
           @if(galleryItemTemporarilyDeleted.length){
           <div class="media-item">
             <div class="media-title">Danh sách xóa tạm {{'('+galleryItemTemporarilyDeleted.length+')'}}</div>
@@ -32,7 +33,6 @@
             <mat-icon>sync</mat-icon>
           </button>
         </div>
-        }
         <div class="vertical-container form-container" [ngStyle]="{ 'margin': !galleryItems.length ? '0' : ''}">
           <form>
             <mat-form-field>

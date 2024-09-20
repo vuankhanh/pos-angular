@@ -7,7 +7,7 @@ import { Customer, Order, TOrderDetailModel } from '../../../shared/interface/or
 import { OrderService } from '../../../shared/service/api/order.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IBill, IBillSubInfo } from '../../../shared/interface/bill.interface';
-import { BehaviorSubject, combineLatest, filter, map, of, Subscription, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, of, Subscription, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderUtil } from '../../../shared/utitl/order.util';
 import { ProductService } from '../../../shared/service/api/product.service';
@@ -60,7 +60,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private orderService: OrderService,
-    private productService: ProductService,
+    private productService: ProductService
   ) { }
 
   ngOnInit(): void {
@@ -84,7 +84,8 @@ export class OrderEditComponent implements OnInit, OnDestroy {
         if (orderDetail) {
           // Xử lý orderDetail
           this.order = orderDetail;
-        } else if (productDetail) {
+        }
+        if (productDetail) {
           // Xử lý productDetail
           this.product = productDetail;
         }
