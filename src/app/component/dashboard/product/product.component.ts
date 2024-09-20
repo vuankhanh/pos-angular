@@ -62,7 +62,9 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   onOrderEvent(element: TProductModel) {
-    console.log(element);
+    this.router.navigate(['/order-edit'], {
+      queryParams: { productId: element._id }
+    })
   }
 
   onEditEvent(element: TProductModel) {

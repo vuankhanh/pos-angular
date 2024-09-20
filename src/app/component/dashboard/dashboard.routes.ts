@@ -13,7 +13,6 @@ import { OrderComponent } from "./order/order.component";
 import { OrderDetailComponent } from "./order-detail/order-detail.component";
 import { OrderEditComponent } from "./order-edit/order-edit.component";
 
-
 export const routes: Routes = [
   {
     path: '',

@@ -4,8 +4,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MaterialModule } from '../../shared/module/material';
 import { Observable, of } from 'rxjs';
 import { BreakpointDetectionService } from '../../shared/service/breakpoint-detection.service';
-import { AuthStateService } from '../../shared/service/auth_state.service';
 import { RouterEventService } from '../../shared/service/router-event.service';
+import { AuthStateService } from '../../shared/service/auth_state.service';
 
 @Component({
   selector: 'app-dashboard',

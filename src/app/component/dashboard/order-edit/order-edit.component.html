@@ -1,9 +1,14 @@
 <div class="container">
+  <div class="button-group-header">
+    <button mat-icon-button color="primary" (click)="backToOrderDetail()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
   <mat-card>
     <mat-card-content>
       <div class="content-container horizontal-container">
         <div class="bill-info">
-          <order-bill-info [order]="order" (emitBillInfo)="handleBillInfo($event)"
+          <order-bill-info [order]="order" [product]="product" (emitBillInfo)="handleBillInfo($event)"
             (emitBillSubInfo)="handleSubBillInfo($event)"></order-bill-info>
         </div>
 

@@ -69,7 +69,9 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   }
 
   onOrderEvent() {
-    
+    this.router.navigate(['/order-edit'], {
+      queryParams: { productId: this.product!._id }
+    })
   }
 
   goBackProductList() {

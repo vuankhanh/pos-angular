@@ -47,6 +47,7 @@ export class BillInfoComponent implements OnChanges, OnInit, OnDestroy {
   @ViewChild(MatTable) table?: MatTable<any>;
 
   @Input() order?: TOrderDetailModel;
+  @Input() product?: TProductModel;
 
   @Output() emitBillInfo = new EventEmitter<IBill>();
   @Output() emitBillSubInfo = new EventEmitter<IBillSubInfo>();
@@ -105,6 +106,15 @@ export class BillInfoComponent implements OnChanges, OnInit, OnDestroy {
         this.subInfoForm.controls['paymentMethod'].setValue(order.paymentMethod);
       }
     }
+
+    if (changes['product']) {
+      const previousValue = changes['product'].previousValue;
+      const currentValue = changes['product'].currentValue;
+      if (currentValue && previousValue !== currentValue) {
+        this.onChooseProductEvent(currentValue);
+      }
+    }
+
   }
 
   ngOnInit(): void {

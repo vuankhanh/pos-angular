@@ -7,9 +7,11 @@ import { Customer, Order, TOrderDetailModel } from '../../../shared/interface/or
 import { OrderService } from '../../../shared/service/api/order.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IBill, IBillSubInfo } from '../../../shared/interface/bill.interface';
-import { BehaviorSubject, filter, map, Subscription, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, of, Subscription, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderUtil } from '../../../shared/utitl/order.util';
+import { ProductService } from '../../../shared/service/api/product.service';
+import { TProductModel } from '../../../shared/interface/product.interface';
 
 @Component({
   selector: 'app-order-edit',
@@ -51,31 +53,41 @@ export class OrderEditComponent implements OnInit, OnDestroy {
   );
 
   order?: TOrderDetailModel;
+  product?: TProductModel;
 
   subscription: Subscription = new Subscription();
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private productService: ProductService,
   ) { }
 
   ngOnInit(): void {
     this.initForm();
   }
 
-  initForm() {
+  private initForm() {
     this.activatedRoute.queryParamMap.pipe(
-      map(params => {
+      switchMap(params => {
         const id: string = params.get('_id') as string;
-        return id;
+        const productId: string = params.get('productId') as string;
+  
+        const orderDetail$ = id ? this.orderService.getDetail(id) : of(null);
+        const productDetail$ = productId ? this.productService.getDetail(productId) : of(null);
+  
+        return combineLatest([orderDetail$, productDetail$]);
       }),
-      filter(id => !!id),
-      switchMap(id => {
-        return this.orderService.getDetail(id);
-      })
+      filter(([orderDetail, productDetail]) => !!orderDetail || !!productDetail)
     ).subscribe({
-      next: res => {
-        this.order = res;
+      next: ([orderDetail, productDetail]) => {
+        if (orderDetail) {
+          // Xử lý orderDetail
+          this.order = orderDetail;
+        } else if (productDetail) {
+          // Xử lý productDetail
+          this.product = productDetail;
+        }
       },
       error: error => {
         this.backToOrderDetail();

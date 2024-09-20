@@ -73,7 +73,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
           this.initForm();
         },
         error: error => {
-
+          this.goBackProducDetail();
         }
       })
     )

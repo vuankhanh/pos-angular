@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { IGalleryItem } from '../../../shared/interface/gallery.interface';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterEventService } from '../../../shared/service/router-event.service';
 
 @Component({
   selector: 'app-album-edit',
@@ -48,15 +49,15 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog,
-    private formBuilder: FormBuilder,
+    private routerEventService: RouterEventService,
     private albumService: AlbumService,
     private setBaseUrlPipe: SetBaseUrlPipe
   ) {
-
+    this.routerEventService.updateRouteTitle('Chỉnh sửa album');
   }
 
   ngOnInit() {
+    
     this.activatedRoute.queryParamMap.pipe(
       map(params => {
         const customerRoute = params.get('route');
@@ -69,6 +70,7 @@ export class AlbumEditComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: res => {
+        this.routerEventService.updateRouteTitle('Cập nhật album');
         this.albumDetail = res;
         this.initImages(this.albumDetail.media);
         this.nameControl.setValue(this.albumDetail.name);
