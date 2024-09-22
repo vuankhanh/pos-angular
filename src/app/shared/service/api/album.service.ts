@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { EMPTY, expand, map, Observable, toArray } from 'rxjs';
-import { environment } from '../../../../environments/environment.development';
 import { IAlbum, IAlbumDetailRespone, IAlbumResponse } from '../../interface/album.interface';
 import { IRequestParamsWithFiles } from '../../interface/request.interface';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
