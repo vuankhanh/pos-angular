@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted, Linux, X64, production]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build:staging
+    
+    - name: Remove old project directory if exists
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        DEPLOY_DIR="/var/www/front-end/$PROJECT_NAME"
+        if [ -d "$DEPLOY_DIR" ]; then
+          rm -rf "$PROJECT_DIR"
+        fi
+
+    - name: Copy files to deployment directory
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        DEPLOY_DIR="/var/www/front-end"
+        mkdir -p $DEPLOY_DIR
+        cp -r dist/$PROJECT_NAME $DEPLOY_DIR
+
+    # - name: Restart Nginx
+    #   run: sudo systemctl restart nginx
