@@ -23,6 +23,18 @@ jobs:
 
     - name: Build project
       run: npm run build:production
+
+    - name: Check and create Front-End folder
+      run: |
+        DEPLOY_DIR="/var/www/front-end"
+        if [ -d "$DEPLOY_DIR" ]; then
+          echo "Directory exists."
+          echo "${{ secrets.PRODUCTION_HOME_X502CA_SUDO_PASSWORD }}" | sudo -S chown -R $USER:$USER $DEPLOY_DIR
+        else
+          echo "Directory does not exist."
+          echo "${{ secrets.PRODUCTION_HOME_X502CA_SUDO_PASSWORD }}" | sudo -S mkdir -p $DEPLOY_DIR
+          echo "${{ secrets.PRODUCTION_HOME_X502CA_SUDO_PASSWORD }}" | sudo -S chown -R $USER:$USER $DEPLOY_DIR
+        fi
     
     - name: Remove old project directory if exists
       run: |
