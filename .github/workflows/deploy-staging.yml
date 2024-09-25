@@ -39,5 +39,14 @@ jobs:
         mkdir -p $DEPLOY_DIR
         cp -r dist/$PROJECT_NAME $DEPLOY_DIR
 
-    # - name: Restart Nginx
-    #   run: sudo systemctl restart nginx
+    - name: Replace Nginx configuration
+      run: |
+        CONFIG_FILE="/etc/nginx/sites-available/pos-angular"
+        if [ -f "$CONFIG_FILE" ]; then
+          sudo rm "$CONFIG_FILE"
+        fi
+        sudo cp nginx/pos-angular "$CONFIG_FILE"
+        sudo ln -sf "$CONFIG_FILE" /etc/nginx/sites-enabled/pos-angular
+
+    - name: Reload Nginx
+      run: echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo systemctl reload nginx
