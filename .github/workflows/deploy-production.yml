@@ -22,7 +22,7 @@ jobs:
       run: npm install
 
     - name: Build project
-      run: npm run build:staging
+      run: npm run build:production
     
     - name: Remove old project directory if exists
       run: |
@@ -39,5 +39,14 @@ jobs:
         mkdir -p $DEPLOY_DIR
         cp -r dist/$PROJECT_NAME $DEPLOY_DIR
 
-    # - name: Restart Nginx
-    #   run: sudo systemctl restart nginx
+    - name: Replace Nginx configuration
+      run: |
+        CONFIG_FILE="/etc/nginx/sites-available/pos-angular"
+        if [ -f "$CONFIG_FILE" ]; then
+          echo "${{ secrets.PRODUCTION_HOME_X502CA_SUDO_PASSWORD }}" | sudo rm "$CONFIG_FILE"
+        fi
+        echo "${{ secrets.PRODUCTION_HOME_X502CA_SUDO_PASSWORD }}" | sudo cp nginx/pos-angular "$CONFIG_FILE"
+        echo "${{ secrets.PRODUCTION_HOME_X502CA_SUDO_PASSWORD }}" | sudo ln -sf "$CONFIG_FILE" /etc/nginx/sites-enabled/pos-angular
+
+    - name: Reload Nginx
+      run: echo "${{ secrets.PRODUCTION_HOME_X502CA_SUDO_PASSWORD }}" | sudo systemctl reload nginx

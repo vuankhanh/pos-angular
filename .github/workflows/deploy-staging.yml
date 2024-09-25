@@ -43,10 +43,10 @@ jobs:
       run: |
         CONFIG_FILE="/etc/nginx/sites-available/pos-angular"
         if [ -f "$CONFIG_FILE" ]; then
-          sudo rm "$CONFIG_FILE"
+          echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo rm "$CONFIG_FILE"
         fi
-        sudo cp nginx/pos-angular "$CONFIG_FILE"
-        sudo ln -sf "$CONFIG_FILE" /etc/nginx/sites-enabled/pos-angular
+        echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo cp nginx/pos-angular "$CONFIG_FILE"
+        echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo ln -sf "$CONFIG_FILE" /etc/nginx/sites-enabled/pos-angular
 
     - name: Reload Nginx
       run: echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo systemctl reload nginx
