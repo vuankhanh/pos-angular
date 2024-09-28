@@ -13,7 +13,7 @@
     <mat-list-item [routerLink]="customer._id">
       <mat-icon matListItemIcon>contacts</mat-icon>
       <div matListItemTitle>{{ customer.name }}</div>
-      <div matListItemLine>{{ customer.phoneNumber }}</div>
+      <div matListItemLine>{{ customer.phoneNumber | phoneNumber }}</div>
     </mat-list-item>
     }
   </mat-list>

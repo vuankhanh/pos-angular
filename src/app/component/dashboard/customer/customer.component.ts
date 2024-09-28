@@ -12,6 +12,7 @@ import { paginationConstant } from '../../../constant/pagination.constant';
 import { Router, RouterLink } from '@angular/router';
 import { MaterialModule } from '../../../shared/module/material';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
+import { PhoneNumberPipe } from '../../../shared/pipe/phone-number.pipe';
 
 @Component({
   selector: 'app-customer',
@@ -22,7 +23,9 @@ import { BreakpointDetectionService } from '../../../shared/service/breakpoint-d
 
     SearchComponent,
 
-    MaterialModule
+    MaterialModule,
+
+    PhoneNumberPipe
   ],
   templateUrl: './customer.component.html',
   styleUrl: './customer.component.scss'

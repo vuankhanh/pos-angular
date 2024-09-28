@@ -14,7 +14,7 @@
         <mat-list-item>
           <mat-icon matListItemIcon>contacts</mat-icon>
           <div matListItemTitle>{{ option.name }}</div>
-          <div matListItemLine>{{ option.phoneNumber }}</div>
+          <div matListItemLine>{{ option.phoneNumber | phoneNumber }}</div>
         </mat-list-item>
       </mat-option>
       }
@@ -38,7 +38,7 @@
       </div>
       <div class="customer-info__content__item">
         <div class="customer-info__content__item__label">Số điện thoại</div>
-        <div class="customer-info__content__item__value">{{ customer.phoneNumber }}</div>
+        <div class="customer-info__content__item__value">{{ customer.phoneNumber | phoneNumber }}</div>
       </div>
       <div class="customer-info__content__item vertical-container">
         <div class="customer-info__content__item__label">Địa chỉ</div>

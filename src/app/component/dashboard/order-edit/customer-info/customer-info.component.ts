@@ -8,6 +8,7 @@ import { CustomerService } from '../../../../shared/service/api/customer.service
 import { Customer, TOrderDetailModel } from '../../../../shared/interface/order.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomerAddressComponent } from '../../../../shared/component/dialog/customer-address/customer-address.component';
+import { PhoneNumberPipe } from '../../../../shared/pipe/phone-number.pipe';
 
 @Component({
   selector: 'order-customer-info',
@@ -18,7 +19,9 @@ import { CustomerAddressComponent } from '../../../../shared/component/dialog/cu
 
     CustomerAddressComponent,
 
-    MaterialModule
+    MaterialModule,
+
+    PhoneNumberPipe
   ],
   templateUrl: './customer-info.component.html',
   styleUrl: './customer-info.component.scss'

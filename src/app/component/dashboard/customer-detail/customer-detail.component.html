@@ -34,7 +34,7 @@
           <div class="list-item-container">
             <mat-icon>phone</mat-icon>
             @if(customer.phoneNumber; as phoneNumber) {
-              <span>{{ phoneNumber }}</span>
+              <span>{{ phoneNumber | phoneNumber }}</span>
             }@else {
               <span class="additional-text-element" (click)="editCustomer('phoneNumber')">Thêm số điện thoại</span>
             }

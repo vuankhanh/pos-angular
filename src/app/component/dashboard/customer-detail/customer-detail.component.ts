@@ -9,6 +9,7 @@ import { MaterialModule } from '../../../shared/module/material';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmComponent } from '../../../shared/component/dialog/confirm/confirm.component';
 import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.interface';
+import { PhoneNumberPipe } from '../../../shared/pipe/phone-number.pipe';
 
 @Component({
   selector: 'app-customer-detail',
@@ -18,7 +19,9 @@ import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.int
 
     ConfirmComponent,
 
-    MaterialModule
+    MaterialModule,
+
+    PhoneNumberPipe
   ],
   templateUrl: './customer-detail.component.html',
   styleUrl: './customer-detail.component.scss'
