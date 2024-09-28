@@ -1,11 +1,13 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, of, Subject, Subscription, switchMap } from 'rxjs';
+import { map, of, Subscription, switchMap } from 'rxjs';
 import { CustomerService } from '../../../shared/service/api/customer.service';
 import { TCustomerModel } from '../../../shared/interface/customer.interface';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../shared/module/material';
+import { MatDialog } from '@angular/material/dialog';
+import { CustomerImportDataComponent } from './customer-import-data/customer-import-data.component';
 
 @Component({
   selector: 'app-customer-edit',
@@ -14,7 +16,7 @@ import { MaterialModule } from '../../../shared/module/material';
     CommonModule,
     ReactiveFormsModule,
 
-    MaterialModule
+    MaterialModule,
   ],
   templateUrl: './customer-edit.component.html',
   styleUrl: './customer-edit.component.scss'
@@ -24,18 +26,18 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
   customer?: TCustomerModel;
 
   formGroup!: FormGroup;
-
-  afterViewInit: Subject<null> = new Subject<null>();
+  
   subscription: Subscription = new Subscription();
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private dialog: MatDialog,
     private formBuilder: FormBuilder,
     private cdRef: ChangeDetectorRef,
     private customerService: CustomerService
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   private initForm() {
     this.formGroup = this.formBuilder.group({
@@ -55,27 +57,27 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.subscription.add(
       this.activatedRoute.queryParamMap.pipe(
-        map(params =>{
+        map(params => {
           const customerId = params.get('_id');
           const elementFocus = params.get('elementFocus');
-  
-          return {customerId, elementFocus};
+
+          return { customerId, elementFocus };
         }),
         switchMap(res => {
-          if(res.customerId) {
+          if (res.customerId) {
             return this.customerService.getDetail(res.customerId).pipe(
-              map(customer => ({elementFocus: res.elementFocus, customer}))
+              map(customer => ({ elementFocus: res.elementFocus, customer }))
             )
           }
           return of(null);
         })
       ).subscribe({
         next: (res) => {
-          if(res){
+          if (res) {
             const elementFocus = res.elementFocus;
             this.customer = res?.customer;
-            
-            if(elementFocus) {
+
+            if (elementFocus) {
               setTimeout(() => {
                 this.findAndFocusElement(elementFocus)
               }, 150);
@@ -118,11 +120,11 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
     )
   }
 
-  private create(){
+  private create() {
     return this.customerService.create(this.formGroup.value);
   }
 
-  private update(){
+  private update() {
     const changedControls: { [key: string]: any } = {};
     Object.keys(this.formGroup.controls).forEach(key => {
       const control = this.formGroup.get(key);
@@ -131,6 +133,17 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     return this.customerService.update(this.customer?._id!, changedControls);
+  }
+
+  openImportDataDialog() {
+    const dialogRef = this.dialog.open(CustomerImportDataComponent);
+    this.subscription.add(
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.goBackAlbumDetail();
+        }
+      })
+    )
   }
 
   goBackAlbumDetail() {

@@ -183,3 +183,36 @@ table[mat-table] {
     border-right: 1px solid #e0e0e0;
   }
 }
+
+ngx-file-drop {
+  width: 100%;
+  max-width: 700px;
+
+  .drop-zone-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+
+    .drop-zone-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      mat-icon {
+        width: 72px;
+        height: 72px;
+        font-size: 72px;
+      }
+    }
+  }
+}
+
+.ngx-file-drop__drop-zone {
+  height: unset !important;
+}
+
+.ngx-file-drop__content {
+  height: unset !important;
+}

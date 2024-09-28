@@ -42,6 +42,14 @@ export class CustomerService {
     );
   }
 
+  importFile(file: Blob){
+    const formData = new FormData();
+    formData.append('csv', file);
+    return this.httpClient.post<ICustomerDetailRespone>(this.url + '/upload-csv', formData).pipe(
+      map(res => res.metaData)
+    );
+  }
+
   update(id: string, data: Partial<ICustomer>){
     return this.httpClient.patch<ICustomerDetailRespone>(this.url + '/' + id, data).pipe(
       map(res => res.metaData)

@@ -49,6 +49,11 @@
       [disabled]="formGroup.invalid || !isFormChanged()">
       {{ customer?._id ? 'Lưu' : 'Tạo' }}
     </button>
+    @if (!customer) {
+      <button mat-raised-button type="button" (click)="openImportDataDialog()">
+        Thêm danh sách
+      </button>
+    }
   </mat-card-actions>
 </mat-card>
 }

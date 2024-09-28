@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>Thêm danh sách khách hàng</h2>
+<mat-dialog-content>
+  @if(!file){
+    <ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)"
+      [dropZoneClassName]="'ngx-file-drop__drop-zone'" [multiple]="isMultiple" [accept]="accept">
+      <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+        <div class="drop-zone-container">
+          <div class="drop-zone-text">
+            <mat-icon>upload</mat-icon>
+            <p>Kéo file csv vào đây</p>
+            <p>Hoặc</p>
+          </div>
+          <button mat-stroked-button type="button" (click)="openFileSelector()">Chọn</button>
+        </div>
+      </ng-template>
+    </ngx-file-drop>
+  }@else {
+    <div class="file-container vertical-container">
+      <span>{{file.name}}</span>
+      <div class="button-container">
+        <button mat-stroked-button type="button" (click)="edit()">
+          Sửa lại
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-raised-button color="primary" (click)="upload()">
+          Đẩy lên
+          <mat-icon>cloud_upload</mat-icon>
+        </button>
+      </div>
+    </div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close] cdkFocusInitial>Xong</button>
+</mat-dialog-actions>

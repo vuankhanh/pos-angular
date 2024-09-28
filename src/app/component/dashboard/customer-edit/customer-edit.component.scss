@@ -1,3 +1,8 @@
 form{
   max-width: 700px;
 }
+mat-card-actions{
+  button:last-child{
+    margin-left: 10px;
+  }
+}
