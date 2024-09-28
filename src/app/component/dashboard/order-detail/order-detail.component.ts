@@ -10,6 +10,7 @@ import { BehaviorSubject, map, Subscription, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../../../shared/service/api/order.service';
 import { OrderStatus } from '../../../constant/order.constant';
+import { PhoneNumberPipe } from '../../../shared/pipe/phone-number.pipe';
 
 @Component({
   selector: 'app-order-detail',
@@ -20,10 +21,9 @@ import { OrderStatus } from '../../../constant/order.constant';
     MaterialModule,
 
     SetBaseUrlPipe,
-    CurrencyCustomPipe
-  ],
-  providers: [
-    CurrencyCustomPipe
+    CurrencyCustomPipe,
+
+    PhoneNumberPipe
   ],
   templateUrl: './order-detail.component.html',
   styleUrl: './order-detail.component.scss'
