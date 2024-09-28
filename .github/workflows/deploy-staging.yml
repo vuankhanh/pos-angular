@@ -29,11 +29,11 @@ jobs:
         DEPLOY_DIR="/var/www/front-end"
         if [ -d "$DEPLOY_DIR" ]; then
           echo "Directory exists."
-          echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo -S chown -R $USER:$USER $DEPLOY_DIR
+          echo "${{ secrets.HOME_X502CA_SUDO_PASSWORD }}" | sudo -S chown -R $USER:$USER $DEPLOY_DIR
         else
           echo "Directory does not exist."
-          echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo -S mkdir -p $DEPLOY_DIR
-          echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo -S chown -R $USER:$USER $DEPLOY_DIR
+          echo "${{ secrets.HOME_X502CA_SUDO_PASSWORD }}" | sudo -S mkdir -p $DEPLOY_DIR
+          echo "${{ secrets.HOME_X502CA_SUDO_PASSWORD }}" | sudo -S chown -R $USER:$USER $DEPLOY_DIR
         fi
     
     - name: Remove old project directory if exists
@@ -55,10 +55,10 @@ jobs:
       run: |
         CONFIG_FILE="/etc/nginx/sites-available/pos-angular"
         if [ -f "$CONFIG_FILE" ]; then
-          echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo -S rm "$CONFIG_FILE"
+          echo "${{ secrets.HOME_X502CA_SUDO_PASSWORD }}" | sudo -S rm "$CONFIG_FILE"
         fi
-        echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo -S cp nginx/pos-angular "$CONFIG_FILE"
-        echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo -S ln -sf "$CONFIG_FILE" /etc/nginx/sites-enabled/pos-angular
+        echo "${{ secrets.HOME_X502CA_SUDO_PASSWORD }}" | sudo -S cp nginx/pos-angular "$CONFIG_FILE"
+        echo "${{ secrets.HOME_X502CA_SUDO_PASSWORD }}" | sudo -S ln -sf "$CONFIG_FILE" /etc/nginx/sites-enabled/pos-angular
 
     - name: Reload Nginx
-      run: echo "${{ secrets.STAGING_VAK_TP550LA_SUDO_PASSWORD }}" | sudo -S systemctl reload nginx
+      run: echo "${{ secrets.HOME_X502CA_SUDO_PASSWORD }}" | sudo -S systemctl reload nginx
