@@ -66,6 +66,10 @@ body {
   align-items: center;
 }
 
+.activatedItem {
+  background-color: #ededed !important;
+}
+
 .list-item-container {
   display: flex;
   padding: 5px 0;

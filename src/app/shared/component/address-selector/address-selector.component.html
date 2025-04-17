@@ -1,0 +1,36 @@
+<form [formGroup]="addressForm" class="vertical-container">
+  <mat-form-field appearance="fill">
+    <mat-label>Tỉnh</mat-label>
+    <mat-select formControlName="province" (selectionChange)="onProvinceChange($event)">
+      @if (provinces$ | async; as provinces) {
+      <mat-option *ngFor="let province of provinces" [value]="province">
+        {{ province.name }}
+      </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Huyện</mat-label>
+    <mat-select formControlName="district" (selectionChange)="onDistrictChange($event)">
+      @if (districts$ | async; as districts) {
+      <mat-option *ngFor="let district of districts" [value]="district">
+        {{ district.name }}
+      </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Phường</mat-label>
+    <mat-select formControlName="ward" (selectionChange)="onWardChange($event)">
+      @if (wards$ | async; as wards) {
+      <mat-option *ngFor="let ward of wards" [value]="ward">
+        {{ ward.name }}
+      </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Địa chỉ</mat-label>
+    <input matInput formControlName="street" />
+  </mat-form-field>
+</form>

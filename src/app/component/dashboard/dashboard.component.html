@@ -8,9 +8,29 @@
     <mat-sidenav #snav [mode]="(breakpointDetection$ | async) ? 'over' : 'side'" [fixedInViewport]="true"
       fixedTopGap="64">
       <mat-nav-list>
-        <mat-list-item role="listitem" *ngFor="let nav of menu" [routerLink]="nav.route" (click)="snav.close()">
-          {{ nav.name }}
-        </mat-list-item>
+        @for (nav of menu; track $index) {
+          @if (!(nav.childs && nav.childs.length)) {
+            <mat-list-item role="listitem" [routerLink]="nav.route" routerLinkActive="activatedItem" (click)="snav.close()">
+              {{ nav.name }}
+            </mat-list-item>
+          }@else {
+            @if(nav.childs; as childs){
+              <mat-accordion>
+                <mat-expansion-panel [expanded]="isActiveMap[nav.route]">
+                  <mat-expansion-panel-header routerLinkActive="activatedItem">
+                    <span>{{nav.name}}</span>
+                  </mat-expansion-panel-header>
+                  @for (child of childs; track $index) {
+                    <mat-list-item role="listitem" routerLink="{{nav.route+'/'+child.route}}" routerLinkActive="activatedItem" (click)="snav.close()">
+                      {{ child.name }}
+                    </mat-list-item>
+                  }
+                </mat-expansion-panel>
+              </mat-accordion>
+            }
+          }
+        }
+
         <div class="bottom-container">
           <mat-list-item (click)="logout()">Đăng xuất</mat-list-item>
         </div>

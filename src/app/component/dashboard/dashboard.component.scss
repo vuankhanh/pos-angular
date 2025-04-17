@@ -13,6 +13,17 @@
 .sidenav-container {
   height: calc(100% - 64px);
   mat-sidenav{
+    mat-accordion{
+      mat-expansion-panel-header {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      ::ng-deep .mat-expansion-panel-body{
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
     .bottom-container{
       position: absolute;
       bottom: 0;

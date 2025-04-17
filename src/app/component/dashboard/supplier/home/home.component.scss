@@ -1,0 +1,28 @@
+.mat-mdc-list-item-icon {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.container{
+  padding: 15px;
+  box-sizing: border-box;
+  section{
+    .horizontal-container{
+      justify-content: space-between;
+    }
+  }
+  mat-list{
+    height: 100%;
+    overflow-y: scroll;
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .container{
+    padding: 15px 0;
+    section{
+      app-search{
+        width: 100%;
+      }
+    }
+  }
+}

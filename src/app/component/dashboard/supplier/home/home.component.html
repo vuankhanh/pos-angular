@@ -1,0 +1,24 @@
+<div class="container">
+  <section>
+    <div [ngClass]="(breakpointDetection$ | async) ? 'vertical-container' : 'horizontal-container'">
+      <app-search (search)="onSearch($event)"></app-search>
+      <button mat-raised-button color="primary" (click)="onCreateSupplier()">
+        <mat-icon>add</mat-icon>
+        Thêm đối tác
+      </button>
+    </div>
+  </section>
+  <mat-list>
+    @for (supplier of suppliers; track $index) {
+    <mat-list-item [routerLink]="supplier._id">
+      <mat-icon matListItemIcon>location_on</mat-icon>
+      <div matListItemTitle>{{ supplier.name }}</div>
+      <div matListItemLine>{{ supplier.address | address }}</div>
+    </mat-list-item>
+    }
+  </mat-list>
+  @if(pagination.totalItems){
+  <mat-paginator [length]="pagination.totalItems" [pageIndex]="pagination.page - 1" [pageSize]="pagination.size"
+    [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)"></mat-paginator>
+  }
+</div>

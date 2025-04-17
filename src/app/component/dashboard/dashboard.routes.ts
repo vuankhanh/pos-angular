@@ -79,6 +79,10 @@ export const routes: Routes = [
       {
         path: 'order-edit',
         component: OrderEditComponent
+      },
+      {
+        path: 'supplier',
+        loadChildren: () => import('./supplier/supplier.routes').then(m => m.routes),
       }
     ]
   }
