@@ -1,33 +1,45 @@
 <form [formGroup]="addressForm" class="vertical-container">
   <mat-form-field appearance="fill">
     <mat-label>Tỉnh</mat-label>
-    <mat-select formControlName="province" (selectionChange)="onProvinceChange($event)">
-      @if (provinces$ | async; as provinces) {
-      <mat-option *ngFor="let province of provinces" [value]="province">
-        {{ province.name }}
-      </mat-option>
+    <input
+      #provinceEl
+      type="text"
+      matInput
+      [matAutocomplete]="provinceAuto"
+    >
+    <mat-autocomplete #provinceAuto="matAutocomplete" (optionSelected)="onProvinceOptionSelected($event)">
+      @for (province of provinces$ | async; track province) {
+      <mat-option [value]="province">{{province.name}}</mat-option>
       }
-    </mat-select>
+    </mat-autocomplete>
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>Huyện</mat-label>
-    <mat-select formControlName="district" (selectionChange)="onDistrictChange($event)">
-      @if (districts$ | async; as districts) {
-      <mat-option *ngFor="let district of districts" [value]="district">
-        {{ district.name }}
-      </mat-option>
+    <input
+      #districtEl
+      type="text"
+      matInput
+      [matAutocomplete]="districtAuto"
+    >
+    <mat-autocomplete #districtAuto="matAutocomplete" (optionSelected)="onDistrictOptionSelected($event)">
+      @for (districts of districts$ | async; track districts) {
+      <mat-option [value]="districts">{{districts.name}}</mat-option>
       }
-    </mat-select>
+    </mat-autocomplete>
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>Phường</mat-label>
-    <mat-select formControlName="ward" (selectionChange)="onWardChange($event)">
-      @if (wards$ | async; as wards) {
-      <mat-option *ngFor="let ward of wards" [value]="ward">
-        {{ ward.name }}
-      </mat-option>
+    <input
+      #wardEl
+      type="text"
+      matInput
+      [matAutocomplete]="wardAuto"
+    >
+    <mat-autocomplete #wardAuto="matAutocomplete" (optionSelected)="onWardOptionSelected($event)">
+      @for (wards of wards$ | async; track wards) {
+      <mat-option [value]="wards">{{wards.name}}</mat-option>
       }
-    </mat-select>
+    </mat-autocomplete>
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>Địa chỉ</mat-label>
