@@ -3,10 +3,15 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, OnDest
 import { MaterialModule } from '../../../../shared/module/material';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TSupplierModel } from '../shared/interface/supplier.interface';
-import { map, of, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, skipUntil, skipWhile, Subscription, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeService } from '../shared/service/api/home.service';
 import { AddressSelectorComponent } from '../../../../shared/component/address-selector/address-selector.component';
+import { IAddress } from '../../../../shared/interface/vn-public-apis.interface';
+import { addressAsyncValidator } from '../../../../shared/component/validators/address-async.validator';
+import { CoordinateSelectorComponent } from '../../../../shared/component/coordinate-selector/coordinate-selector.component';
+import { ICoordinate } from '../../../../shared/interface/coordinate.interface';
+import { isEqual } from 'lodash';
 
 @Component({
   selector: 'app-home-edit',
@@ -16,6 +21,7 @@ import { AddressSelectorComponent } from '../../../../shared/component/address-s
     ReactiveFormsModule,
 
     AddressSelectorComponent,
+    CoordinateSelectorComponent,
 
     MaterialModule
   ],
@@ -34,27 +40,15 @@ export class HomeEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   formGroup!: FormGroup;
 
-  private subscription: Subscription = new Subscription();
+  private readonly bIsFormChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isFormChanged$: Observable<boolean> = this.bIsFormChanged.asObservable();
+
+  private readonly addressValidSubject = new BehaviorSubject<boolean>(false);
+  private readonly addressValid$ = this.addressValidSubject.asObservable();
+  private readonly subscription: Subscription = new Subscription();
 
   ngOnInit(): void {
 
-  }
-
-  private initForm() {
-    const positionGroup = this.formBuilder.group({
-      lat: [this.supplier?.position?.lat],
-      lng: [this.supplier?.position?.lng]
-    })
-
-    this.formGroup = this.formBuilder.group({
-      name: [this.supplier?.name, Validators.required],
-      address: [this.supplier?.address, Validators.required],
-      telephone: [this.supplier?.telephone, Validators.required],
-      email: [this.supplier?.email],
-      position: [positionGroup, Validators.required],
-    });
-
-    this.cdRef.detectChanges();
   }
 
   ngAfterViewInit() {
@@ -95,15 +89,72 @@ export class HomeEditComponent implements OnInit, AfterViewInit, OnDestroy {
     )
   }
 
+  private initForm() {
+    const positionGroup = this.formBuilder.group({
+      lat: [this.supplier?.position?.lat || '0'],
+      lng: [this.supplier?.position?.lng || '0']
+    })
+
+    this.formGroup = this.formBuilder.group({
+      name: [this.supplier?.name, Validators.required],
+      address: [
+        this.supplier?.address,
+        Validators.required,
+        addressAsyncValidator(this.addressValid$)
+      ],
+      telephone: [this.supplier?.telephone, Validators.required],
+      email: [this.supplier?.email],
+      position: positionGroup
+    });
+
+    const initialFormValue = this.formGroup.getRawValue();
+    console.log(initialFormValue);
+    
+    this.subscription.add(
+      this.formGroup.valueChanges.pipe(
+        distinctUntilChanged((prev, curr) => {
+          return isEqual(prev, curr);
+        }),
+        skipWhile(value => !isEqual(initialFormValue, value)), // Bỏ qua cho đến khi isEqual = true
+      ).subscribe(value => {
+        console.log(value);
+        const isFormChanged = !isEqual(initialFormValue, value);
+        console.log(isFormChanged);
+        
+        this.bIsFormChanged.next(isFormChanged);
+        // console.log(initialFormValue);
+        // console.log(isEqual(initialFormValue, value));
+      })
+    )
+
+    this.cdRef.detectChanges();
+  }
+
+  get addressControl() {
+    return this.formGroup.get('address') as FormGroup;
+  }
+
+  get positionControl() {
+    return this.formGroup.get('position') as FormGroup;
+  }
+
+  onAddressValueChange(value: IAddress) {
+    this.addressControl.patchValue(value);
+  }
+
+  onAddressValidChange(isValid: boolean) {
+    this.addressValidSubject.next(isValid);
+  }
+
+  onCoordinateChange(value: ICoordinate) {
+    this.positionControl.patchValue(value);
+  }
+
   private findAndFocusElement(elementFocus: string) {
     const elementToFocus = this.formElements.find(el => el.nativeElement.getAttribute('formcontrolname') === elementFocus);
     if (elementToFocus) {
       elementToFocus.nativeElement.focus();
     }
-  }
-
-  isFormChanged(): boolean {
-    return this.formGroup.dirty && !this.formGroup.pristine;
   }
 
   onSubmit() {
@@ -139,7 +190,7 @@ export class HomeEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBackSupplierDetail() {
-    const commands = this.supplier?._id ? ['/supplier', this.supplier?._id] : ['/supplier'];
+    const commands = this.supplier?._id ? ['/supplier/home', this.supplier?._id] : ['/supplier'];
     this.router.navigate(commands);
   };
 

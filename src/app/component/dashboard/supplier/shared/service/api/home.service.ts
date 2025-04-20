@@ -41,7 +41,7 @@ export class HomeService {
   }
 
   update(id: string, data: Partial<ISupplier>) {
-    return this.httpClient.put<ISupplierDetailResponse>(this.url + '/' + id, data).pipe(
+    return this.httpClient.patch<ISupplierDetailResponse>(this.url + '/' + id, data).pipe(
       map(res => res.metaData)
     );
   }

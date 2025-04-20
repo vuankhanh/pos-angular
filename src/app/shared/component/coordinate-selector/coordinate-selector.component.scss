@@ -19,3 +19,15 @@ form{
     }
   }
 }
+
+@media screen and (max-width: 600px) {
+  form{
+    fieldset{
+      flex-direction: column;
+      mat-form-field {
+        margin-right: 0px !important
+      }
+    }
+  }
+  
+}

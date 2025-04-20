@@ -1,0 +1,17 @@
+<form [formGroup]="coordinateForm" class="vertical-container">
+  <fieldset class="horizontal-container">
+    <legend class="horizontal-container">
+      <mat-icon>my_location</mat-icon>
+      <span>Tọa độ</span>
+    </legend>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Vĩ độ</mat-label>
+      <input type="text" matInput formControlName="lat">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Kinh độ</mat-label>
+      <input type="text" matInput formControlName="lng">
+    </mat-form-field>
+  </fieldset>
+</form>

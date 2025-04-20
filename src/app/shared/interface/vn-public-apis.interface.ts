@@ -36,6 +36,13 @@ export interface IWard {
   isDeleted: boolean; // Indicates if the ward is deleted or active
 }
 
+export interface IAddress {
+  province: IProvince; // Province object
+  district: IDistrict; // District object
+  ward: IWard; // Ward object
+  street: string; // Street name or address
+}
+
 export interface IProvinceResponse extends ISuccess {
   metaData: {
     nItems: number; // Number of items in the response

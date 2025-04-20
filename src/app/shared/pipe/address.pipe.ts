@@ -20,10 +20,10 @@ export class AddressPipe implements PipeTransform {
     }
 
     // Nếu hợp lệ, trả về chuỗi địa chỉ
-    return `${value.street}, ${value.ward.name}, ${value.district.name}, ${value.province.name}`;
+    return `${value.street}, ${value.ward.name_with_type}, ${value.district.name_with_type}, ${value.province.name_with_type}`;
   }
 
   private isValidAddress(value: any): boolean {
-    return value?.province?.name && value?.district?.name && value?.ward?.name && value?.street;
+    return value?.province?.name_with_type && value?.district?.name_with_type && value?.ward?.name_with_type && value?.street;
   }
 }

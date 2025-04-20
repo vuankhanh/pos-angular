@@ -9,12 +9,15 @@ import { ConfirmComponent } from '../../../../shared/component/dialog/confirm/co
 
 import { filter, map, Subscription, switchMap } from 'rxjs';
 import { HomeService } from '../shared/service/api/home.service';
+import { AddressPipe } from '../../../../shared/pipe/address.pipe';
 
 @Component({
   selector: 'app-home-detail',
   standalone: true,
   imports: [
     CommonModule,
+
+    AddressPipe,
 
     MaterialModule
   ],
@@ -32,7 +35,7 @@ export class HomeDetailComponent implements OnInit, OnDestroy {
   private readonly subscription: Subscription = new Subscription();
 
   ngOnInit() {
-    const customerDetail$ = this.activatedRoute.params.pipe(
+    const supplierDetail$ = this.activatedRoute.params.pipe(
       map(params => {
         const id: string = params['id'] as string;
         return id;
@@ -41,7 +44,7 @@ export class HomeDetailComponent implements OnInit, OnDestroy {
     );
 
     this.subscription.add(
-      customerDetail$.subscribe({
+      supplierDetail$.subscribe({
         next: res => {
           this.supplier = res;
           console.log(this.supplier);
@@ -54,13 +57,13 @@ export class HomeDetailComponent implements OnInit, OnDestroy {
     )
   }
 
-  editCustomer(elementFocus?: string) {
+  editSupplier(elementFocus?: string) {
     this.router.navigate(['/supplier/home-edit'], {
       queryParams: { elementFocus, _id: this.supplier?._id }
     });
   }
 
-  deleteCustomer() {
+  deleteSupplier() {
     const data: TConfirmDialogData = {
       title: 'Xác nhận xóa',
       message: `Bạn có chắc chắn muốn xóa nhà cung cấp ${this.supplier?.name} không?`,

@@ -23,6 +23,8 @@ export class ShowToastInterceptor implements HttpInterceptor {
       tap({
         // Operation failed; error is an HttpErrorResponse
         error: (error: HttpErrorResponse) => {
+          console.log(error);
+          
           this.toastrService.error(error.error.message, error.error.error);
         }
       })
