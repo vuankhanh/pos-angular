@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { BreakpointDetectionService } from '../../../../shared/service/breakpoint-detection.service';
 import { HomeService } from '../shared/service/api/home.service';
@@ -28,7 +28,7 @@ import { AddressPipe } from '../../../../shared/pipe/address.pipe';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
   private readonly router: Router = inject(Router);
   private readonly breakpointDetectionService: BreakpointDetectionService = inject(BreakpointDetectionService);
   private readonly homeService: HomeService = inject(HomeService);
@@ -40,7 +40,7 @@ export class HomeComponent {
   nameSearch: string = '';
 
   breakpointDetection$ = this.breakpointDetectionService.detection$();
-  subscription: Subscription = new Subscription();
+  private readonly subscription: Subscription = new Subscription();
 
   ngOnInit() {
     this.getAll(this.nameSearch, this.pagination.page, this.pagination.size);
@@ -69,5 +69,9 @@ export class HomeComponent {
     this.pagination.page = event.pageIndex + 1;
     this.pagination.size = event.pageSize;
     this.getAll(this.nameSearch, this.pagination.page, this.pagination.size);
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

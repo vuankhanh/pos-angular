@@ -10,6 +10,7 @@ import { ConfirmComponent } from '../../../../shared/component/dialog/confirm/co
 import { filter, map, Subscription, switchMap } from 'rxjs';
 import { HomeService } from '../shared/service/api/home.service';
 import { AddressPipe } from '../../../../shared/pipe/address.pipe';
+import { PhoneNumberPipe } from '../../../../shared/pipe/phone-number.pipe';
 
 @Component({
   selector: 'app-home-detail',
@@ -17,6 +18,7 @@ import { AddressPipe } from '../../../../shared/pipe/address.pipe';
   imports: [
     CommonModule,
 
+    PhoneNumberPipe,
     AddressPipe,
 
     MaterialModule

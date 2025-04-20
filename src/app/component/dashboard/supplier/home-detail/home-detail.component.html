@@ -32,6 +32,15 @@
               <span class="additional-text-element" (click)="editSupplier('address')">Thêm số điện thoại</span>
             }
           </div>
+
+          <div class="list-item-container">
+            <mat-icon>phone</mat-icon>
+            @if(supplier.telephone; as telephone) {
+              <span>{{ telephone | phoneNumber }}</span>
+            }@else {
+              <span class="additional-text-element" (click)="editSupplier('telephone')">Thêm số điện thoại</span>
+            }
+          </div>
         </mat-card-content>
       </mat-card>
     </mat-card-content>

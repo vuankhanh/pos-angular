@@ -1,3 +1,23 @@
 <div class="container">
-  <p>supplier-product works!</p>
+  <section>
+    <div [ngClass]="(breakpointDetection$ | async) ? 'vertical-container' : 'horizontal-container'">
+      <app-search (search)="onSearch($event)"></app-search>
+      <button mat-raised-button color="primary" (click)="onCreateProduct()">
+        <mat-icon>add</mat-icon>
+        Thêm đối tác
+      </button>
+    </div>
+  </section>
+  <mat-list>
+    @for (supplierProduct of supplierProducts; track $index) {
+    <mat-list-item [routerLink]="supplierProduct._id">
+      <mat-icon matListItemIcon>shopping_bag</mat-icon>
+      <div matListItemTitle>{{ supplierProduct.name }}</div>
+    </mat-list-item>
+    }
+  </mat-list>
+  @if(pagination.totalItems){
+  <mat-paginator [length]="pagination.totalItems" [pageIndex]="pagination.page - 1" [pageSize]="pagination.size"
+    [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)"></mat-paginator>
+  }
 </div>
