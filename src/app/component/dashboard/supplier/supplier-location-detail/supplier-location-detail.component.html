@@ -3,15 +3,15 @@
     <mat-card-header>
       <div class="button-group-header">
         <div>
-          <button mat-icon-button color="primary" (click)="goBackSupplierList()">
+          <button mat-icon-button color="primary" (click)="goBackSupplierLocationList()">
             <mat-icon>arrow_back</mat-icon>
           </button>
         </div>
         <div>
-          <button mat-icon-button color="primary" (click)="editSupplier()">
+          <button mat-icon-button color="primary" (click)="editSupplierLocation()">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="deleteSupplier()">
+          <button mat-icon-button color="warn" (click)="deleteSupplierLocation()">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
@@ -29,7 +29,7 @@
             @if(supplier.address; as address) {
               <span>{{ address | address }}</span>
             }@else {
-              <span class="additional-text-element" (click)="editSupplier('address')">Thêm số điện thoại</span>
+              <span class="additional-text-element" (click)="editSupplierLocation('address')">Thêm số điện thoại</span>
             }
           </div>
 
@@ -38,7 +38,7 @@
             @if(supplier.telephone; as telephone) {
               <span>{{ telephone | phoneNumber }}</span>
             }@else {
-              <span class="additional-text-element" (click)="editSupplier('telephone')">Thêm số điện thoại</span>
+              <span class="additional-text-element" (click)="editSupplierLocation('telephone')">Thêm số điện thoại</span>
             }
           </div>
         </mat-card-content>

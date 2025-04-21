@@ -2,7 +2,7 @@
   <section>
     <div [ngClass]="(breakpointDetection$ | async) ? 'vertical-container' : 'horizontal-container'">
       <app-search (search)="onSearch($event)"></app-search>
-      <button mat-raised-button color="primary" (click)="onCreateSupplier()">
+      <button mat-raised-button color="primary" (click)="onCreateSupplierLocation()">
         <mat-icon>add</mat-icon>
         Thêm đối tác
       </button>

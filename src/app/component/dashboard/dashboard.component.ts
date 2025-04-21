@@ -32,7 +32,7 @@ export class DashboardComponent implements OnInit {
       name: 'Nhà cung cấp',
       route: 'supplier',
       childs: [
-        { name: 'Nhà cung cấp', route: 'home' },
+        { name: 'Nhà cung cấp', route: 'location' },
         { name: 'Sản phẩm', route: 'product' },
       ]
     }

@@ -2,18 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MaterialModule } from '../../../../shared/module/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TSupplierModel } from '../shared/interface/supplier.interface';
+import { TSupplierLocationModel } from '../shared/interface/supplier-location.interface';
 import { TConfirmDialogData } from '../../../../shared/interface/confirm_dialog.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmComponent } from '../../../../shared/component/dialog/confirm/confirm.component';
 
 import { filter, map, Subscription, switchMap } from 'rxjs';
-import { HomeService } from '../shared/service/api/home.service';
+import { LocationService } from '../shared/service/api/location.service';
 import { AddressPipe } from '../../../../shared/pipe/address.pipe';
 import { PhoneNumberPipe } from '../../../../shared/pipe/phone-number.pipe';
 
 @Component({
-  selector: 'app-home-detail',
+  selector: 'app-supplier-location-detail',
   standalone: true,
   imports: [
     CommonModule,
@@ -23,16 +23,16 @@ import { PhoneNumberPipe } from '../../../../shared/pipe/phone-number.pipe';
 
     MaterialModule
   ],
-  templateUrl: './home-detail.component.html',
-  styleUrl: './home-detail.component.scss'
+  templateUrl: './supplier-location-detail.component.html',
+  styleUrl: './supplier-location-detail.component.scss'
 })
-export class HomeDetailComponent implements OnInit, OnDestroy {
+export class SupplierLocationDetailComponent implements OnInit, OnDestroy {
   private readonly router: Router = inject(Router);
   private readonly dialog: MatDialog = inject(MatDialog);
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
 
-  private readonly homeService: HomeService = inject(HomeService);
-  supplier?: TSupplierModel;
+  private readonly locationService = inject(LocationService);
+  supplier?: TSupplierLocationModel;
 
   private readonly subscription: Subscription = new Subscription();
 
@@ -42,7 +42,7 @@ export class HomeDetailComponent implements OnInit, OnDestroy {
         const id: string = params['id'] as string;
         return id;
       }),
-      switchMap(id => this.homeService.getDetail(id))
+      switchMap(id => this.locationService.getDetail(id))
     );
 
     this.subscription.add(
@@ -53,19 +53,19 @@ export class HomeDetailComponent implements OnInit, OnDestroy {
 
         },
         error: error => {
-          this.goBackSupplierList();
+          this.goBackSupplierLocationList();
         }
       })
     )
   }
 
-  editSupplier(elementFocus?: string) {
-    this.router.navigate(['/supplier/home-edit'], {
+  editSupplierLocation(elementFocus?: string) {
+    this.router.navigate(['/supplier/location-edit'], {
       queryParams: { elementFocus, _id: this.supplier?._id }
     });
   }
 
-  deleteSupplier() {
+  deleteSupplierLocation() {
     const data: TConfirmDialogData = {
       title: 'Xác nhận xóa',
       message: `Bạn có chắc chắn muốn xóa nhà cung cấp ${this.supplier?.name} không?`,
@@ -78,10 +78,10 @@ export class HomeDetailComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().pipe(
       filter(result => result),
-      switchMap(() => this.homeService.remove(this.supplier!._id))
+      switchMap(() => this.locationService.remove(this.supplier!._id))
     ).subscribe({
       next: res => {
-        this.goBackSupplierList();
+        this.goBackSupplierLocationList();
       },
       error: error => {
         console.error(error);
@@ -89,7 +89,7 @@ export class HomeDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  goBackSupplierList() {
+  goBackSupplierLocationList() {
     this.router.navigate(['/supplier']);
   }
 

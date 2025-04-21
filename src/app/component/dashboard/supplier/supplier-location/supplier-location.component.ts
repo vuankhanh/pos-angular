@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { BreakpointDetectionService } from '../../../../shared/service/breakpoint-detection.service';
-import { HomeService } from '../shared/service/api/home.service';
-import { TSupplierModel } from '../shared/interface/supplier.interface';
+import { LocationService } from '../shared/service/api/location.service';
+import { TSupplierLocationModel } from '../shared/interface/supplier-location.interface';
 import { IPagination } from '../../../../shared/interface/pagination.interface';
 import { paginationConstant } from '../../../../constant/pagination.constant';
 import { Subscription } from 'rxjs';
@@ -13,7 +13,7 @@ import { SearchComponent } from '../../../../shared/component/search/search.comp
 import { AddressPipe } from '../../../../shared/pipe/address.pipe';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-supplier-location',
   standalone: true,
   imports: [
     CommonModule,
@@ -25,15 +25,15 @@ import { AddressPipe } from '../../../../shared/pipe/address.pipe';
 
     SearchComponent
   ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  templateUrl: './supplier-location.component.html',
+  styleUrl: './supplier-location.component.scss'
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class SupplierLocationComponent implements OnInit, OnDestroy {
   private readonly router: Router = inject(Router);
   private readonly breakpointDetectionService: BreakpointDetectionService = inject(BreakpointDetectionService);
-  private readonly homeService: HomeService = inject(HomeService);
+  private readonly locationService: LocationService = inject(LocationService);
 
-  suppliers: Array<TSupplierModel> = [];
+  suppliers: Array<TSupplierLocationModel> = [];
   pagination: IPagination = paginationConstant;
   pageSizeOptions: number[] = [2, 5, 10, 25, 100];
 
@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private getAll(name: string, page: number, size: number) {
     this.subscription.add(
-      this.homeService.getAll(name, page, size).subscribe(res => {
+      this.locationService.getAll(name, page, size).subscribe(res => {
         this.suppliers = res.data;
         this.pagination = res.paging;
       })
@@ -61,8 +61,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.getAll(this.nameSearch, this.pagination.page, this.pagination.size);
   }
 
-  onCreateSupplier() {
-    this.router.navigate(['supplier/home-edit']);
+  onCreateSupplierLocation() {
+    this.router.navigate(['supplier/location-edit']);
   }
 
   handlePageEvent(event: PageEvent) {

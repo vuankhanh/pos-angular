@@ -8,7 +8,7 @@
     </div>
   </mat-card-header>
   <mat-card-content>
-    <mat-card-title>{{ supplier?.name }}</mat-card-title>
+    <mat-card-title>{{ supplierLocation?.name }}</mat-card-title>
     <form #customerEditForm [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="container">
       <mat-form-field>
         <mat-icon matPrefix>contacts</mat-icon>
@@ -33,10 +33,17 @@
     </form>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-raised-button color="primary" type="button" (click)="onSubmit()"
+    @if (supplierLocation?._id) {
+      <button mat-raised-button color="primary" type="button" (click)="onSubmit()"
       [disabled]="formGroup.invalid || !(isFormChanged$ | async)">
-      {{ supplier?._id ? 'Lưu' : 'Tạo' }}
+      Lưu
     </button>
+    }@else {
+      <button mat-raised-button color="primary" type="button" (click)="onSubmit()"
+      [disabled]="formGroup.invalid ">
+      Tạo
+    </button>
+    }
   </mat-card-actions>
 </mat-card>
 }

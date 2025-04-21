@@ -82,10 +82,10 @@ export class AddressSelectorComponent implements OnInit, AfterViewInit, OnDestro
   ngOnInit(): void {
     this.setProvince$();
 
-    this.provinceControl.setValue(this.address.province);
-    this.districtControl.setValue(this.address.district);
-    this.wardControl.setValue(this.address.ward);
-    this.streetControl.setValue(this.address.street);
+    this.provinceControl.setValue(this.address?.province);
+    this.districtControl.setValue(this.address?.district);
+    this.wardControl.setValue(this.address?.ward);
+    this.streetControl.setValue(this.address?.street);
   }
 
   onProvinceOptionSelected(event: MatAutocompleteSelectedEvent) {
@@ -156,9 +156,9 @@ export class AddressSelectorComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   ngAfterViewInit(): void {
-    this.provinceEl.nativeElement.value = this.address.province?.name || '';
-    this.districtEl.nativeElement.value = this.address.district?.name || '';
-    this.wardEl.nativeElement.value = this.address.ward?.name || '';
+    this.provinceEl.nativeElement.value = this.address?.province?.name || '';
+    this.districtEl.nativeElement.value = this.address?.district?.name || '';
+    this.wardEl.nativeElement.value = this.address?.ward?.name || '';
 
     this.renderer.listen(this.provinceEl.nativeElement, 'input', (event: InputEvent ) => {
       this.bProvinceInputChange.next(this.provinceEl.nativeElement.value);

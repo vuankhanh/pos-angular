@@ -3,7 +3,7 @@ import { IPagination } from "../../../../../shared/interface/pagination.interfac
 import { ISuccess } from "../../../../../shared/interface/success.interface";
 import { IDistrict, IProvince, IWard } from "../../../../../shared/interface/vn-public-apis.interface";
 
-export interface ISupplier {
+export interface ISupplierLocation {
   name: string; // Name of the supplier
   address: {
     province: IProvince;
@@ -25,19 +25,19 @@ export interface ISupplier {
     telephone: string; // Contact phone number
     email: string; // Contact email
   };
-  logo?: string; // URL to the supplier's logo (optional)
+  logo?: string; // URL to the supplierLocation's logo (optional)
   sameAs?: string[]; // URLs to social media or related profiles (optional)
 }
 
-export type TSupplierModel = ISupplier & IMongodbDocument;
+export type TSupplierLocationModel = ISupplierLocation & IMongodbDocument;
 
-export interface ISupplierResponse extends ISuccess {
+export interface ISupplierLocationResponse extends ISuccess {
   metaData: {
-    data: Array<TSupplierModel>,
+    data: Array<TSupplierLocationModel>,
     paging: IPagination
   }
 }
 
-export interface ISupplierDetailResponse extends ISuccess {
-  metaData: TSupplierModel
+export interface ISupplierLocationDetailResponse extends ISuccess {
+  metaData: TSupplierLocationModel
 }

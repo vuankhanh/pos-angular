@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { MaterialModule } from '../../../../shared/module/material';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TSupplierModel } from '../shared/interface/supplier.interface';
+import { TSupplierLocationModel } from '../shared/interface/supplier-location.interface';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, skipUntil, skipWhile, Subscription, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HomeService } from '../shared/service/api/home.service';
+import { LocationService } from '../shared/service/api/location.service';
 import { AddressSelectorComponent } from '../../../../shared/component/address-selector/address-selector.component';
 import { IAddress } from '../../../../shared/interface/vn-public-apis.interface';
 import { addressAsyncValidator } from '../../../../shared/component/validators/address-async.validator';
@@ -14,7 +14,7 @@ import { ICoordinate } from '../../../../shared/interface/coordinate.interface';
 import { isEqual } from 'lodash';
 
 @Component({
-  selector: 'app-home-edit',
+  selector: 'app-supplier-location-edit',
   standalone: true,
   imports: [
     CommonModule,
@@ -25,23 +25,28 @@ import { isEqual } from 'lodash';
 
     MaterialModule
   ],
-  templateUrl: './home-edit.component.html',
-  styleUrl: './home-edit.component.scss'
+  templateUrl: './supplier-location-edit.component.html',
+  styleUrl: './supplier-location-edit.component.scss'
 })
-export class HomeEditComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('formElement') formElements!: QueryList<ElementRef>;
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly formBuilder = inject(FormBuilder);
   private readonly cdRef = inject(ChangeDetectorRef);
 
-  private readonly homeService = inject(HomeService);
-  supplier?: TSupplierModel;
+  private readonly locationService = inject(LocationService);
+  supplierLocation?: TSupplierLocationModel;
 
   formGroup!: FormGroup;
 
-  private readonly bIsFormChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  isFormChanged$: Observable<boolean> = this.bIsFormChanged.asObservable();
+  private readonly bControlFormChanged: BehaviorSubject<{ [key: string]: any }> = new BehaviorSubject<{ [key: string]: any }>({});
+  private readonly controlFormChanged$: Observable<{ [key: string]: any }> = this.bControlFormChanged.asObservable();
+  isFormChanged$: Observable<boolean> = this.controlFormChanged$.pipe(
+    map((value: { [key: string]: any }) => {
+      return Object.keys(value).length > 0;
+    }),
+  );
 
   private readonly addressValidSubject = new BehaviorSubject<boolean>(false);
   private readonly addressValid$ = this.addressValidSubject.asObservable();
@@ -55,15 +60,15 @@ export class HomeEditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(
       this.activatedRoute.queryParamMap.pipe(
         map(params => {
-          const supplierId = params.get('_id');
+          const supplierLocationId = params.get('_id');
           const elementFocus = params.get('elementFocus');
 
-          return { supplierId, elementFocus };
+          return { supplierLocationId, elementFocus };
         }),
         switchMap(res => {
-          if (res.supplierId) {
-            return this.homeService.getDetail(res.supplierId).pipe(
-              map(supplier => ({ elementFocus: res.elementFocus, supplier }))
+          if (res.supplierLocationId) {
+            return this.locationService.getDetail(res.supplierLocationId).pipe(
+              map(supplierLocation => ({ elementFocus: res.elementFocus, supplierLocation }))
             )
           }
           return of(null);
@@ -72,7 +77,7 @@ export class HomeEditComponent implements OnInit, AfterViewInit, OnDestroy {
         next: (res) => {
           if (res) {
             const elementFocus = res.elementFocus;
-            this.supplier = res?.supplier;
+            this.supplierLocation = res?.supplierLocation;
 
             if (elementFocus) {
               setTimeout(() => {
@@ -90,26 +95,26 @@ export class HomeEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initForm() {
+
     const positionGroup = this.formBuilder.group({
-      lat: [this.supplier?.position?.lat || '0'],
-      lng: [this.supplier?.position?.lng || '0']
+      lat: [this.supplierLocation?.position?.lat || '0'],
+      lng: [this.supplierLocation?.position?.lng || '0']
     })
 
     this.formGroup = this.formBuilder.group({
-      name: [this.supplier?.name, Validators.required],
+      name: [this.supplierLocation?.name, Validators.required],
       address: [
-        this.supplier?.address,
+        this.supplierLocation?.address?.province || null,
         Validators.required,
         addressAsyncValidator(this.addressValid$)
       ],
-      telephone: [this.supplier?.telephone, Validators.required],
-      email: [this.supplier?.email],
+      telephone: [this.supplierLocation?.telephone, Validators.required],
+      email: [this.supplierLocation?.email],
       position: positionGroup
     });
 
     const initialFormValue = this.formGroup.getRawValue();
-    console.log(initialFormValue);
-    
+
     this.subscription.add(
       this.formGroup.valueChanges.pipe(
         distinctUntilChanged((prev, curr) => {
@@ -117,16 +122,17 @@ export class HomeEditComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         skipWhile(value => !isEqual(initialFormValue, value)), // Bỏ qua cho đến khi isEqual = true
       ).subscribe(value => {
-        console.log(value);
-        const isFormChanged = !isEqual(initialFormValue, value);
-        console.log(isFormChanged);
-        
-        this.bIsFormChanged.next(isFormChanged);
-        // console.log(initialFormValue);
-        // console.log(isEqual(initialFormValue, value));
+        const changedControls: { [key: string]: any } = {};
+        Object.keys(value).forEach(key => {
+          if (!this.supplierLocation) return;
+          if (value[key] !== this.supplierLocation[key as keyof TSupplierLocationModel]) {
+            changedControls[key] = value[key];
+          }
+        });
+
+        this.bControlFormChanged.next(changedControls);
       })
     )
-
     this.cdRef.detectChanges();
   }
 
@@ -161,7 +167,7 @@ export class HomeEditComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.formGroup.invalid) {
       return;
     }
-    const api$ = this.supplier?._id ? this.update() : this.create();
+    const api$ = this.supplierLocation?._id ? this.update() : this.create();
     this.subscription.add(
       api$.subscribe({
         next: res => {
@@ -175,22 +181,19 @@ export class HomeEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private create() {
-    return this.homeService.create(this.formGroup.value);
+    return this.locationService.create(this.formGroup.value);
   }
 
   private update() {
-    const changedControls: { [key: string]: any } = {};
-    Object.keys(this.formGroup.controls).forEach(key => {
-      const control = this.formGroup.get(key);
-      if (control?.dirty) {
-        changedControls[key] = control.value;
-      }
-    });
-    return this.homeService.update(this.supplier?._id!, changedControls);
+    return this.controlFormChanged$.pipe(
+      switchMap((value: { [key: string]: any }) => {
+        return this.locationService.update(this.supplierLocation?._id!, value);
+      })
+    )
   }
 
   goBackSupplierDetail() {
-    const commands = this.supplier?._id ? ['/supplier/home', this.supplier?._id] : ['/supplier'];
+    const commands = this.supplierLocation?._id ? ['/supplier/location', this.supplierLocation?._id] : ['/supplier'];
     this.router.navigate(commands);
   };
 

@@ -8,7 +8,8 @@ export interface ISupplierProduct {
   price: number;
   unit: `${SupplierProductUnit}`;
   description?: string;
-  supplierId: string;
+  supplierLocationId: string;
+  supplierLocationName: string;
 }
 
 export type TSupplierProductModel = ISupplierProduct & IMongodbDocument;

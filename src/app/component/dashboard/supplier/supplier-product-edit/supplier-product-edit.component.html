@@ -1,1 +1,62 @@
-<p>supplier-product-edit works!</p>
+@if (formGroup) {
+<mat-card>
+  <mat-card-header>
+    <div class="button-group-header">
+      <button mat-icon-button color="primary" (click)="goBackSupplierProductDetail()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-card-title>{{ supplierProduct?.name }}</mat-card-title>
+    <form #customerEditForm [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="container">
+      <mat-form-field>
+        <mat-icon matPrefix>contacts</mat-icon>
+        <input #formElement matInput placeholder="Tên" formControlName="name">
+        <mat-error *ngIf="formGroup.get('name')!.hasError('required')">Tên không được để trống</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-icon matPrefix>attach_money</mat-icon>
+        <input #formElement matInput placeholder="Đơn giá" formControlName="price">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-icon matPrefix>shopping_bag</mat-icon>
+        <mat-select formControlName="unit">
+          <mat-option *ngFor="let unit of productUnits" [value]="unit">{{ unit }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-icon matPrefix>description</mat-icon>
+        <textarea #formElement matInput placeholder="Mô tả" formControlName="description"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Nhà cung cấp</mat-label>
+        <input #supplierEl type="text" matInput [matAutocomplete]="provinceAuto" (blur)="onSupplierBlur($event)">
+        <mat-autocomplete #provinceAuto="matAutocomplete" (optionSelected)="onSupplierOptionSelected($event)">
+          @for (supplier of suppliers$ | async; track supplier) {
+          <mat-option [value]="supplier">{{supplier.name}}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    @if (supplierProduct?._id) {
+      <button mat-raised-button color="primary" type="button" (click)="onSubmit()"
+      [disabled]="formGroup.invalid || !(isFormChanged$ | async)">
+      Lưu
+    </button>
+    }@else {
+      <button mat-raised-button color="primary" type="button" (click)="onSubmit()"
+      [disabled]="formGroup.invalid ">
+      Tạo
+    </button>
+    }
+  </mat-card-actions>
+</mat-card>
+}

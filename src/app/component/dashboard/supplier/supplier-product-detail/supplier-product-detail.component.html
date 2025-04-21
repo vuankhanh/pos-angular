@@ -1,1 +1,66 @@
-<p>supplier-product-detail works!</p>
+@if (supplierProduct) {
+  <mat-card>
+    <mat-card-header>
+      <div class="button-group-header">
+        <div>
+          <button mat-icon-button color="primary" (click)="goBackSupplierProductList()">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </div>
+        <div>
+          <button mat-icon-button color="primary" (click)="editSupplierProduct()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteSupplierProduct()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-card-title>
+      {{ supplierProduct.name }}
+    </mat-card-title>
+      <mat-card class="mat-card-child">
+        <mat-card-content>
+          <mat-card-subtitle>Nhà cung cấp</mat-card-subtitle>
+          <div class="list-item-container">
+            <mat-icon>attach_money</mat-icon>
+            @if(supplierProduct.price; as price) {
+              <span>{{ price | vndCurrency }}</span>
+            }@else {
+              <span class="additional-text-element" (click)="editSupplierProduct('price')">Thêm đơn giá</span>
+            }
+          </div>
+
+          <div class="list-item-container">
+            <mat-icon>shopping_bag</mat-icon>
+            @if(supplierProduct.unit; as unit) {
+              <span>{{ unit }}</span>
+            }@else {
+              <span class="additional-text-element" (click)="editSupplierProduct('unit')">Thêm đơn vị</span>
+            }
+          </div>
+
+          <div class="list-item-container">
+            <mat-icon>description</mat-icon>
+            @if(supplierProduct.description; as description) {
+              <span>{{ description }}</span>
+            }@else {
+              <span class="additional-text-element" (click)="editSupplierProduct('description')">Thêm mô tả</span>
+            }
+          </div>
+
+          <div class="list-item-container">
+            <mat-icon>warehouse</mat-icon>
+            @if(supplierProduct.supplierLocationName; as supplierLocationName) {
+              <span>{{ supplierLocationName }}</span>
+            }@else {
+              <span class="additional-text-element" (click)="editSupplierProduct('supplierLocationName')">Thêm nhà cung cấp</span>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-card-content>
+  </mat-card>
+}

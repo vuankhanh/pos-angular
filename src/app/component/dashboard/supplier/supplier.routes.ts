@@ -1,9 +1,10 @@
 import { Routes } from "@angular/router";
 import { SupplierComponent } from "./supplier.component";
+import { SupplierLocationComponent } from "./supplier-location/supplier-location.component";
+import { SupplierLocationDetailComponent } from "./supplier-location-detail/supplier-location-detail.component";
+import { SupplierLocationEditComponent } from "./supplier-location-edit/supplier-location-edit.component";
+
 import { SupplierProductComponent } from "./supplier-product/supplier-product.component";
-import { HomeComponent } from "./home/home.component";
-import { HomeDetailComponent } from "./home-detail/home-detail.component";
-import { HomeEditComponent } from "./home-edit/home-edit.component";
 import { SupplierProductDetailComponent } from "./supplier-product-detail/supplier-product-detail.component";
 import { SupplierProductEditComponent } from "./supplier-product-edit/supplier-product-edit.component";
 
@@ -14,20 +15,20 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'location',
         pathMatch: 'full'
       },
       {
-        path: 'home',
-        component: HomeComponent
+        path: 'location',
+        component: SupplierLocationComponent
       },
       {
-        path: 'home/:id',
-        component: HomeDetailComponent
+        path: 'location/:id',
+        component: SupplierLocationDetailComponent
       },
       {
-        path: 'home-edit',
-        component: HomeEditComponent
+        path: 'location-edit',
+        component: SupplierLocationEditComponent
       },
       {
         path: 'product',
