@@ -1,0 +1,63 @@
+<div class="container">
+  <div class="button-group-header">
+    <button mat-icon-button color="primary" (click)="goBackOrderList()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+  @if (purchaseOrder) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h3>{{ purchaseOrder.orderCode }}</h3>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="info-list">
+        <div class="info-list__item">
+          <div class="info-list__item__label">Trạng thái:</div>
+          <div class="info-list__item__value">{{ purchaseOrder.status }}</div>
+        </div>
+      </div>
+      <section class="table-container mat-elevation-z8">
+        <!-- 2. Hiển thị thông tin bảng order items -->
+        <table mat-table [dataSource]="purchaseOrder.purchaseOrderItems" class="mat-elevation-z8">
+
+          <ng-container matColumnDef="name" [sticky]="breakpointDetection$ | async">
+            <th mat-header-cell *matHeaderCellDef> Tên sản phẩm </th>
+            <td mat-cell *matCellDef="let item"> {{item.product.name}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef> Số lượng </th>
+            <td mat-cell *matCellDef="let item">{{item.quantity}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef> Giá </th>
+            <td mat-cell *matCellDef="let item"> {{item.product.price | vndCurrency}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef> Tổng tiền </th>
+            <td mat-cell *matCellDef="let item"> {{item.itemTotal | vndCurrency}} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </section>
+
+    </mat-card-content>
+  </mat-card>
+  <div class="group-button-container">
+    <button mat-raised-button color="primary" (click)="onPrintEvent()">
+      <mat-icon>print</mat-icon>
+      In hóa đơn
+    </button>
+    <button mat-raised-button color="warn" (click)="onEditEvent()">
+      <mat-icon>edit</mat-icon>
+      Sửa lại
+    </button>
+  </div>
+  }
+</div>

@@ -44,6 +44,8 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
   private readonly controlFormChanged$: Observable<{ [key: string]: any }> = this.bControlFormChanged.asObservable();
   isFormChanged$: Observable<boolean> = this.controlFormChanged$.pipe(
     map((value: { [key: string]: any }) => {
+      console.log(value);
+      
       return Object.keys(value).length > 0;
     }),
   );
@@ -78,7 +80,6 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
           if (res) {
             const elementFocus = res.elementFocus;
             this.supplierLocation = res?.supplierLocation;
-
             if (elementFocus) {
               setTimeout(() => {
                 this.findAndFocusElement(elementFocus)
@@ -95,7 +96,6 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
   }
 
   private initForm() {
-
     const positionGroup = this.formBuilder.group({
       lat: [this.supplierLocation?.position?.lat || '0'],
       lng: [this.supplierLocation?.position?.lng || '0']
@@ -104,7 +104,7 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
     this.formGroup = this.formBuilder.group({
       name: [this.supplierLocation?.name, Validators.required],
       address: [
-        this.supplierLocation?.address?.province || null,
+        this.supplierLocation?.address || null,
         Validators.required,
         addressAsyncValidator(this.addressValid$)
       ],
@@ -125,11 +125,12 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
         const changedControls: { [key: string]: any } = {};
         Object.keys(value).forEach(key => {
           if (!this.supplierLocation) return;
-          if (value[key] !== this.supplierLocation[key as keyof TSupplierLocationModel]) {
+           // Bỏ qua nếu không thay đổi
+          if (!isEqual(value[key], this.supplierLocation[key as keyof TSupplierLocationModel])) {
             changedControls[key] = value[key];
           }
         });
-
+        
         this.bControlFormChanged.next(changedControls);
       })
     )

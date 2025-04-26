@@ -12,6 +12,9 @@ import { ProductEditComponent } from "./product-edit/product-edit.component";
 import { OrderComponent } from "./order/order.component";
 import { OrderDetailComponent } from "./order-detail/order-detail.component";
 import { OrderEditComponent } from "./order-edit/order-edit.component";
+import { PurchaseOrderComponent } from "./purchase-order/purchase-order.component";
+import { PurchaseOrderDetailComponent } from "./purchase-order-detail/purchase-order-detail.component";
+import { PurchaseOrderEditComponent } from "./purchase-order-edit/purchase-order-edit.component";
 
 export const routes: Routes = [
   {
@@ -79,6 +82,18 @@ export const routes: Routes = [
       {
         path: 'order-edit',
         component: OrderEditComponent
+      },
+      {
+        path: 'purchase-order',
+        component: PurchaseOrderComponent
+      },
+      {
+        path: 'purchase-order/:id',
+        component: PurchaseOrderDetailComponent
+      },
+      {
+        path: 'purchase-order-edit',
+        component: PurchaseOrderEditComponent
       },
       {
         path: 'supplier',

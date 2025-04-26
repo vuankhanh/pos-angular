@@ -16,14 +16,16 @@
         <mat-error *ngIf="formGroup.get('name')!.hasError('required')">Tên không được để trống</mat-error>
       </mat-form-field>
 
-      <app-address-selector [address]="addressControl.value" (addressValidChange)="onAddressValidChange($event)" (valueChange)="onAddressValueChange($event)"></app-address-selector>
+      <app-address-selector [address]="addressControl.value" (addressValidChange)="onAddressValidChange($event)"
+        (valueChange)="onAddressValueChange($event)"></app-address-selector>
 
       <mat-form-field>
         <mat-icon matPrefix>call</mat-icon>
         <input #formElement matInput placeholder="Số điện thoại" formControlName="telephone">
       </mat-form-field>
 
-      <app-coordinate-selector [coordinate]="positionControl.value" (coordinateChange)="onCoordinateChange($event)"></app-coordinate-selector>
+      <app-coordinate-selector [coordinate]="positionControl.value"
+        (coordinateChange)="onCoordinateChange($event)"></app-coordinate-selector>
 
       <mat-form-field>
         <mat-icon matPrefix>mail</mat-icon>
@@ -34,13 +36,12 @@
   </mat-card-content>
   <mat-card-actions>
     @if (supplierLocation?._id) {
-      <button mat-raised-button color="primary" type="button" (click)="onSubmit()"
+    <button mat-raised-button color="primary" type="button" (click)="onSubmit()"
       [disabled]="formGroup.invalid || !(isFormChanged$ | async)">
       Lưu
     </button>
     }@else {
-      <button mat-raised-button color="primary" type="button" (click)="onSubmit()"
-      [disabled]="formGroup.invalid ">
+    <button mat-raised-button color="primary" type="button" (click)="onSubmit()" [disabled]="formGroup.invalid ">
       Tạo
     </button>
     }

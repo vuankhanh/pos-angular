@@ -1,0 +1,81 @@
+.container {
+  padding: 15px;
+  box-sizing: border-box;
+
+  .mat-card-container {
+    height: 100%;
+    overflow-y: auto;
+  }
+}
+
+.search-form-container {
+  max-width: 700px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+mat-option {
+  ::ng-deep .mdc-list-item__primary-text {
+    width: 100%;
+    .product-option {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 10px 0;
+      border-bottom: 1px solid #ccc;
+
+      .thumbnail {
+        width: 100px;
+      }
+
+      .product-name {
+        flex-grow: 1;
+      }
+
+      .product-price {
+        font-weight: bold;
+      }
+
+      >*:not(:first-child) {
+        margin-left: 10px;
+        text-wrap: nowrap;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 699px) {
+  .table-container {
+    table[mat-table] {
+      .mat-column-thumbnail {
+        img {
+          max-width: 120px;
+        }
+      }
+    }
+  }
+
+  .footer-bill-container {
+    .footer-bill-content {
+      flex-direction: column;
+
+      mat-form-field {
+        width: 100% !important;
+      }
+
+      .info-list {
+        margin: 10px 0 0 0;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .product-option {
+    .thumbnail {
+      display: none;
+    }
+  }
+}

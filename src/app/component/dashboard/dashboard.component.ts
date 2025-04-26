@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit {
     { name: 'Khách hàng', route: 'customer' },
     { name: 'Sản phẩm', route: 'product' },
     { name: 'Đơn hàng', route: 'order' },
+    { name: 'Đơn hàng mua', route: 'purchase-order' },
     {
       name: 'Nhà cung cấp',
       route: 'supplier',

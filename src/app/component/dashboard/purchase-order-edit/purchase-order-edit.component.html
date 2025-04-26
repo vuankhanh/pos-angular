@@ -1,0 +1,104 @@
+<div class="container">
+  <div class="button-group-header">
+    <button mat-icon-button color="primary" (click)="backToOrderDetail()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+  <mat-card class="mat-card-container container">
+
+    <mat-form-field class="search-form-container">
+      <mat-label>Tìm sản phẩm</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input #nameOrProductEl type="text" placeholder="Nhập tên hoặc mã sản phẩm" matInput [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onChooseProductEvent($event)">
+        @for (option of filteredOptions$ | async; track option) {
+        <mat-option [value]="option">
+          <div class="product-option">
+            <span class="product-name">{{ option.name }}</span>
+            <span class="product-name">{{ option.supplierLocationName }}</span>
+            <span class="product-price">{{ option.price | vndCurrency }}</span>
+          </div>
+        </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <div *ngIf="groupedOrderItems$ | async as groupedOrderItems" class="group-accordion-container">
+      <div *ngIf="groupedOrderItems.length; else noData">
+
+        <mat-accordion multi>
+          <mat-expansion-panel *ngFor="let group of groupedOrderItems" [expanded]="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{ group.productSupplierName }}
+              </mat-panel-title>
+              <mat-panel-description>
+                Total: {{ group.totalPrice | vndCurrency }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <!-- Table for order items -->
+            <table mat-table [dataSource]="group.orderItems" class="order-items-table">
+              <!-- Product Name Column -->
+              <ng-container matColumnDef="productName">
+                <th mat-header-cell *matHeaderCellDef> Tên sản phẩm </th>
+                <td mat-cell *matCellDef="let item"> {{ item.product.name }} </td>
+              </ng-container>
+
+              <!-- Price Column -->
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef> Đơn giá </th>
+                <td mat-cell *matCellDef="let item"> {{ item.product.price | vndCurrency }} </td>
+              </ng-container>
+
+              <!-- Quantity Column -->
+              <ng-container matColumnDef="quantity">
+                <th mat-header-cell *matHeaderCellDef> Số lượng </th>
+                <td mat-cell *matCellDef="let item">
+                  <app-number-input [value]="item.quantity" (valueChange)="quantityChange($event, item)"></app-number-input>
+                </td>
+              </ng-container>
+
+              <!-- Total Column -->
+              <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef> Tổng </th>
+                <td mat-cell *matCellDef="let item"> {{ item.itemTotal | vndCurrency }} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Hành động </th>
+                <td mat-cell *matCellDef="let item; let index = $index;">
+                  <button mat-icon-button color="warn" (click)="removeItemQuantity(index)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <!-- Header and Row Definitions -->
+              <tr mat-header-row *matHeaderRowDef="['productName', 'price', 'quantity', 'total', 'actions']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['productName', 'price', 'quantity', 'total', 'actions']"></tr>
+            </table>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+      <ng-template #noData>
+        <p>Không có dữ liệu để hiển thị.</p>
+      </ng-template>
+    </div>
+    <mat-form-field>
+      <mat-label>Trạng thái</mat-label>
+      <mat-select #statusEl (valueChange)="onStatusChange($event)">
+        @for (status of purchaseOrderStatus$ | async; track $index) {
+        <mat-option [value]="status">{{status}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-card-actions>
+      @if (purchaseOrder) {
+      <button mat-raised-button color="primary">Cập nhật</button>
+      }@else {
+      <button mat-raised-button color="primary" [disabled]="!(formGroupValid$ | async)">Tạo mới</button>
+      }
+    </mat-card-actions>
+  </mat-card>
+</div>
