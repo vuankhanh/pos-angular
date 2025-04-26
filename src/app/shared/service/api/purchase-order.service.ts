@@ -52,14 +52,18 @@ export class PurchaseOrderService {
     );
   }
 
-  update(id: string, purchaseOrderItems: PurchaseOrderItem[]) {
-    return this.httpClient.patch<IPurchaseOrderDetailResponse>(this.url + '/' + id, purchaseOrderItems).pipe(
+  update(id: string, data: Partial<{status: `${PurchaseOrderStatus}`, purchaseOrderItems: PurchaseOrderItem[] }>) {
+    return this.httpClient.patch<IPurchaseOrderDetailResponse>(this.url + '/' + id, data).pipe(
       map(res => res.metaData)
     );
   }
 
-  replace(id: string, purchaseOrderItems: PurchaseOrderItem[]) {
-    return this.httpClient.put<IPurchaseOrderDetailResponse>(this.url + '/' + id, purchaseOrderItems).pipe(
+  replace(id: string, status: `${PurchaseOrderStatus}`, purchaseOrderItems: PurchaseOrderItem[]) {
+    const data = {
+      status,
+      purchaseOrderItems
+    }
+    return this.httpClient.put<IPurchaseOrderDetailResponse>(this.url + '/' + id, data).pipe(
       map(res => res.metaData)
     );
   }

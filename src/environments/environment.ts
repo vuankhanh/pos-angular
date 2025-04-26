@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  backendApi: 'http://192.168.12.2:8181/api',
-  backendStatic: 'http://192.168.12.2:8181/static'
+  backendApi: 'https://pos.bep4than.online/api',
+  backendStatic: 'https://pos.bep4than.online/static'
 };

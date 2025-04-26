@@ -5,7 +5,7 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { MatTable } from '@angular/material/table';
 import { PurchaseOrderItem, TPurchaseOrder } from '../../../shared/interface/purchase-order.interface';
 import { TSupplierProductModel } from '../supplier/shared/interface/supplier-product.interface';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, map, Observable, of, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, map, Observable, of, skipWhile, Subscription, switchMap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from '../supplier/shared/service/api/product.service';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
@@ -18,6 +18,10 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
 import { PurchaseOrderStatus, purchaseOrderStatus$ } from '../../../constant/order.constant';
 import { MatSelect } from '@angular/material/select';
+import { FeeDiscountComponent } from '../../../shared/component/dialog/fee-discount/fee-discount.component';
+import { numberValidator } from '../../../shared/utitl/form-validator.util';
+import { isEqual } from 'lodash';
+import { PurchaseOrderUtil } from '../../../shared/utitl/purchase-order.util';
 
 @Component({
   selector: 'app-purchase-order-edit',
@@ -50,14 +54,35 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
   private readonly breakpointDetectionService = inject(BreakpointDetectionService);
   private readonly formBuilder = inject(FormBuilder);
 
-  private formGroup!: FormGroup;
-  private readonly bFormgroupValid: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  formGroupValid$: Observable<boolean> = this.bFormgroupValid.asObservable();
+  formGroup!: FormGroup;
+  private readonly bControlFormChanged: BehaviorSubject<{ [key: string]: any }> = new BehaviorSubject<{ [key: string]: any }>({});
+  private readonly controlFormChanged$: Observable<{ [key: string]: any }> = this.bControlFormChanged.asObservable();
+  isFormChanged$: Observable<boolean> = this.controlFormChanged$.pipe(
+    map((value: { [key: string]: any }) => {
+      console.log(value);
+
+      return Object.keys(value).length > 0;
+    }),
+  );
 
   purchaseOrderStatus$ = purchaseOrderStatus$;
 
   private readonly bPurchaseOrderItems: BehaviorSubject<PurchaseOrderItem[]> = new BehaviorSubject<PurchaseOrderItem[]>([]);
   purchaseOrderItems$: Observable<PurchaseOrderItem[]> = this.bPurchaseOrderItems.asObservable();
+  groupedOrderItems$: Observable<GroupedOrderItems[]> = this.purchaseOrderItems$.pipe(
+    map((items) => {
+      const grouped = PurchaseOrderUtil.groupBySupplier(items);
+      return grouped;
+    })
+  );
+
+  totalPrice$: Observable<number> = this.purchaseOrderItems$.pipe(
+    map((items) => {
+      return items.reduce((total, item) => {
+        return total + item.itemTotal;
+      }, 0);
+    })
+  );
 
   private readonly bNameOrProductElChange: BehaviorSubject<string> = new BehaviorSubject<string>('');
   filteredOptions$: Observable<TSupplierProductModel[]> = this.bNameOrProductElChange.pipe(
@@ -67,12 +92,33 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
       map((data) => data.data)
     ))
   );
-  
+
   breakpointDetection$ = this.breakpointDetectionService.detection$();
 
   private readonly subscription: Subscription = new Subscription();
 
   ngOnInit(): void {
+    this.formGroup = this.formBuilder.group({
+      status: [this.purchaseOrder?.status || PurchaseOrderStatus.CREATED, Validators.required],
+      purchaseOrderItems: [this.purchaseOrder?.purchaseOrderItems || [], [Validators.required, Validators.minLength(1)]]
+    });
+
+    const initialFormValue = this.formGroup.getRawValue();
+
+    this.subscription.add(
+      this.formGroup.valueChanges.subscribe(value => {
+        const changedControls: { [key: string]: any } = {};
+        Object.keys(value).forEach(key => {
+          if (!this.purchaseOrder) return;
+          // Bỏ qua nếu không thay đổi
+          if (!isEqual(value[key], this.purchaseOrder[key as keyof TPurchaseOrder])) {
+            changedControls[key] = value[key];
+          }
+        });
+
+        this.bControlFormChanged.next(changedControls);
+      })
+    )
     this.activatedRoute.queryParamMap.pipe(
       switchMap(params => {
         const id: string = params.get('_id') as string;
@@ -83,20 +129,19 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
       next: (purchaseOrder) => {
         if (purchaseOrder) {
           // Xử lý purchaseOrderDetail
-          const purchaseOrderItems: PurchaseOrderItem[] = purchaseOrder.purchaseOrderItems.map(item=>{
+          const purchaseOrderItems: PurchaseOrderItem[] = purchaseOrder.purchaseOrderItems.map(item => {
             return new PurchaseOrderItem({
               product: item.product,
-              quantity: item.discount,
+              quantity: item.quantity,
               discount: item.discount || 0
             });
           });
 
           this.bPurchaseOrderItems.next(purchaseOrderItems);
           this.purchaseOrder = purchaseOrder;
-          console.log(this.purchaseOrder);
-          
         }
-        this.initForm();
+        this.formGroup.get('status')?.setValue(purchaseOrder?.status || PurchaseOrderStatus.CREATED);
+        this.formGroup.get('purchaseOrderItems')?.setValue(purchaseOrder?.purchaseOrderItems || []);
       },
       error: error => {
         this.backToOrderDetail();
@@ -104,98 +149,98 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
     });
   }
 
-  private initForm() {
-    this.formGroup = this.formBuilder.group({
-      status: [this.purchaseOrder?.status || PurchaseOrderStatus.CREATED, Validators.required],
-      purchaseOrderItems: [this.purchaseOrder?.purchaseOrderItems || [], [Validators.required, Validators.minLength(1)]]
-    });
-
-    this.subscription.add(
-      this.formGroup.valueChanges.subscribe((value) => {
-        this.bFormgroupValid.next(this.formGroup.valid);
-      })
-    )
-  }
-
   get purchaseOrderItemsControl() {
     return this.formGroup.get('purchaseOrderItems') as FormArray;
   }
 
   ngAfterViewInit(): void {
-    this.renderer.listen(this.nameOrProductEl.nativeElement, 'input', (event: InputEvent ) => {
+    this.renderer.listen(this.nameOrProductEl.nativeElement, 'input', (event: InputEvent) => {
       this.bNameOrProductElChange.next(this.nameOrProductEl.nativeElement.value);
     });
 
     setTimeout(() => {
       this.statusEl.value = this.purchaseOrder?.status || PurchaseOrderStatus.CREATED;
     }, 150);
-    // this.statusEl.options.forEach((option) => {
-    //   console.log(option);
-      
-    // });
-
-    // this.statusEl.nativeElement.value = this.purchaseOrder?.status || PurchaseOrderStatus.CREATED;
   }
 
   onChooseProductEvent(event: MatAutocompleteSelectedEvent) {
     const product = event.option.value as TSupplierProductModel;
     this.nameOrProductEl.nativeElement.value = '';
     this.bNameOrProductElChange.next('');
-    
-    const orderItem = new PurchaseOrderItem({
-      product: product,
-      quantity: 1,
-      discount: 0
-    });
 
     const orderItems = this.bPurchaseOrderItems.value;
-    orderItems.push(orderItem);
+
+    // Kiểm tra nếu sản phẩm đã tồn tại
+    const existingOrderItem = orderItems.find(item => item.product._id === product._id);
+    if (existingOrderItem) {
+      // Nếu tồn tại, tăng quantity lên 1
+      existingOrderItem.quantity += 1;
+      existingOrderItem.itemTotal = existingOrderItem.product.price * existingOrderItem.quantity;
+    } else {
+      // Nếu chưa tồn tại, thêm sản phẩm mới
+      const orderItem = new PurchaseOrderItem({
+        product: product,
+        quantity: 1,
+        discount: 0
+      });
+      orderItems.push(orderItem);
+    }
     this.bPurchaseOrderItems.next(orderItems);
     this.purchaseOrderItemsControl.setValue(orderItems);
     this.table?.renderRows()
   }
-
-
 
   quantityChange(value: number, orderItem: PurchaseOrderItem) {
     orderItem.quantity = value;
     orderItem.itemTotal = orderItem.product.price * orderItem.quantity;
     const orderItems = this.bPurchaseOrderItems.value;
     this.bPurchaseOrderItems.next(orderItems);
+    this.purchaseOrderItemsControl.setValue(orderItems);
     this.table?.renderRows();
   }
 
-  removeItemQuantity(index: number) {
-    // const orderItems = this.orderItems$.value;
-    // orderItems.splice(index, 1);
-    // this.orderItems$.next(orderItems);
-    // this.table?.renderRows();
-  }
-
-  groupedOrderItems$: Observable<GroupedOrderItems[]> = this.purchaseOrderItems$.pipe(
-    map((items) =>{
-      const grouped = this.groupBySupplier(items);
-      return grouped;
-    })
-  );
-
-  private groupBySupplier(orderItems: PurchaseOrderItem[]): GroupedOrderItems[] {
-    const grouped = orderItems.reduce((acc, item) => {
-      const supplierName = item.product.supplierLocationName; // Assuming `supplierName` exists in product
-      if (!acc[supplierName]) {
-        acc[supplierName] = { productSupplierName: supplierName, orderItems: [], totalPrice: 0 };
-      }
-      acc[supplierName].orderItems.push(item);
-      acc[supplierName].totalPrice += item.itemTotal;
-      return acc;
-    }, {} as Record<string, GroupedOrderItems>);
-
-    return Object.values(grouped);
+  removeItemQuantity(orderItem: PurchaseOrderItem) {
+    const orderItems = this.bPurchaseOrderItems.value;
+    const index = orderItems.findIndex(item => item.product._id === orderItem.product._id);
+    if (index === -1) return; // Không tìm thấy sản phẩm trong danh sách
+    orderItems.splice(index, 1);
+    this.bPurchaseOrderItems.next(orderItems);
+    this.purchaseOrderItemsControl.setValue(orderItems);
   }
 
   onStatusChange(event: `${PurchaseOrderStatus}`) {
-    console.log(event);
     this.formGroup.get('status')?.setValue(event);
+  }
+
+  onSubmit() {
+    if (this.formGroup.invalid) {
+      return;
+    }
+    const api$ = this.purchaseOrder?._id ? this.update() : this.create();
+    this.subscription.add(
+      api$.subscribe({
+        next: res => {
+          this.backToOrderDetail();
+        },
+        error: error => {
+          console.error(error);
+        }
+      })
+    )
+  }
+
+  private create() {
+    const status = this.formGroup.get('status')?.value as `${PurchaseOrderStatus}`;
+    const purchaseOrderItems = this.formGroup.get('purchaseOrderItems')?.value as PurchaseOrderItem[];
+    return this.purchaseOrderService.create(status, purchaseOrderItems);
+  }
+
+  private update() {
+    return this.controlFormChanged$.pipe(
+      switchMap((value: { [key: string]: any }) => {
+        return this.purchaseOrderService.update(this.purchaseOrder?._id!, value);
+      })
+    )
   }
 
   backToOrderDetail() {

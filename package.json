@@ -5,7 +5,6 @@
     "ng": "ng",
     "start": "ng serve --open",
     "build": "ng build",
-    "build:staging": "ng build --configuration staging",
     "build:production": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -23,6 +22,7 @@
     "@angular/platform-browser-dynamic": "^17.0.0",
     "@angular/router": "^17.0.0",
     "@daelmaak/ngx-gallery": "^3.0.4",
+    "html2canvas": "^1.4.1",
     "lodash": "^4.17.21",
     "ngx-file-drop": "^16.0.0",
     "ngx-toastr": "^19.0.0",

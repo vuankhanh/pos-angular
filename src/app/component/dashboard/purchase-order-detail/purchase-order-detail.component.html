@@ -5,7 +5,7 @@
     </button>
   </div>
   @if (purchaseOrder) {
-  <mat-card>
+  <mat-card #matCard>
     <mat-card-header>
       <mat-card-title>
         <h3>{{ purchaseOrder.orderCode }}</h3>
@@ -17,42 +17,68 @@
           <div class="info-list__item__label">Trạng thái:</div>
           <div class="info-list__item__value">{{ purchaseOrder.status }}</div>
         </div>
+        <div class="info-list__item">
+          <div class="info-list__item__label">Tổng tiền:</div>
+          <div class="info-list__item__value">{{ ((totalPrice$ | async) ?? 0) | vndCurrency }}</div>
+        </div>
       </div>
-      <section class="table-container mat-elevation-z8">
-        <!-- 2. Hiển thị thông tin bảng order items -->
-        <table mat-table [dataSource]="purchaseOrder.purchaseOrderItems" class="mat-elevation-z8">
-
-          <ng-container matColumnDef="name" [sticky]="breakpointDetection$ | async">
-            <th mat-header-cell *matHeaderCellDef> Tên sản phẩm </th>
-            <td mat-cell *matCellDef="let item"> {{item.product.name}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="quantity">
-            <th mat-header-cell *matHeaderCellDef> Số lượng </th>
-            <td mat-cell *matCellDef="let item">{{item.quantity}}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="price">
-            <th mat-header-cell *matHeaderCellDef> Giá </th>
-            <td mat-cell *matCellDef="let item"> {{item.product.price | vndCurrency}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="total">
-            <th mat-header-cell *matHeaderCellDef> Tổng tiền </th>
-            <td mat-cell *matCellDef="let item"> {{item.itemTotal | vndCurrency}} </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </section>
+      <mat-accordion multi>
+        @if (groupedOrderItems$ | async; as groupedOrderItems) {
+        @for (group of groupedOrderItems; track $index) {
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ group.productSupplierName }}
+            </mat-panel-title>
+            <mat-panel-description>
+              Tổng tiền: {{ group.totalPrice | vndCurrency }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="table-container">
+            <!-- Table for order items -->
+            <table mat-table [dataSource]="group.orderItems">
+              <!-- Product Name Column -->
+              <ng-container matColumnDef="productName" [sticky]="breakpointDetection$ | async">
+                <th mat-header-cell *matHeaderCellDef> Tên sản phẩm </th>
+                <td mat-cell *matCellDef="let item"> {{ item.product.name }} </td>
+              </ng-container>
+  
+              <!-- Price Column -->
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef> Đơn giá </th>
+                <td mat-cell *matCellDef="let item"> {{ item.product.price | vndCurrency }} </td>
+              </ng-container>
+  
+              <!-- Quantity Column -->
+              <ng-container matColumnDef="quantity">
+                <th mat-header-cell *matHeaderCellDef> Số lượng </th>
+                <td mat-cell *matCellDef="let item">
+                  {{ item.quantity }}
+                </td>
+              </ng-container>
+  
+              <!-- Total Column -->
+              <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef> Tổng </th>
+                <td mat-cell *matCellDef="let item"> {{ item.itemTotal | vndCurrency }} </td>
+              </ng-container>
+  
+              <!-- Header and Row Definitions -->
+              <tr mat-header-row *matHeaderRowDef="['productName', 'price', 'quantity', 'total']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['productName', 'price', 'quantity', 'total']"></tr>
+            </table>
+          </div>
+        </mat-expansion-panel>
+        }
+        }
+      </mat-accordion>
 
     </mat-card-content>
   </mat-card>
   <div class="group-button-container">
-    <button mat-raised-button color="primary" (click)="onPrintEvent()">
-      <mat-icon>print</mat-icon>
-      In hóa đơn
+    <button mat-raised-button color="primary" (click)="onDownloadEvent()">
+      <mat-icon>download</mat-icon>
+      Tải dữ liệu
     </button>
     <button mat-raised-button color="warn" (click)="onEditEvent()">
       <mat-icon>edit</mat-icon>
