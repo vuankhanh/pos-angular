@@ -9,9 +9,8 @@
     overflow-y: auto;
 
     mat-card-content {
-      height: 100%;
       .search-form-container {
-        max-width: 700px;
+        width: 700px;
   
         mat-form-field {
           width: 100%;
