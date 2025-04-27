@@ -7,100 +7,103 @@
 
   @if (formGroup) {
   <mat-card class="mat-card-container">
-    <mat-form-field class="search-form-container">
-      <mat-label>Tìm sản phẩm</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <input #nameOrProductEl type="text" placeholder="Nhập tên hoặc mã sản phẩm" matInput [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onChooseProductEvent($event)">
-        @for (option of filteredOptions$ | async; track option) {
-        <mat-option [value]="option">
-          <div class="product-option">
-            <span class="product-name">{{ option.name }}</span>
-            <span class="product-name">{{ option.supplierLocationName }}</span>
-            <span class="product-price">{{ option.price | vndCurrency }}</span>
-          </div>
-        </mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+    <mat-card-content>
 
-    <mat-accordion multi>
-      @if (groupedOrderItems$ | async; as groupedOrderItems) {
-      @for (group of groupedOrderItems; track $index) {
-      <mat-expansion-panel [expanded]="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{ group.productSupplierName }}
-          </mat-panel-title>
-          <mat-panel-description>
-            Tổng tiền: {{ group.totalPrice | vndCurrency }}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div class="table-container">
-          <!-- Table for order items -->
-          <table mat-table [dataSource]="group.orderItems">
-            <!-- Product Name Column -->
-            <ng-container matColumnDef="productName" [sticky]="breakpointDetection$ | async">
-              <th mat-header-cell *matHeaderCellDef> Tên sản phẩm </th>
-              <td mat-cell *matCellDef="let item"> {{ item.product.name }} </td>
-            </ng-container>
-
-            <!-- Price Column -->
-            <ng-container matColumnDef="price">
-              <th mat-header-cell *matHeaderCellDef> Đơn giá </th>
-              <td mat-cell *matCellDef="let item"> {{ item.product.price | vndCurrency }} </td>
-            </ng-container>
-
-            <!-- Quantity Column -->
-            <ng-container matColumnDef="quantity">
-              <th mat-header-cell *matHeaderCellDef> Số lượng </th>
-              <td mat-cell *matCellDef="let item">
-                <app-number-input [value]="item.quantity"
-                  (valueChange)="quantityChange($event, item)"></app-number-input>
-              </td>
-            </ng-container>
-
-            <!-- Total Column -->
-            <ng-container matColumnDef="total">
-              <th mat-header-cell *matHeaderCellDef> Tổng </th>
-              <td mat-cell *matCellDef="let item"> {{ item.itemTotal | vndCurrency }} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef> Hành động </th>
-              <td mat-cell *matCellDef="let item; let index = $index;">
-                <button mat-icon-button color="warn" (click)="removeItemQuantity(item)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </td>
-            </ng-container>
-
-            <!-- Header and Row Definitions -->
-            <tr mat-header-row *matHeaderRowDef="['productName', 'price', 'quantity', 'total', 'actions']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['productName', 'price', 'quantity', 'total', 'actions']"></tr>
-          </table>
-        </div>
-      </mat-expansion-panel>
-      }
-      }
-    </mat-accordion>
-
-    <div class="footer-bill-container horizontal-container">
-      <mat-form-field>
-        <mat-label>Trạng thái</mat-label>
-        <mat-select #statusEl (valueChange)="onStatusChange($event)">
-          @for (status of purchaseOrderStatus$ | async; track $index) {
-          <mat-option [value]="status">{{status}}</mat-option>
+      <mat-form-field class="search-form-container">
+        <mat-label>Tìm sản phẩm</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input #nameOrProductEl type="text" placeholder="Nhập tên hoặc mã sản phẩm" matInput [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onChooseProductEvent($event)">
+          @for (option of filteredOptions$ | async; track option) {
+          <mat-option [value]="option">
+            <div class="product-option">
+              <span class="product-name">{{ option.name }}</span>
+              <span class="product-name">{{ option.supplierLocationName }}</span>
+              <span class="product-price">{{ option.price | vndCurrency }}</span>
+            </div>
+          </mat-option>
           }
-        </mat-select>
+        </mat-autocomplete>
       </mat-form-field>
-      <div class="info-list">
-        <div class="info-list__item">
-          <div class="info-list__item__label"><b>Tổng cộng:</b></div>
-          <div class="info-list__item__value"><b>{{ ((totalPrice$ | async) ?? 0) | vndCurrency }}</b></div>
+  
+      <mat-accordion multi>
+        @if (groupedOrderItems$ | async; as groupedOrderItems) {
+        @for (group of groupedOrderItems; track $index) {
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ group.productSupplierName }}
+            </mat-panel-title>
+            <mat-panel-description>
+              Tổng tiền: {{ group.totalPrice | vndCurrency }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="table-container">
+            <!-- Table for order items -->
+            <table mat-table [dataSource]="group.orderItems">
+              <!-- Product Name Column -->
+              <ng-container matColumnDef="productName" [sticky]="breakpointDetection$ | async">
+                <th mat-header-cell *matHeaderCellDef> Tên sản phẩm </th>
+                <td mat-cell *matCellDef="let item"> {{ item.product.name }} </td>
+              </ng-container>
+  
+              <!-- Price Column -->
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef> Đơn giá </th>
+                <td mat-cell *matCellDef="let item"> {{ item.product.price | vndCurrency }} </td>
+              </ng-container>
+  
+              <!-- Quantity Column -->
+              <ng-container matColumnDef="quantity">
+                <th mat-header-cell *matHeaderCellDef> Số lượng </th>
+                <td mat-cell *matCellDef="let item">
+                  <app-number-input [value]="item.quantity"
+                    (valueChange)="quantityChange($event, item)"></app-number-input>
+                </td>
+              </ng-container>
+  
+              <!-- Total Column -->
+              <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef> Tổng </th>
+                <td mat-cell *matCellDef="let item"> {{ item.itemTotal | vndCurrency }} </td>
+              </ng-container>
+  
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Hành động </th>
+                <td mat-cell *matCellDef="let item; let index = $index;">
+                  <button mat-icon-button color="warn" (click)="removeItemQuantity(item)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+  
+              <!-- Header and Row Definitions -->
+              <tr mat-header-row *matHeaderRowDef="['productName', 'price', 'quantity', 'total', 'actions']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['productName', 'price', 'quantity', 'total', 'actions']"></tr>
+            </table>
+          </div>
+        </mat-expansion-panel>
+        }
+        }
+      </mat-accordion>
+  
+      <div class="footer-bill-container horizontal-container">
+        <mat-form-field>
+          <mat-label>Trạng thái</mat-label>
+          <mat-select #statusEl (valueChange)="onStatusChange($event)">
+            @for (status of purchaseOrderStatus$ | async; track $index) {
+            <mat-option [value]="status">{{status}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <div class="info-list">
+          <div class="info-list__item">
+            <div class="info-list__item__label"><b>Tổng cộng:</b></div>
+            <div class="info-list__item__value"><b>{{ ((totalPrice$ | async) ?? 0) | vndCurrency }}</b></div>
+          </div>
         </div>
       </div>
-    </div>
+    </mat-card-content>
 
     <mat-card-actions>
       @if (purchaseOrder) {

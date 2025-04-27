@@ -187,7 +187,8 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
     }
     this.bPurchaseOrderItems.next(orderItems);
     this.purchaseOrderItemsControl.setValue(orderItems);
-    this.table?.renderRows()
+    this.table?.renderRows();
+    // this.nameOrProductEl.nativeElement.blur();
   }
 
   quantityChange(value: number, orderItem: PurchaseOrderItem) {
