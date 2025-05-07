@@ -90,6 +90,13 @@ mat-option {
   }
 }
 
+:host {
+  .mat-badge-content {
+    margin-left: 10px !important;
+    top: 50%;
+  }
+}
+
 @media screen and (max-width: 699px) {
   .container {
     padding: 0;

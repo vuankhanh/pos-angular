@@ -72,6 +72,8 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
   groupedOrderItems$: Observable<GroupedOrderItems[]> = this.purchaseOrderItems$.pipe(
     map((items) => {
       const grouped = PurchaseOrderUtil.groupBySupplier(items);
+      console.log(grouped);
+      
       return grouped;
     })
   );

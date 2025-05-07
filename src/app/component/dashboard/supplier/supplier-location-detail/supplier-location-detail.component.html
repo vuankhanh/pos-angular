@@ -1,48 +1,56 @@
 @if (supplier) {
-  <mat-card>
-    <mat-card-header>
-      <div class="button-group-header">
-        <div>
-          <button mat-icon-button color="primary" (click)="goBackSupplierLocationList()">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
-        </div>
-        <div>
-          <button mat-icon-button color="primary" (click)="editSupplierLocation()">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="deleteSupplierLocation()">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
+<mat-card>
+  <mat-card-header>
+    <div class="button-group-header">
+      <div>
+        <button mat-icon-button color="primary" (click)="goBackSupplierLocationList()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
       </div>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-card-title>
+      <div>
+        <button mat-icon-button color="primary" (click)="editSupplierLocation()">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteSupplierLocation()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-card-title>
       {{ supplier.name }}
     </mat-card-title>
-      <mat-card class="mat-card-child">
-        <mat-card-content>
-          <mat-card-subtitle>Nhà cung cấp</mat-card-subtitle>
-          <div class="list-item-container">
-            <mat-icon>location_on</mat-icon>
-            @if(supplier.address; as address) {
-              <span>{{ address | address }}</span>
-            }@else {
-              <span class="additional-text-element" (click)="editSupplierLocation('address')">Thêm số điện thoại</span>
-            }
-          </div>
+    <mat-card class="mat-card-child">
+      <mat-card-content>
+        <mat-card-subtitle>Nhà cung cấp</mat-card-subtitle>
+        <div class="list-item-container">
+          <mat-icon>location_on</mat-icon>
+          @if(supplier.address; as address) {
+          <span>{{ address | address }}</span>
+          }@else {
+          <span class="additional-text-element" (click)="editSupplierLocation('address')">Thêm số điện thoại</span>
+          }
+        </div>
 
-          <div class="list-item-container">
-            <mat-icon>phone</mat-icon>
-            @if(supplier.telephone; as telephone) {
-              <span>{{ telephone | phoneNumber }}</span>
-            }@else {
-              <span class="additional-text-element" (click)="editSupplierLocation('telephone')">Thêm số điện thoại</span>
-            }
+        <div class="list-item-container">
+          <mat-icon>phone</mat-icon>
+          @if(supplier.telephone; as telephone) {
+          <span>{{ telephone | phoneNumber }}</span>
+          }@else {
+          <span class="additional-text-element" (click)="editSupplierLocation('telephone')">Thêm số điện thoại</span>
+          }
+        </div>
+
+        <div class="list-item-container debt-container">
+          <mat-icon>money_bag</mat-icon>
+          <div class="additional-text-element horizontal-container" (click)="updateDebt()">
+            <span><b>{{ (supplier.debt?.amount || 0) | vndCurrency }}</b></span>
+            <p [innerHTML]="supplier.debt?.note | replaceNewLine"></p>
           </div>
-        </mat-card-content>
-      </mat-card>
-    </mat-card-content>
-  </mat-card>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-card-content>
+</mat-card>
 }

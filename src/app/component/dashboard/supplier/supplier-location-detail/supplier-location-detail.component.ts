@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MaterialModule } from '../../../../shared/module/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TSupplierLocationModel } from '../shared/interface/supplier-location.interface';
+import { ISupplierLocation, TSupplierLocationModel } from '../shared/interface/supplier-location.interface';
 import { TConfirmDialogData } from '../../../../shared/interface/confirm_dialog.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmComponent } from '../../../../shared/component/dialog/confirm/confirm.component';
@@ -11,6 +11,9 @@ import { filter, map, Subscription, switchMap } from 'rxjs';
 import { LocationService } from '../shared/service/api/location.service';
 import { AddressPipe } from '../../../../shared/pipe/address.pipe';
 import { PhoneNumberPipe } from '../../../../shared/pipe/phone-number.pipe';
+import { CurrencyCustomPipe } from '../../../../shared/pipe/currency-custom.pipe';
+import { UpdateSupplierDebtComponent } from '../../../../shared/component/dialog/update-supplier-debt/update-supplier-debt.component';
+import { ReplaceNewLinePipe } from '../../../../shared/pipe/replace-new-line.pipe';
 
 @Component({
   selector: 'app-supplier-location-detail',
@@ -20,6 +23,8 @@ import { PhoneNumberPipe } from '../../../../shared/pipe/phone-number.pipe';
 
     PhoneNumberPipe,
     AddressPipe,
+    CurrencyCustomPipe,
+    ReplaceNewLinePipe,
 
     MaterialModule
   ],
@@ -63,6 +68,26 @@ export class SupplierLocationDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/supplier/location-edit'], {
       queryParams: { elementFocus, _id: this.supplier?._id }
     });
+  }
+
+  updateDebt() {
+    console.log(`update debt, ${this.supplier?.debt}`);
+    const dialogRef = this.dialog.open(UpdateSupplierDebtComponent, {
+      data: this.supplier
+    });
+
+    this.subscription.add(
+      dialogRef.afterClosed().pipe(
+        filter(result => !!result)
+      ).subscribe({
+        next: (res: TSupplierLocationModel) => {
+          this.supplier = res;
+        },
+        error: error => {
+          console.error(error);
+        }
+      })
+    )
   }
 
   deleteSupplierLocation() {
