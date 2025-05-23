@@ -15,7 +15,9 @@
       <div class="info-list">
         <div class="info-list__item">
           <div class="info-list__item__label">Trạng thái:</div>
-          <div class="info-list__item__value">{{ purchaseOrder.status }}</div>
+          <div class="info-list__item__value">
+            <app-status-color [status]="purchaseOrder.status"></app-status-color>
+          </div>
         </div>
         <div class="info-list__item">
           <div class="info-list__item__label">Tổng tiền:</div>
@@ -28,15 +30,9 @@
         <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              <div
-                [matBadge]="group.productSupplierDebt > 0 ? '+' : '-'"
-                matBadgeDescription="Công nợ"
-                [matBadgeHidden]="group.productSupplierDebt === 0"
-                matBadgeOverlap="true"
-                matBadgeSize="small"
-                [matBadgeColor]="group.productSupplierDebt > 0 ? 'primary' : 'warn'"
-              >
+              <div>
                 {{ group.productSupplierName }}
+                <mat-icon style="display: none; font-size: unset;" [asyncDebtBadge]="group.productSupplierId">add_circle</mat-icon>
               </div>
             </mat-panel-title>
             <mat-panel-description>

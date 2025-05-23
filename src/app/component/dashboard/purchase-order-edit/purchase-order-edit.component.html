@@ -32,7 +32,7 @@
         <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              <div
+              <!-- <div
                 [matBadge]="group.productSupplierDebt > 0 ? '+' : '-'"
                 matBadgeDescription="Công nợ"
                 [matBadgeHidden]="group.productSupplierDebt === 0"
@@ -41,7 +41,7 @@
                 [matBadgeColor]="group.productSupplierDebt > 0 ? 'primary' : 'warn'"
               >
                 {{ group.productSupplierName }}
-              </div>
+              </div> -->
             </mat-panel-title>
             <mat-panel-description>
               Tổng tiền: {{ group.totalPrice | vndCurrency }}

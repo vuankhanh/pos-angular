@@ -13,6 +13,9 @@ import { PurchaseOrderUtil } from '../../../shared/utitl/purchase-order.util';
 import { MatCard } from '@angular/material/card';
 
 import { Html2canvasService } from '../../../shared/service/html2canvas.service';
+import { StatusColorComponent } from '../../../shared/component/status-color/status-color.component';
+import { AsyncDebtBadgeDirective } from '../../../shared/directive/async-debt-badge.directive';
+import { LongPressDirective } from '../../../shared/directive/long-press.directive';
 
 @Component({
   selector: 'app-purchase-order-detail',
@@ -20,7 +23,9 @@ import { Html2canvasService } from '../../../shared/service/html2canvas.service'
   imports: [
     CommonModule,
 
+    StatusColorComponent,
     CurrencyCustomPipe,
+    AsyncDebtBadgeDirective,
 
     MaterialModule
   ],
@@ -41,8 +46,8 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
   purchaseOrderItems$: Observable<PurchaseOrderItem[]> = this.bPurchaseOrderItems.asObservable();
   groupedOrderItems$: Observable<GroupedOrderItems[]> = this.purchaseOrderItems$.pipe(
     map((items) => {
+      console.log(items);
       const grouped = PurchaseOrderUtil.groupBySupplier(items);
-      console.log(grouped);
       
       return grouped;
     })
@@ -93,6 +98,24 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
 
   goBackOrderList() {
     this.router.navigate(['/purchase-order']);
+  }
+
+  onPanelTitleLongTouch(event: Event) {
+    console.log(event);
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onPanelTitleLongPress(event: Event) {
+    console.log(event);
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onPanelTitleClick(event: Event) {
+    console.log(event);
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   async onDownloadEvent() {

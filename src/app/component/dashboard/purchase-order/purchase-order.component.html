@@ -3,14 +3,27 @@
     <div class="group-button-row">
       <button mat-raised-button color="primary" (click)="onCreateEvent()">
         <mat-icon>add</mat-icon>
-        Thêm sản phẩm
+        Thêm đơn hàng
       </button>
     </div>
   </section>
   @if (purchaseOrders) {
     <section class="table-container mat-elevation-z8" tabindex="0">
       <table mat-table [dataSource]="purchaseOrders" class="mat-elevation-z8">
-        <ng-container matColumnDef="code" [sticky]="breakpointDetection$ | async">
+
+        <ng-container matColumnDef="status" [sticky]="breakpointDetection$ | async">
+          <th mat-header-cell *matHeaderCellDef> Trạng thái </th>
+          <td mat-cell *matCellDef="let item">
+            <app-status-color [status]="item.status"></app-status-color>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef> Ngày tháng </th>
+          <td mat-cell *matCellDef="let item">{{item.createdAt | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="code">
           <th mat-header-cell *matHeaderCellDef> Mã </th>
           <td mat-cell *matCellDef="let item"> {{item.orderCode}} </td>
         </ng-container>
@@ -18,11 +31,6 @@
         <ng-container matColumnDef="totalPrice">
           <th mat-header-cell *matHeaderCellDef> Tổng tiền </th>
           <td mat-cell *matCellDef="let item"> {{item.totalPrice | vndCurrency}} </td>
-        </ng-container>
-  
-        <ng-container matColumnDef="createdAt">
-          <th mat-header-cell *matHeaderCellDef> Ngày tháng </th>
-          <td mat-cell *matCellDef="let item">{{item.createdAt | date:'dd/MM/yyyy HH:mm:ss'}}</td>
         </ng-container>
   
         <!-- Action Column -->

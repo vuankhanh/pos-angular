@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../../../../environments/environment.development';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ISupplierDebt, ISupplierLocation, ISupplierLocationDetailResponse, ISupplierLocationResponse, TSupplierLocationModel } from '../../interface/supplier-location.interface';
+import { ISupplierDebt, ISupplierLocation, ISupplierLocationDebtResponse, ISupplierLocationDetailResponse, ISupplierLocationResponse, TSupplierLocationModel } from '../../interface/supplier-location.interface';
 import { EMPTY, expand, map, Observable, tap, toArray } from 'rxjs';
 import { IPagination } from '../../../../../../shared/interface/pagination.interface';
 
@@ -62,6 +62,12 @@ export class LocationService {
 
   update(id: string, data: Partial<ISupplierLocation>) {
     return this.httpClient.patch<ISupplierLocationDetailResponse>(this.url + '/' + id, data).pipe(
+      map(res => res.metaData)
+    );
+  }
+
+  getDebtBySupplierId(id: string) {
+    return this.httpClient.get<ISupplierLocationDebtResponse>(this.url + '/' + id + '/debt').pipe(
       map(res => res.metaData)
     );
   }

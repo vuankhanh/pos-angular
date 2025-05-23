@@ -4,12 +4,10 @@ import { PurchaseOrderItem } from "../interface/purchase-order.interface";
 export class PurchaseOrderUtil {
   static groupBySupplier(orderItems: PurchaseOrderItem[]): GroupedOrderItems[] {
     const grouped = orderItems.reduce((acc, item) => {
-      console.log(item);
-      
       const supplierName = item.product.supplierLocationName; // Assuming `supplierName` exists in product
-      const supplierDebt = item.product.supplierLocationDebt?.amount || 0; // Assuming `supplierDebt` exists in product
+      const supplierId = item.product.supplierLocationId; // Assuming `supplierId` exists in product
       if (!acc[supplierName]) {
-        acc[supplierName] = { productSupplierName: supplierName, productSupplierDebt: supplierDebt, orderItems: [], totalPrice: 0 };
+        acc[supplierName] = { productSupplierName: supplierName, productSupplierId: supplierId, orderItems: [], totalPrice: 0 };
       }
       acc[supplierName].orderItems.push(item);
       acc[supplierName].totalPrice += item.itemTotal;

@@ -1,0 +1,21 @@
+.status-badge {
+  color: #fff;
+  padding: 2px 10px;
+  border-radius: 12px;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+  &.status-created {
+    background: #e53935; // Đỏ
+  }
+  &.status-confirmed {
+    background: #fbc02d; // Vàng
+  }
+  &.status-completed {
+    background: #43a047; // Xanh lá
+  }
+  &.status-canceled {
+    color: #999999;
+    background: #ededed; // Xanh dương
+  }
+}

@@ -9,6 +9,7 @@ import { BreakpointDetectionService } from '../../../shared/service/breakpoint-d
 import { Subscription } from 'rxjs';
 import { PurchaseOrderService } from '../../../shared/service/api/purchase-order.service';
 import { CurrencyCustomPipe } from '../../../shared/pipe/currency-custom.pipe';
+import { StatusColorComponent } from '../../../shared/component/status-color/status-color.component';
 
 @Component({
   selector: 'app-purchase-order',
@@ -16,6 +17,7 @@ import { CurrencyCustomPipe } from '../../../shared/pipe/currency-custom.pipe';
   imports: [
     CommonModule,
 
+    StatusColorComponent,
     CurrencyCustomPipe,
 
     MaterialModule
@@ -28,7 +30,7 @@ export class PurchaseOrderComponent implements OnInit, OnDestroy {
   private readonly breakpointDetectionService = inject(BreakpointDetectionService);
   private readonly purchaseOrderService = inject(PurchaseOrderService);
   purchaseOrders: TPurchaseOrder[] = [];
-  displayedColumns = ['code', 'totalPrice', 'createdAt', 'action'];
+  displayedColumns = ['status', 'createdAt', 'code', 'totalPrice', 'action'];
   paging: IPagination = paginationConstant;
   breakpointDetection$ = this.breakpointDetectionService.detection$();
 

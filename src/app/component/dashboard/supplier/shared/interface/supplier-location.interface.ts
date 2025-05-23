@@ -47,3 +47,10 @@ export interface ISupplierLocationResponse extends ISuccess {
 export interface ISupplierLocationDetailResponse extends ISuccess {
   metaData: TSupplierLocationModel
 }
+
+type ISupplierLocationDebtResponseData = ISupplierDebt & IMongodbDocument;
+export interface ISupplierLocationDebtResponse extends ISuccess {
+  metaData: {
+    debt: ISupplierDebt
+  } & IMongodbDocument;
+}
