@@ -18,10 +18,9 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
 import { PurchaseOrderStatus, purchaseOrderStatus$ } from '../../../constant/order.constant';
 import { MatSelect } from '@angular/material/select';
-import { FeeDiscountComponent } from '../../../shared/component/dialog/fee-discount/fee-discount.component';
-import { numberValidator } from '../../../shared/utitl/form-validator.util';
 import { isEqual } from 'lodash';
 import { PurchaseOrderUtil } from '../../../shared/utitl/purchase-order.util';
+import { AsyncDebtBadgeDirective } from '../../../shared/directive/async-debt-badge.directive';
 
 @Component({
   selector: 'app-purchase-order-edit',
@@ -32,6 +31,7 @@ import { PurchaseOrderUtil } from '../../../shared/utitl/purchase-order.util';
 
     NumberInputComponent,
     CurrencyCustomPipe,
+    AsyncDebtBadgeDirective,
 
     MaterialModule
   ],

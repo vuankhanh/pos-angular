@@ -23,14 +23,37 @@ export class OnlyNumberDirective implements ControlValueAccessor {
   constructor(private el: ElementRef, private renderer: Renderer2) { }
 
   @HostListener('input', ['$event']) onInputChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+    const target = event.target as HTMLInputElement;
+    let value = target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
     console.log(value);
     
     // Remove leading zeros
     value = value.replace(/^0+/, '');
+    // if(!this.allowZero){
+    //   if (value === '' || value === '0') {
+    //     value = '1'; // Auto fill 1 if empty or 0
+    //   }
+    // }else{
+    //   if (value === ''){
+    //     value = '0';
+    //   }
+    // }
+
+    if (this.limitedValue && Number(value) > 999) {
+      value = '999'; // Limit to 999
+    }
+
+    this.renderer.setProperty(target, 'value', value);
+    this.onChange(Number(value)); // Set value as number
+  }
+
+  @HostListener('blur', ['$event']) onBlur(event: FocusEvent) {
+    const target = event.target as HTMLInputElement;
+    let value = target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+    console.log('Blur event triggered');
+    console.log(value);
+    
     if(!this.allowZero){
-  
       if (value === '' || value === '0') {
         value = '1'; // Auto fill 1 if empty or 0
       }
@@ -40,12 +63,9 @@ export class OnlyNumberDirective implements ControlValueAccessor {
       }
     }
 
-    if (this.limitedValue && Number(value) > 999) {
-      value = '999'; // Limit to 999
-    }
-
-    this.renderer.setProperty(input, 'value', value);
+    this.renderer.setProperty(target, 'value', value);
     this.onChange(Number(value)); // Set value as number
+    
   }
 
   @HostListener('paste', ['$event']) onPaste(event: ClipboardEvent) {
