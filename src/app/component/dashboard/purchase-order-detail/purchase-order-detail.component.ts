@@ -4,7 +4,7 @@ import { BehaviorSubject, lastValueFrom, map, Observable, Subscription, switchMa
 import { ActivatedRoute, Router } from '@angular/router';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MaterialModule } from '../../../shared/module/material';
 import { CurrencyCustomPipe } from '../../../shared/pipe/currency-custom.pipe';
 import { PurchaseOrderService } from '../../../shared/service/api/purchase-order.service';
@@ -39,7 +39,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
   private readonly breakpointDetectionService: BreakpointDetectionService = inject(BreakpointDetectionService);
   private readonly purchaseOrderService: PurchaseOrderService = inject(PurchaseOrderService);
   private readonly html2canvasService = inject(Html2canvasService)
-  
+
   purchaseOrder?: TPurchaseOrder;
 
   private readonly bPurchaseOrderItems: BehaviorSubject<PurchaseOrderItem[]> = new BehaviorSubject<PurchaseOrderItem[]>([]);
@@ -48,7 +48,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
     map((items) => {
       console.log(items);
       const grouped = PurchaseOrderUtil.groupBySupplier(items);
-      
+
       return grouped;
     })
   );
@@ -87,7 +87,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
           });
 
           this.bPurchaseOrderItems.next(purchaseOrderItems);
-          
+
         },
         error: error => {
           this.goBackOrderList();
@@ -100,41 +100,55 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/purchase-order']);
   }
 
-  onPanelTitleLongTouch(event: Event) {
-    console.log(event);
-    event.preventDefault();
+  async onDownloadSingle(event: MouseEvent | TouchEvent, groupedOrderItem: GroupedOrderItems) {
     event.stopPropagation();
-  }
-
-  onPanelTitleLongPress(event: Event) {
-    console.log(event);
     event.preventDefault();
-    event.stopPropagation();
-  }
 
-  onPanelTitleClick(event: Event) {
-    console.log(event);
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  async onDownloadEvent() {
     const status = this.purchaseOrder!.status;
+    const orderCode = this.purchaseOrder!.orderCode;
+    const createdAt = this.purchaseOrder!.createdAt;
     try {
-      const groupedOrderItems = await lastValueFrom(this.groupedOrderItems$.pipe(take(1)));
-      console.log(groupedOrderItems);
-      const totalAmount = await lastValueFrom(this.totalPrice$.pipe(take(1)));
-
-      console.log(totalAmount);
-      
-      const image = await this.html2canvasService.captureTableFromArray(status, totalAmount, groupedOrderItems, 800, 600)
+      const image = await this.html2canvasService.captureTableFromObject(
+        status,
+        orderCode,
+        groupedOrderItem,
+        createdAt,
+        800,
+        600
+      );
       const link = document.createElement('a');
       link.href = image;
-      link.download = 'grouped-order-items.png';
+      const extension = 'png';
+      link.download = [orderCode, extension].join('.');
       link.click();
     } catch (error) {
       console.error('Error capturing table:', error);
-      
+    }
+  }
+
+  async onDownloadMultiple() {
+    const status = this.purchaseOrder!.status;
+    const orderCode = this.purchaseOrder!.orderCode;
+    const createdAt = this.purchaseOrder!.createdAt;
+    try {
+      const groupedOrderItems = await lastValueFrom(this.groupedOrderItems$.pipe(take(1)));
+      const totalAmount = await lastValueFrom(this.totalPrice$.pipe(take(1)));
+
+      const image = await this.html2canvasService.captureTableFromArray(
+        status,
+        orderCode,
+        totalAmount,
+        groupedOrderItems,
+        createdAt,
+        800,
+        600)
+      const link = document.createElement('a');
+      link.href = image;
+      const extension = 'png';
+      link.download = [orderCode, extension].join('.');
+      link.click();
+    } catch (error) {
+      console.error('Error capturing table:', error);
     }
   }
 

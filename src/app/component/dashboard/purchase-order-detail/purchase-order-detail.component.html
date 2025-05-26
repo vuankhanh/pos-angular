@@ -37,6 +37,9 @@
             </mat-panel-title>
             <mat-panel-description>
               Tổng tiền: {{ group.totalPrice | vndCurrency }}
+              <button mat-icon-button (click)="onDownloadSingle($event, group)">
+                <mat-icon>download</mat-icon>
+              </button>
             </mat-panel-description>
           </mat-expansion-panel-header>
           <div class="table-container">
@@ -81,7 +84,7 @@
     </mat-card-content>
     <mat-card-actions>
       <div class="group-button-container">
-        <button mat-raised-button color="primary" (click)="onDownloadEvent()">
+        <button mat-raised-button color="primary" (click)="onDownloadMultiple()">
           <mat-icon>download</mat-icon>
           Tải dữ liệu
         </button>

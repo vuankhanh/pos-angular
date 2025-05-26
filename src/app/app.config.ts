@@ -12,6 +12,7 @@ import { LoadingInterceptor } from './shared/core/interceptors/loading.intercept
 import { provideToastr, ToastrService } from 'ngx-toastr';
 import { AddressPipe } from './shared/pipe/address.pipe';
 import { ReplaceNewLinePipe } from './shared/pipe/replace-new-line.pipe';
+import { DatePipe } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     SetBaseUrlPipe,
     CurrencyCustomPipe,
     AddressPipe,
-    ReplaceNewLinePipe
+    ReplaceNewLinePipe,
+    DatePipe
   ]
 };
