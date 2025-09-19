@@ -5,7 +5,7 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { MatTable } from '@angular/material/table';
 import { PurchaseOrderItem, TPurchaseOrder } from '../../../shared/interface/purchase-order.interface';
 import { TSupplierProductModel } from '../supplier/shared/interface/supplier-product.interface';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, of, skipWhile, Subscription, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, of, Subscription, switchMap, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from '../supplier/shared/service/api/product.service';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
@@ -60,6 +60,7 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
   private readonly formBuilder = inject(FormBuilder);
 
   formGroup!: FormGroup;
+  private initialFormValue: unknown;
   private readonly bControlFormChanged: BehaviorSubject<{ [key: string]: any }> = new BehaviorSubject<{ [key: string]: any }>({});
   private readonly controlFormChanged$: Observable<{ [key: string]: any }> = this.bControlFormChanged.asObservable();
   isFormChanged$: Observable<boolean> = this.controlFormChanged$.pipe(
@@ -106,9 +107,8 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
       purchaseOrderItems: [this.purchaseOrder?.purchaseOrderItems || [], [Validators.required, Validators.minLength(1)]]
     });
 
-    const initialFormValue = this.formGroup.getRawValue();
-    console.log(initialFormValue);
-
+    this.initialFormValue = this.formGroup.getRawValue();
+    
     this.subscription.add(
       this.formGroup.valueChanges.subscribe(value => {
         const changedControls: { [key: string]: any } = {};
@@ -264,7 +264,7 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
     this.subscription.add(
       api$.subscribe({
         next: res => {
-          this.formGroup.reset();
+          this.formGroup.reset(this.initialFormValue);
           this.bControlFormChanged.next({});
           this.backToOrderDetail();
         },
@@ -291,14 +291,10 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
 
   backToOrderDetail() {
     const commands = this.purchaseOrder?._id ? ['/purchase-order', this.purchaseOrder?._id] : ['/purchase-order'];
-    console.log(commands);
-
     this.router.navigate(commands);
   }
 
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
-    
-
     if (!this.purchaseOrder){
       const purchaseOrderItemsLength = this.formGroup.get('purchaseOrderItems')?.value.length;
       console.log(purchaseOrderItemsLength);
