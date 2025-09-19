@@ -5,7 +5,7 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { MatTable } from '@angular/material/table';
 import { PurchaseOrderItem, TPurchaseOrder } from '../../../shared/interface/purchase-order.interface';
 import { TSupplierProductModel } from '../supplier/shared/interface/supplier-product.interface';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, map, Observable, of, skipWhile, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, of, skipWhile, Subscription, switchMap, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from '../supplier/shared/service/api/product.service';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
@@ -21,6 +21,12 @@ import { MatSelect } from '@angular/material/select';
 import { isEqual } from 'lodash';
 import { PurchaseOrderUtil } from '../../../shared/utitl/purchase-order.util';
 import { AsyncDebtBadgeDirective } from '../../../shared/directive/async-debt-badge.directive';
+import { LongPressDirective } from "../../../shared/directive/long-press.directive";
+import { InputFeeComponent } from '../../../shared/component/input-fee/input-fee.component';
+import { IInputFeeDialogData } from '../../../shared/interface/input-fee-dialog.interface';
+import { CanComponentDeactivate } from '../../../shared/interface/can-component-deactivate.interface';
+import { ConfirmComponent } from '../../../shared/component/dialog/confirm/confirm.component';
+import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.interface';
 
 @Component({
   selector: 'app-purchase-order-edit',
@@ -28,17 +34,16 @@ import { AsyncDebtBadgeDirective } from '../../../shared/directive/async-debt-ba
   imports: [
     CommonModule,
     ReactiveFormsModule,
-
     NumberInputComponent,
     CurrencyCustomPipe,
     AsyncDebtBadgeDirective,
-
-    MaterialModule
+    MaterialModule,
+    LongPressDirective
   ],
   templateUrl: './purchase-order-edit.component.html',
   styleUrl: './purchase-order-edit.component.scss'
 })
-export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDestroy, CanComponentDeactivate {
   @ViewChild('nameOrProductEl') nameOrProductEl!: ElementRef<MatInput>;
   @ViewChild('statusEl') statusEl!: MatSelect;
   @ViewChild(MatTable) table?: MatTable<any>;
@@ -59,8 +64,6 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
   private readonly controlFormChanged$: Observable<{ [key: string]: any }> = this.bControlFormChanged.asObservable();
   isFormChanged$: Observable<boolean> = this.controlFormChanged$.pipe(
     map((value: { [key: string]: any }) => {
-      console.log(value);
-
       return Object.keys(value).length > 0;
     }),
   );
@@ -72,8 +75,6 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
   groupedOrderItems$: Observable<GroupedOrderItems[]> = this.purchaseOrderItems$.pipe(
     map((items) => {
       const grouped = PurchaseOrderUtil.groupBySupplier(items);
-      console.log(grouped);
-      
       return grouped;
     })
   );
@@ -106,6 +107,7 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
     });
 
     const initialFormValue = this.formGroup.getRawValue();
+    console.log(initialFormValue);
 
     this.subscription.add(
       this.formGroup.valueChanges.subscribe(value => {
@@ -121,34 +123,36 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
         this.bControlFormChanged.next(changedControls);
       })
     )
-    this.activatedRoute.queryParamMap.pipe(
-      switchMap(params => {
-        const id: string = params.get('_id') as string;
-        const purchaseOrderService$ = id ? this.purchaseOrderService.getDetail(id) : of(null);
-        return purchaseOrderService$;
-      }),
-    ).subscribe({
-      next: (purchaseOrder) => {
-        if (purchaseOrder) {
-          // Xử lý purchaseOrderDetail
-          const purchaseOrderItems: PurchaseOrderItem[] = purchaseOrder.purchaseOrderItems.map(item => {
-            return new PurchaseOrderItem({
-              product: item.product,
-              quantity: item.quantity,
-              discount: item.discount || 0
+    this.subscription.add(
+      this.activatedRoute.queryParamMap.pipe(
+        switchMap(params => {
+          const id: string = params.get('_id') as string;
+          const purchaseOrderService$ = id ? this.purchaseOrderService.getDetail(id) : of(null);
+          return purchaseOrderService$;
+        }),
+      ).subscribe({
+        next: (purchaseOrder) => {
+          if (purchaseOrder) {
+            // Xử lý purchaseOrderDetail
+            const purchaseOrderItems: PurchaseOrderItem[] = purchaseOrder.purchaseOrderItems.map(item => {
+              return new PurchaseOrderItem({
+                product: item.product,
+                quantity: item.quantity,
+                discount: item.discount || 0
+              });
             });
-          });
 
-          this.bPurchaseOrderItems.next(purchaseOrderItems);
-          this.purchaseOrder = purchaseOrder;
+            this.bPurchaseOrderItems.next(purchaseOrderItems);
+            this.purchaseOrder = purchaseOrder;
+          }
+          this.formGroup.get('status')?.setValue(purchaseOrder?.status || PurchaseOrderStatus.CREATED);
+          this.formGroup.get('purchaseOrderItems')?.setValue(purchaseOrder?.purchaseOrderItems || []);
+        },
+        error: error => {
+          this.backToOrderDetail();
         }
-        this.formGroup.get('status')?.setValue(purchaseOrder?.status || PurchaseOrderStatus.CREATED);
-        this.formGroup.get('purchaseOrderItems')?.setValue(purchaseOrder?.purchaseOrderItems || []);
-      },
-      error: error => {
-        this.backToOrderDetail();
-      }
-    });
+      })
+    )
   }
 
   get purchaseOrderItemsControl() {
@@ -192,6 +196,44 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
     this.table?.renderRows();
   }
 
+  onPriceLongPress(event: MouseEvent, orderItem: PurchaseOrderItem) {
+    event.preventDefault();
+    this.openInputPriceDialog(orderItem);
+  }
+
+  onPriceLongTouch(event: TouchEvent, orderItem: PurchaseOrderItem) {
+    event.preventDefault();
+    this.openInputPriceDialog(orderItem);
+  }
+
+  private openInputPriceDialog(orderItem: PurchaseOrderItem) {
+    const data: IInputFeeDialogData = {
+      title: 'Cập nhật giá mới',
+      message: 'Cập nhật giá mới',
+      fee: orderItem.product.price
+    }
+    const dialogRef = this.dialog.open(InputFeeComponent, {
+      data
+    });
+
+    this.subscription.add(
+      dialogRef.afterClosed().pipe(
+        filter(result => !!result),
+        switchMap((price: number) => this.productService.update(orderItem.product._id, { price }))
+      ).subscribe(result => {
+        if (result) {
+          console.log(result);
+          orderItem.product.price = result.price;
+          orderItem.itemTotal = orderItem.product.price * orderItem.quantity;
+          const orderItems = this.bPurchaseOrderItems.value;
+          this.bPurchaseOrderItems.next(orderItems);
+          this.purchaseOrderItemsControl.setValue(orderItems);
+          this.table?.renderRows();
+        }
+      })
+    )
+  }
+
   quantityChange(value: number, orderItem: PurchaseOrderItem) {
     orderItem.quantity = value;
     orderItem.itemTotal = orderItem.product.price * orderItem.quantity;
@@ -222,6 +264,8 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
     this.subscription.add(
       api$.subscribe({
         next: res => {
+          this.formGroup.reset();
+          this.bControlFormChanged.next({});
           this.backToOrderDetail();
         },
         error: error => {
@@ -247,7 +291,44 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
 
   backToOrderDetail() {
     const commands = this.purchaseOrder?._id ? ['/purchase-order', this.purchaseOrder?._id] : ['/purchase-order'];
+    console.log(commands);
+
     this.router.navigate(commands);
+  }
+
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    
+
+    if (!this.purchaseOrder){
+      const purchaseOrderItemsLength = this.formGroup.get('purchaseOrderItems')?.value.length;
+      console.log(purchaseOrderItemsLength);
+      
+      if(purchaseOrderItemsLength === 0) return true;
+
+      return this.openConfirmDialog();
+    };
+
+    return this.isFormChanged$.pipe(
+      switchMap(isChanged => {
+        if (!isChanged) return of(true);
+
+        return this.openConfirmDialog();
+      })
+    );
+  }
+
+  private openConfirmDialog() {
+    const data: TConfirmDialogData = {
+      title: 'Xử lý thay đổi',
+      message: 'Bản thay đổi chưa lưu. Bản cơ chúc muốn hóa khóa bản thay đổi?',
+      cancelText: 'Hủy',
+      confirmText: 'Vẫn thoát'
+    }
+
+    return this.dialog.open(ConfirmComponent, { data }).afterClosed().pipe(
+      map(result => !!result),
+      tap((result) => console.log(result))
+    ); 
   }
 
   ngOnDestroy(): void {

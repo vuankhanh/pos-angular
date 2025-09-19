@@ -1,0 +1,19 @@
+<div class="container vertical-container">
+  <h2 mat-dialog-title>{{data.title}}</h2>
+  <mat-dialog-content>
+    <p>{{data.message}}</p>
+    <mat-form-field appearance="fill">
+      <mat-label>Nhập số tiền</mat-label>
+      <input matInput type="number" [formControl]="feeControl" type="tel" inputmode="numeric" mask="separator.0"
+        thousandSeparator="." suffix=" VND" [allowNegativeNumbers]="false" />
+      <mat-error *ngIf="feeControl.invalid">Hãy nhập số tiền hợp lệ.</mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="dialogRef.close()">{{data.cancelText ?? 'Hủy'}}</button>
+
+    <button mat-button (click)="updateFee()" [disabled]="feeControl.invalid"
+      cdkFocusInitial>{{data.confirmText ?? 'Xác nhận'}}</button>
+
+  </mat-dialog-actions>
+</div>

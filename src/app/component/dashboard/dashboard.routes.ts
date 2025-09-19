@@ -15,6 +15,7 @@ import { OrderEditComponent } from "./order-edit/order-edit.component";
 import { PurchaseOrderComponent } from "./purchase-order/purchase-order.component";
 import { PurchaseOrderDetailComponent } from "./purchase-order-detail/purchase-order-detail.component";
 import { PurchaseOrderEditComponent } from "./purchase-order-edit/purchase-order-edit.component";
+import { unsavedChangesGuard } from "../../shared/core/guard/unsaved-changes.guard";
 
 export const routes: Routes = [
   {
@@ -93,7 +94,8 @@ export const routes: Routes = [
       },
       {
         path: 'purchase-order-edit',
-        component: PurchaseOrderEditComponent
+        component: PurchaseOrderEditComponent,
+        canDeactivate: [unsavedChangesGuard]
       },
       {
         path: 'supplier',

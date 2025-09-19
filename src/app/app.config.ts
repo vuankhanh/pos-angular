@@ -13,6 +13,7 @@ import { provideToastr, ToastrService } from 'ngx-toastr';
 import { AddressPipe } from './shared/pipe/address.pipe';
 import { ReplaceNewLinePipe } from './shared/pipe/replace-new-line.pipe';
 import { DatePipe } from '@angular/common';
+import { provideNgxMask } from 'ngx-mask';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,6 +29,7 @@ export const appConfig: ApplicationConfig = {
       positionClass: 'toast-bottom-center',
       preventDuplicates: true,
     }),
+    provideNgxMask(),
     ToastrService,
     SetBaseUrlPipe,
     CurrencyCustomPipe,

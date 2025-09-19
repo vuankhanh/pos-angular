@@ -18,7 +18,8 @@
 
       <mat-form-field>
         <mat-icon matPrefix>attach_money</mat-icon>
-        <input #formElement matInput placeholder="Đơn giá" formControlName="price">
+        <input #formElement matInput placeholder="Đơn giá" formControlName="price" type="tel" inputmode="numeric" mask="separator.0"
+        thousandSeparator="." suffix=" VND" [allowNegativeNumbers]="false" >
       </mat-form-field>
 
       <mat-form-field>

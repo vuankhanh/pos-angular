@@ -1,6 +1,6 @@
 server {
   listen 80;
-  server_name pos.bep4than.online;
+  server_name pos.bep4than.vn;
 
   root /var/www/front-end/pos-angular/browser;
   index index.html;

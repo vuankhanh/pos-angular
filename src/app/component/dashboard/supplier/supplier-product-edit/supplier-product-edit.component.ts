@@ -11,6 +11,7 @@ import { LocationService } from '../shared/service/api/location.service';
 import { MatInput } from '@angular/material/input';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { SupplierProductUnit } from '../../../../constant/product.constant';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-supplier-product-edit',
@@ -18,6 +19,8 @@ import { SupplierProductUnit } from '../../../../constant/product.constant';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+
+    NgxMaskDirective,
 
     MaterialModule
   ],
