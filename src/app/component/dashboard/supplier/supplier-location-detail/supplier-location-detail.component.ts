@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MaterialModule } from '../../../../shared/module/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ISupplierLocation, TSupplierLocationModel } from '../shared/interface/supplier-location.interface';
+import { TSupplierLocationModel } from '../shared/interface/supplier-location.interface';
 import { TConfirmDialogData } from '../../../../shared/interface/confirm_dialog.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmComponent } from '../../../../shared/component/dialog/confirm/confirm.component';
@@ -54,8 +54,6 @@ export class SupplierLocationDetailComponent implements OnInit, OnDestroy {
       supplierDetail$.subscribe({
         next: res => {
           this.supplier = res;
-          console.log(this.supplier);
-
         },
         error: error => {
           this.goBackSupplierLocationList();
@@ -71,7 +69,6 @@ export class SupplierLocationDetailComponent implements OnInit, OnDestroy {
   }
 
   updateDebt() {
-    console.log(`update debt, ${this.supplier?.debt}`);
     const dialogRef = this.dialog.open(UpdateSupplierDebtComponent, {
       data: this.supplier
     });

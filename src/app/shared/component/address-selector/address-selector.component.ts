@@ -80,8 +80,6 @@ export class AddressSelectorComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   ngOnInit(): void {
-    console.log(this.address);
-    
     this.setProvince$();
 
     this.provinceControl.setValue(this.address?.province);
@@ -161,9 +159,7 @@ export class AddressSelectorComponent implements OnInit, AfterViewInit, OnDestro
     this.provinceEl.nativeElement.value = this.address?.province?.name || '';
     this.districtEl.nativeElement.value = this.address?.district?.name || '';
     this.wardEl.nativeElement.value = this.address?.ward?.name || '';
-
-    console.log(this.address);
-    
+       
     this.renderer.listen(this.provinceEl.nativeElement, 'input', (event: InputEvent ) => {
       this.bProvinceInputChange.next(this.provinceEl.nativeElement.value);
     });

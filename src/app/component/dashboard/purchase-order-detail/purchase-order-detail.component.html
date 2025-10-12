@@ -35,7 +35,7 @@
                 <mat-icon style="display: none; font-size: unset;" [asyncDebtBadge]="group.productSupplierId">add_circle</mat-icon>
               </div>
             </mat-panel-title>
-            <mat-panel-description>
+            <mat-panel-description appLongPress (longPress)="onTotalPriceLongPress($event, group)" (longTouch)="onTotalPriceLongTouch($event, group)">
               Tổng tiền: {{ group.totalPrice | vndCurrency }}
               <button mat-icon-button (click)="onDownloadSingle($event, group)">
                 <mat-icon>download</mat-icon>
@@ -92,8 +92,23 @@
           <mat-icon>edit</mat-icon>
           Sửa lại
         </button>
+
+        <button mat-raised-button color="warn" (click)="onRemoveEvent()">
+          <mat-icon>remove</mat-icon>
+          Xóa
+        </button>
       </div>
     </mat-card-actions>
   </mat-card>
   }
 </div>
+
+<div #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="appMenu" style="display: none; position: fixed;"></div>
+
+<mat-menu #appMenu="matMenu">
+  <ng-template matMenuContent let-group="orderGroup">
+    <button mat-menu-item (click)="onGenerateQrCode(group)">
+      {{'Tạo thanh toán '+ group.productSupplierName}}
+    </button>
+  </ng-template>
+</mat-menu>

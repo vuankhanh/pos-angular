@@ -32,6 +32,8 @@
         <input #formElement matInput placeholder="Email" formControlName="email">
       </mat-form-field>
 
+      <app-bank-transfer [bankTransfer]="bankTransferControl.value" (bankTransferChange)="onBankTransferChange($event)"></app-bank-transfer>
+
     </form>
   </mat-card-content>
   <mat-card-actions>

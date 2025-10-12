@@ -7,7 +7,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { BehaviorSubject, map, Observable, Subscription, switchMap, filter } from 'rxjs';
 import { LocationService } from '../../../../component/dashboard/supplier/shared/service/api/location.service';
-import { ReplaceNewLinePipe } from '../../../pipe/replace-new-line.pipe';
 
 @Component({
   selector: 'app-update-supplier-debt',

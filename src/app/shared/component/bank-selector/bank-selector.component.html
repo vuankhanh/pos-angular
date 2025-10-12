@@ -1,0 +1,26 @@
+<div class="container vertical-container">
+  <div mat-dialog-title>
+    <button [autofocus]="false" matIconButton (click)="dialogRef.close()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <h2>Chọn ngân hàng</h2>
+  </div>
+  <div class="input-filter-container">
+    <mat-form-field subscriptSizing="dynamic">
+      <input matInput type="text" [formControl]="searchInputControl" appAutoFocus>
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+  </div>
+  <mat-list>
+    @for (bank of banks$ | async; track bank) {
+    <mat-list-item (click)="dialogRef.close(bank)">
+      <div matListItemAvatar class="vertical-container">
+        <img [src]="bank.logo" [alt]="bank.name">
+      </div>
+      <div matListItemTitle>{{bank.shortName}}</div>
+      <div matListItemLine>{{bank.name}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+    }
+  </mat-list>
+</div>

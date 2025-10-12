@@ -15,6 +15,7 @@ export class LongPressDirective {
   @HostListener('touchstart', ['$event'])
   onMouseDown(event: MouseEvent | TouchEvent): void {
     event.preventDefault();
+    event.stopPropagation();
     this.isPressing = true;
     this.timeout = setTimeout(() => {
       if (this.isPressing) {

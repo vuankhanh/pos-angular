@@ -1,9 +1,11 @@
+import { IBankPayment } from "../../../../../shared/interface/bank-payment.interface";
 import { IMongodbDocument } from "../../../../../shared/interface/mongo.interface";
 import { IPagination } from "../../../../../shared/interface/pagination.interface";
 import { ISuccess } from "../../../../../shared/interface/success.interface";
 import { IDistrict, IProvince, IWard } from "../../../../../shared/interface/vn-public-apis.interface";
 
 export interface ISupplierLocation {
+  bankTransfer?: IBankPayment;
   name: string; // Name of the supplier
   address: {
     province: IProvince;

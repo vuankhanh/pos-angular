@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PurchaseOrderItem, TPurchaseOrder } from '../../../shared/interface/purchase-order.interface';
-import { BehaviorSubject, lastValueFrom, map, Observable, Subscription, switchMap, take } from 'rxjs';
+import { BehaviorSubject, filter, lastValueFrom, map, Observable, Subscription, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
 
@@ -15,7 +15,13 @@ import { MatCard } from '@angular/material/card';
 import { Html2canvasService } from '../../../shared/service/html2canvas.service';
 import { StatusColorComponent } from '../../../shared/component/status-color/status-color.component';
 import { AsyncDebtBadgeDirective } from '../../../shared/directive/async-debt-badge.directive';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { LongPressDirective } from '../../../shared/directive/long-press.directive';
+import { BankTransferService } from '../../../shared/service/api/bank-transfer.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmComponent } from '../../../shared/component/dialog/confirm/confirm.component';
+import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.interface';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-purchase-order-detail',
@@ -26,6 +32,7 @@ import { LongPressDirective } from '../../../shared/directive/long-press.directi
     StatusColorComponent,
     CurrencyCustomPipe,
     AsyncDebtBadgeDirective,
+    LongPressDirective,
 
     MaterialModule
   ],
@@ -38,7 +45,13 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private readonly breakpointDetectionService: BreakpointDetectionService = inject(BreakpointDetectionService);
   private readonly purchaseOrderService: PurchaseOrderService = inject(PurchaseOrderService);
-  private readonly html2canvasService = inject(Html2canvasService)
+  private readonly html2canvasService = inject(Html2canvasService);
+  private readonly bankTransferService = inject(BankTransferService);
+  private readonly matDialog = inject(MatDialog);
+  private readonly toastService = inject(ToastrService)
+
+  @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
+  @ViewChild('menuTrigger', { read: ElementRef }) triggerElementRef!: ElementRef<HTMLDivElement>;
 
   purchaseOrder?: TPurchaseOrder;
 
@@ -46,9 +59,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
   purchaseOrderItems$: Observable<PurchaseOrderItem[]> = this.bPurchaseOrderItems.asObservable();
   groupedOrderItems$: Observable<GroupedOrderItems[]> = this.purchaseOrderItems$.pipe(
     map((items) => {
-      console.log(items);
       const grouped = PurchaseOrderUtil.groupBySupplier(items);
-
       return grouped;
     })
   );
@@ -85,9 +96,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
               discount: item.discount || 0
             });
           });
-
           this.bPurchaseOrderItems.next(purchaseOrderItems);
-
         },
         error: error => {
           this.goBackOrderList();
@@ -152,12 +161,98 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  onTotalPriceLongPress(event: MouseEvent, group: GroupedOrderItems) {
+    event.preventDefault();
+    this.openMenu(event.clientX, event.clientY, group);
+  }
+  onTotalPriceLongTouch(event: TouchEvent, group: GroupedOrderItems) {
+    event.preventDefault();
+    this.openMenu(event.touches[0].clientX, event.touches[0].clientY, group);
+  }
+
+  private openMenu(x: number, y: number, group: GroupedOrderItems) {
+    this.triggerElementRef.nativeElement.style.display = 'block';
+    this.triggerElementRef.nativeElement.style.top = `${y}px`;
+    this.triggerElementRef.nativeElement.style.left = `${x}px`;
+
+    this.menuTrigger.menuData = { orderGroup: group };
+    this.menuTrigger.openMenu();
+
+    setTimeout(() => {
+      this.triggerElementRef.nativeElement.style.display = 'none';
+    }, 50);
+  }
+
+  onGenerateQrCode(group: GroupedOrderItems) {
+    if (!group.bankTransfer) {
+      return;
+    }
+    const bankBin = group.bankTransfer.bankBin
+    const accountNumber = group.bankTransfer.accountNumber
+    const accountName = group.bankTransfer.accountName;
+    const amount = group.totalPrice;
+    const addInfo = '';
+    this.bankTransferService.generateQrCode(bankBin, accountNumber, accountName, amount, addInfo).subscribe({
+      next: async (blob: Blob) => {
+        const qrCodeFile = new File([blob], 'qrcode_thanh_toan.png', { type: 'image/png' });
+
+        if (navigator.canShare && navigator.canShare({ files: [qrCodeFile] })) {
+          await navigator.share({
+            files: [qrCodeFile],
+            title: 'Thanh toán QR Code',
+            text: 'Chia sẻ mã QR để thanh toán nhanh'
+          });
+        }
+        // const a = document.createElement('a');
+        // const objectUrl = URL.createObjectURL(blob);
+        // a.href = objectUrl;
+        // a.download = 'file.png';
+        // a.click();
+        // URL.revokeObjectURL(objectUrl);
+      },
+      error: (error) => {
+        console.log(error)
+      },
+      complete: () => {
+        console.log('complete!');
+      }
+    })
+  }
+
   onEditEvent() {
     this.router.navigate(['/purchase-order-edit'], {
       queryParams: {
         _id: this.purchaseOrder?._id
       }
     });
+  }
+
+  onRemoveEvent() {
+    if (!this.purchaseOrder) return;
+
+    const data: TConfirmDialogData = {
+      title: 'Xác nhận xóa',
+      message: `Bạn có chắc chắn muốn xóa đơn hàng ${this.purchaseOrder.orderCode} không?`,
+      cancelText: 'Hủy',
+      confirmColor: 'warn',
+      confirmText: 'Xóa'
+    }
+    this.matDialog.open(ConfirmComponent, {
+      data
+    }).afterClosed().pipe(
+      filter(result => result),
+      switchMap(() => this.purchaseOrderService.remove(this.purchaseOrder!._id))
+    ).subscribe(
+      {
+        next: res => {
+          this.toastService.success('Xoá đơn hàng thành công');
+          this.router.navigate(['/purchase-order']);
+        },
+        error: error => {
+          console.error(error);
+        }
+      }
+    )
   }
 
   ngOnDestroy(): void {

@@ -1,0 +1,22 @@
+<form [formGroup]="bankTransferForm" class="vertical-container">
+  <fieldset>
+    <legend class="horizontal-container">
+      <mat-icon>account_balance</mat-icon>
+      <span>Ngân hàng</span>
+    </legend>
+    <mat-list-item (click)="selectBank()">
+      <div matListItemAvatar class="vertical-container">
+        <img [src]="bankTransferForm.get('bankAvatar')?.value" [alt]="bankTransferForm.get('bankName')?.value">
+      </div>
+      <div matListItemTitle>{{bankTransferForm.get('bankShortName')?.value}}</div>
+      <div matListItemMeta>
+        <mat-icon>chevron_right</mat-icon>
+      </div>
+    </mat-list-item>
+
+    <mat-form-field>
+      <mat-label>Số tài khoản</mat-label>
+      <input type="text" matInput formControlName="accountNumber">
+    </mat-form-field>
+  </fieldset>
+</form>

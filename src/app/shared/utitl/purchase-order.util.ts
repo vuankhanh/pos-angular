@@ -6,11 +6,19 @@ export class PurchaseOrderUtil {
     const grouped = orderItems.reduce((acc, item) => {
       const supplierName = item.product.supplierLocationName; // Assuming `supplierName` exists in product
       const supplierId = item.product.supplierLocationId; // Assuming `supplierId` exists in product
+      const bankTransfer = item.product.supplierLocationBankTransfer;
       if (!acc[supplierName]) {
-        acc[supplierName] = { productSupplierName: supplierName, productSupplierId: supplierId, orderItems: [], totalPrice: 0 };
+        acc[supplierName] = {
+          productSupplierName: supplierName,
+          productSupplierId: supplierId,
+          bankTransfer,
+          orderItems: [],
+          totalPrice: 0
+        };
       }
       acc[supplierName].orderItems.push(item);
       acc[supplierName].totalPrice += item.itemTotal;
+      
       return acc;
     }, {} as Record<string, GroupedOrderItems>);
 

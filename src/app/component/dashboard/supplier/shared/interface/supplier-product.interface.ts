@@ -1,4 +1,5 @@
 import { SupplierProductUnit } from "../../../../../constant/product.constant";
+import { IBankPayment } from "../../../../../shared/interface/bank-payment.interface";
 import { IMongodbDocument } from "../../../../../shared/interface/mongo.interface";
 import { IPagination } from "../../../../../shared/interface/pagination.interface";
 import { ISuccess } from "../../../../../shared/interface/success.interface";
@@ -11,6 +12,7 @@ export interface ISupplierProduct {
   description?: string;
   supplierLocationId: string;
   supplierLocationName: string;
+  supplierLocationBankTransfer?: IBankPayment;
   supplierLocationDebt: ISupplierDebt;
 }
 

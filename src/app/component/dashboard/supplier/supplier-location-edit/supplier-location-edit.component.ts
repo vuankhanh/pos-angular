@@ -12,6 +12,8 @@ import { addressAsyncValidator } from '../../../../shared/component/validators/a
 import { CoordinateSelectorComponent } from '../../../../shared/component/coordinate-selector/coordinate-selector.component';
 import { ICoordinate } from '../../../../shared/interface/coordinate.interface';
 import { isEqual } from 'lodash';
+import { BankTransferComponent } from '../../../../shared/component/bank-transfer/bank-transfer.component';
+import { IBankPayment } from '../../../../shared/interface/bank-payment.interface';
 
 @Component({
   selector: 'app-supplier-location-edit',
@@ -22,6 +24,7 @@ import { isEqual } from 'lodash';
 
     AddressSelectorComponent,
     CoordinateSelectorComponent,
+    BankTransferComponent,
 
     MaterialModule
   ],
@@ -45,13 +48,14 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
   isFormChanged$: Observable<boolean> = this.controlFormChanged$.pipe(
     map((value: { [key: string]: any }) => {
       console.log(value);
-      
+
       return Object.keys(value).length > 0;
     }),
   );
 
   private readonly addressValidSubject = new BehaviorSubject<boolean>(false);
   private readonly addressValid$ = this.addressValidSubject.asObservable();
+
   private readonly subscription: Subscription = new Subscription();
 
   ngOnInit(): void {
@@ -99,7 +103,16 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
     const positionGroup = this.formBuilder.group({
       lat: [this.supplierLocation?.position?.lat || '0'],
       lng: [this.supplierLocation?.position?.lng || '0']
-    })
+    });
+
+    const bankTransferForm: FormGroup = this.formBuilder.group({
+      bankBin: [this.supplierLocation?.bankTransfer?.bankBin, Validators.required],
+      bankAvatar: [this.supplierLocation?.bankTransfer?.bankAvatar, Validators.required],
+      bankShortName: [this.supplierLocation?.bankTransfer?.bankShortName, Validators.required],
+      bankName: [this.supplierLocation?.bankTransfer?.bankName, Validators.required],
+      accountNumber: [this.supplierLocation?.bankTransfer?.accountNumber, Validators.required],
+      accountName: [this.supplierLocation?.bankTransfer?.accountName],
+    });
 
     this.formGroup = this.formBuilder.group({
       name: [this.supplierLocation?.name, Validators.required],
@@ -110,7 +123,8 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
       ],
       telephone: [this.supplierLocation?.telephone, Validators.required],
       email: [this.supplierLocation?.email],
-      position: positionGroup
+      position: positionGroup,
+      bankTransfer: bankTransferForm
     });
 
     const initialFormValue = this.formGroup.getRawValue();
@@ -125,7 +139,7 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
         const changedControls: { [key: string]: any } = {};
         Object.keys(value).forEach(key => {
           if (!this.supplierLocation) return;
-           // Bỏ qua nếu không thay đổi
+          // Bỏ qua nếu không thay đổi
           if (!isEqual(value[key], this.supplierLocation[key as keyof TSupplierLocationModel])) {
             changedControls[key] = value[key];
           }
@@ -133,7 +147,7 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
         
         this.bControlFormChanged.next(changedControls);
       })
-    )
+    );
     this.cdRef.detectChanges();
   }
 
@@ -143,6 +157,10 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
 
   get positionControl() {
     return this.formGroup.get('position') as FormGroup;
+  }
+
+  get bankTransferControl() {
+    return this.formGroup.get('bankTransfer') as FormGroup;
   }
 
   onAddressValueChange(value: IAddress) {
@@ -162,6 +180,10 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
     if (elementToFocus) {
       elementToFocus.nativeElement.focus();
     }
+  }
+
+  onBankTransferChange(value: IBankPayment) {
+    this.bankTransferControl.patchValue(value);
   }
 
   onSubmit() {

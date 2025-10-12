@@ -1,0 +1,60 @@
+.container {
+  div[mat-dialog-title]{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    button[matIconButton]{
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 100%;
+      border: none;
+      background: none;
+      padding: 0;
+      min-width: 50px;
+      min-height: 50px;
+    }
+    h2{
+      width: 100%;
+      text-align: center;
+    }
+  }
+  .input-filter-container{
+    width: 100%;
+    mat-form-field{
+      width: 100%;
+    }
+  }
+
+  mat-list {
+    height: 100%;
+    max-width: 100%;
+    overflow-y: scroll;
+    mat-list-item {
+      padding: 10px !important;
+      box-sizing: border-box !important;
+      height: 80px !important;
+      cursor: pointer !important;
+
+      div[matListItemAvatar] {
+        width: 100px;
+        height: 60px;
+        margin: 0 10px 0 0 !important;
+        justify-content: center;
+        img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: cover;
+          border-radius: 4px;
+        }
+      }
+
+      div[matListItemLine] {
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+

@@ -74,26 +74,3 @@ export class PurchaseOrderService {
     );
   }
 }
-
-export function groupPurchaseOrderItemsByProductName(
-  purchaseOrderItems: PurchaseOrderItem[]
-): { group: string; groupItem: PurchaseOrderItem[]; totalPrice: number }[] {
-  const grouped = purchaseOrderItems.reduce((acc, item) => {
-    const productName = item.product.name; // Assuming product has a 'name' property
-    if (!acc[productName]) {
-      acc[productName] = [];
-    }
-    acc[productName].push(item);
-    return acc;
-  }, {} as Record<string, PurchaseOrderItem[]>);
-
-  return Object.keys(grouped).map((group) => {
-    const groupItems = grouped[group];
-    const totalPrice = groupItems.reduce((sum, item) => sum + item.itemTotal, 0);
-    return {
-      group,
-      groupItem: groupItems,
-      totalPrice,
-    };
-  });
-}
