@@ -14,6 +14,8 @@ import { PhoneNumberPipe } from '../../../../shared/pipe/phone-number.pipe';
 import { CurrencyCustomPipe } from '../../../../shared/pipe/currency-custom.pipe';
 import { UpdateSupplierDebtComponent } from '../../../../shared/component/dialog/update-supplier-debt/update-supplier-debt.component';
 import { ReplaceNewLinePipe } from '../../../../shared/pipe/replace-new-line.pipe';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-supplier-location-detail',
@@ -26,7 +28,8 @@ import { ReplaceNewLinePipe } from '../../../../shared/pipe/replace-new-line.pip
     CurrencyCustomPipe,
     ReplaceNewLinePipe,
 
-    MaterialModule
+    MaterialModule,
+    ClipboardModule
   ],
   templateUrl: './supplier-location-detail.component.html',
   styleUrl: './supplier-location-detail.component.scss'
@@ -35,8 +38,9 @@ export class SupplierLocationDetailComponent implements OnInit, OnDestroy {
   private readonly router: Router = inject(Router);
   private readonly dialog: MatDialog = inject(MatDialog);
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
-
   private readonly locationService = inject(LocationService);
+  private readonly toastService = inject(ToastrService);
+
   supplier?: TSupplierLocationModel;
 
   private readonly subscription: Subscription = new Subscription();
@@ -85,6 +89,14 @@ export class SupplierLocationDetailComponent implements OnInit, OnDestroy {
         }
       })
     )
+  }
+
+  onCopySuccess(successful: boolean) {
+    if (successful) {
+      this.toastService.success('Đã thêm số tài khoản vào clipboard', '', { timeOut: 1000 });
+    } else {
+      this.toastService.error('Không thêm số tài khoản vào clipboard', '', { timeOut: 1000 });
+    }
   }
 
   deleteSupplierLocation() {

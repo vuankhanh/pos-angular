@@ -53,11 +53,13 @@
         @if(supplier.bankTransfer; as bankTransfer) {
         <div class="list-item-container">
           <mat-icon>account_balance</mat-icon>
-          <mat-list-item>
+          <mat-list-item [cdkCopyToClipboard]="bankTransfer.accountNumber" (cdkCopyToClipboardCopied)="onCopySuccess($event)">
             <div matListItemAvatar class="vertical-container">
               <img [src]="bankTransfer.bankAvatar" [alt]="bankTransfer.bankName">
             </div>
-            <div matListItemTitle>{{bankTransfer.bankShortName}}</div>
+            <div matListItemTitle class="additional-text-element">
+              {{bankTransfer.accountNumber}}
+            </div>
           </mat-list-item>
         </div>
         }
