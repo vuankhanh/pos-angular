@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, inject, OnDestroy, ViewChild } from '@angular/core';
-import { NgxScannerQrcodeComponent, NgxScannerQrcodeModule, ScannerQRCodeConfig, ScannerQRCodeResult } from 'ngx-scanner-qrcode';
+import { NgxScannerQrcodeComponent, NgxScannerQrcodeModule, ScannerQRCodeConfig, ScannerQRCodeDevice, ScannerQRCodeResult } from 'ngx-scanner-qrcode';
 import { filter, map, Subscription, take, tap } from 'rxjs';
 import { Qr } from '../../../utitl/qr-code.util';
 import { IBaseBankPayment } from '../../../interface/bank-payment.interface';
@@ -22,6 +22,7 @@ export class QrcodeScannerComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('scanner') scanner!: NgxScannerQrcodeComponent;
   config: ScannerQRCodeConfig = {
+
     // constraints: {
     //   video: {
     //     width: window.innerWidth,
@@ -32,30 +33,47 @@ export class QrcodeScannerComponent implements AfterViewInit, OnDestroy {
 
   private readonly subscription = new Subscription();
   ngAfterViewInit(): void {
-    this.scanner.start();
+    this.scanner.start(this.playDeviceFacingBack);
 
     this.scanner.event.asObservable().pipe(
-      map(result=>{
-        for(let i = 0; i < result.length; i++){
+      map(result => {
+        for (let i = 0; i < result.length; i++) {
           const item = result[i];
-
           const value = item.value;
           const decoded = Qr.decoder(value);
           const isValid = Qr.validateQrCode(decoded);
-          console.log(isValid);
-          
-          if(isValid) return decoded;
+
+          if (isValid) return decoded;
         }
 
         return;
       }),
-      filter(result=> !!result),
-      tap(()=>this.scanner.stop),
+      filter(result => !!result),
+      tap(() => this.scanner.stop),
     ).subscribe(result => {
-      console.log(result);
       this.dialogRef.close(result);
     })
   }
+
+  private playDeviceFacingBack = (devices: ScannerQRCodeDevice[]) => {
+    // Tìm camera sau
+    const device = devices.find(
+      (f) => {
+        console.log(f);
+        return /back|rear|environment/gi.test(f.label);
+      }
+    );
+
+    if (device) {
+      // Nếu tìm thấy, sử dụng camera sau
+      this.scanner.playDevice(device.deviceId);
+    } else if (devices.length > 0) {
+      // Nếu không tìm thấy camera sau rõ ràng, có thể sử dụng camera đầu tiên
+      this.scanner.playDevice(devices[0].deviceId);
+    } else {
+      console.error("No camera devices found.");
+    }
+  };
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
