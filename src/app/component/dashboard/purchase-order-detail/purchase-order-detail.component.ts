@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PurchaseOrderItem, TPurchaseOrder } from '../../../shared/interface/purchase-order.interface';
-import { BehaviorSubject, filter, lastValueFrom, map, Observable, Subscription, switchMap, take } from 'rxjs';
+import { BehaviorSubject, filter, lastValueFrom, map, Observable, Subscription, switchMap, take, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
 
@@ -22,6 +22,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmComponent } from '../../../shared/component/dialog/confirm/confirm.component';
 import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.interface';
 import { ToastrService } from 'ngx-toastr';
+import { QrcodeScannerComponent } from '../../../shared/component/dialog/qrcode-scanner/qrcode-scanner.component';
+import { IBaseBankPayment } from '../../../shared/interface/bank-payment.interface';
 
 @Component({
   selector: 'app-purchase-order-detail',
@@ -102,7 +104,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
           this.goBackOrderList();
         }
       })
-    )
+    );
   }
 
   goBackOrderList() {
@@ -183,7 +185,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
     }, 50);
   }
 
-  onGenerateQrCode(group: GroupedOrderItems) {
+  async onGenerateQrCode(group: GroupedOrderItems) {
     if (!group.bankTransfer) {
       return;
     }
@@ -192,31 +194,40 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
     const accountName = group.bankTransfer.accountName;
     const amount = group.totalPrice;
     const addInfo = '';
-    this.bankTransferService.generateQrCode(bankBin, accountNumber, accountName, amount, addInfo).subscribe({
-      next: async (blob: Blob) => {
-        const qrCodeFile = new File([blob], 'qrcode_thanh_toan.png', { type: 'image/png' });
+    await this.generateQrCodeAndShare(bankBin, accountNumber, accountName, amount, addInfo);
+  }
 
-        if (navigator.canShare && navigator.canShare({ files: [qrCodeFile] })) {
-          await navigator.share({
-            files: [qrCodeFile],
-            title: 'Thanh toán QR Code',
-            text: 'Chia sẻ mã QR để thanh toán nhanh'
-          });
-        }
-        // const a = document.createElement('a');
-        // const objectUrl = URL.createObjectURL(blob);
-        // a.href = objectUrl;
-        // a.download = 'file.png';
-        // a.click();
-        // URL.revokeObjectURL(objectUrl);
-      },
-      error: (error) => {
-        console.log(error)
-      },
-      complete: () => {
-        console.log('complete!');
-      }
-    })
+  async onScanQrCode(group: GroupedOrderItems) {
+    const dialogRef = this.matDialog.open(QrcodeScannerComponent, {
+      panelClass: ['responsive-design-dialog', 'qrcode-scanner-dialog']
+    });
+
+    const result: IBaseBankPayment = await lastValueFrom(dialogRef.afterClosed().pipe(
+      filter(result => !!result),
+      take(1)
+    ));
+
+    const bankBin = result.bankBin;
+    const accountNumber = result.accountNumber;
+    const accountName = 'something';
+    const amount = group.totalPrice;
+    const addInfo = '';
+
+    await this.generateQrCodeAndShare(bankBin, accountNumber, accountName, amount, addInfo);
+  }
+
+  private async generateQrCodeAndShare(bankBin: string, accountNumber: string, accountName: string, amount: number, addInfo: string) {
+    const blob: Blob = await lastValueFrom(this.bankTransferService.generateQrCode(bankBin, accountNumber, accountName, amount, addInfo));
+
+    const qrCodeFile = new File([blob], 'qrcode_thanh_toan.png', { type: 'image/png' });
+
+    if (navigator.canShare && navigator.canShare({ files: [qrCodeFile] })) {
+      await navigator.share({
+        files: [qrCodeFile],
+        title: 'Thanh toán QR Code',
+        text: 'Chia sẻ mã QR để thanh toán nhanh'
+      });
+    }
   }
 
   onEditEvent() {

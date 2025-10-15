@@ -1,0 +1,11 @@
+<div class="container vertical-container">
+  <div mat-dialog-title>
+    <button [autofocus]="false" matIconButton (click)="dialogRef.close()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <h2>Quét mã QR</h2>
+  </div>
+  <div class="camera-container">
+    <ngx-scanner-qrcode #scanner="scanner" [config]="config"></ngx-scanner-qrcode>
+  </div>
+</div>

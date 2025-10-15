@@ -107,8 +107,13 @@
 
 <mat-menu #appMenu="matMenu">
   <ng-template matMenuContent let-group="orderGroup">
-    <button mat-menu-item (click)="onGenerateQrCode(group)">
-      {{'Tạo thanh toán '+ group.productSupplierName}}
+    @if (group.bankTransfer) {
+      <button mat-menu-item (click)="onGenerateQrCode(group)">
+        {{'Tạo thanh toán '+ group.productSupplierName}}
+      </button>
+    }
+    <button mat-menu-item (click)="onScanQrCode(group)">
+      {{'Quét và tạo thanh toán '+ group.productSupplierName}}
     </button>
   </ng-template>
 </mat-menu>

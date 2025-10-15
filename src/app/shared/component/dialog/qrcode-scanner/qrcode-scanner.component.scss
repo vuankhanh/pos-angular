@@ -1,0 +1,27 @@
+.container{
+  div[mat-dialog-title]{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    button[matIconButton]{
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 100%;
+      border: none;
+      background: none;
+      padding: 0;
+      min-width: 50px;
+      min-height: 50px;
+    }
+    h2{
+      width: 100%;
+      text-align: center;
+    }
+  }
+  .camera-container{
+    
+  }
+}
