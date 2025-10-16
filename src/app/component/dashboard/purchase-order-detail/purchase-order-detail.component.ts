@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PurchaseOrderItem, TPurchaseOrder } from '../../../shared/interface/purchase-order.interface';
-import { BehaviorSubject, filter, lastValueFrom, map, Observable, Subscription, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, defaultIfEmpty, filter, lastValueFrom, map, Observable, of, Subscription, switchMap, take, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
 
@@ -24,6 +24,7 @@ import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.int
 import { ToastrService } from 'ngx-toastr';
 import { QrcodeScannerComponent } from '../../../shared/component/dialog/qrcode-scanner/qrcode-scanner.component';
 import { IBaseBankPayment } from '../../../shared/interface/bank-payment.interface';
+import { QrCodeImageComponent } from '../../../shared/component/dialog/qr-code-image/qr-code-image.component';
 
 @Component({
   selector: 'app-purchase-order-detail',
@@ -189,12 +190,14 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
     if (!group.bankTransfer) {
       return;
     }
+
+    const supplier = group.productSupplierName;
     const bankBin = group.bankTransfer.bankBin
     const accountNumber = group.bankTransfer.accountNumber
     const accountName = group.bankTransfer.accountName;
     const amount = group.totalPrice;
     const addInfo = '';
-    await this.generateQrCodeAndShare(bankBin, accountNumber, accountName, amount, addInfo);
+    await this.generateQrCodeAndShare(supplier, bankBin, accountNumber, accountName, amount, addInfo);
   }
 
   async onScanQrCode(group: GroupedOrderItems) {
@@ -204,30 +207,28 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
 
     const result: IBaseBankPayment = await lastValueFrom(dialogRef.afterClosed().pipe(
       filter(result => !!result),
-      take(1)
+      defaultIfEmpty(null),
+      take(1),
     ));
 
+    if (!result) return;
+    
+    const supplier = group.productSupplierName;
     const bankBin = result.bankBin;
     const accountNumber = result.accountNumber;
     const accountName = 'something';
     const amount = group.totalPrice;
     const addInfo = '';
 
-    await this.generateQrCodeAndShare(bankBin, accountNumber, accountName, amount, addInfo);
+    await this.generateQrCodeAndShare(supplier, bankBin, accountNumber, accountName, amount, addInfo);
   }
 
-  private async generateQrCodeAndShare(bankBin: string, accountNumber: string, accountName: string, amount: number, addInfo: string) {
+  private async generateQrCodeAndShare(supplier: string, bankBin: string, accountNumber: string, accountName: string, amount: number, addInfo: string) {
     const blob: Blob = await lastValueFrom(this.bankTransferService.generateQrCode(bankBin, accountNumber, accountName, amount, addInfo));
-
-    const qrCodeFile = new File([blob], 'qrcode_thanh_toan.png', { type: 'image/png' });
-
-    if (navigator.canShare && navigator.canShare({ files: [qrCodeFile] })) {
-      await navigator.share({
-        files: [qrCodeFile],
-        title: 'Thanh toán QR Code',
-        text: 'Chia sẻ mã QR để thanh toán nhanh'
-      });
-    }
+    this.matDialog.open(QrCodeImageComponent, {
+      data: {  supplier: supplier, blob: blob},
+      panelClass: ['responsive-design-dialog']
+    });
   }
 
   onEditEvent() {

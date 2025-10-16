@@ -9,6 +9,7 @@ import {
 import { Observable, catchError, switchMap, throwError } from 'rxjs';
 import { AuthStateService } from '../../service/auth_state.service';
 import { AuthService } from '../../service/api/auth.service';
+import { LocalStorageKey } from '../../../constant/local_storage.constant';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -20,7 +21,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem(LocalStorageKey.ACCESSTOKEN);
     if (accessToken) {
       const cloned = request.clone({
         headers: request.headers.set("authorization", "Bearer " + accessToken)
@@ -42,14 +43,13 @@ export class AuthInterceptor implements HttpInterceptor {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
 
-      const refreshToken = localStorage.getItem('refreshToken');
+      const refreshToken = localStorage.getItem(LocalStorageKey.REFRESHTOKEN);
       const isLogin = this.authStateService.isLogin;
       if (isLogin) {
         const refreshTokenRequest = this.authService.refreshToken(refreshToken!)
         return refreshTokenRequest.pipe(
-          switchMap((res) => {
-            const accessToken = res.metaData.accessToken;
-            localStorage.setItem('accessToken', accessToken);
+          switchMap((accessToken) => {
+            localStorage.setItem(LocalStorageKey.ACCESSTOKEN, accessToken);
             this.isRefreshing = false;
             const cloned = request.clone({
               headers: request.headers.set("authorization", "Bearer " + accessToken)

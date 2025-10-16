@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { MaterialModule } from '../../shared/module/material';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../../shared/service/api/auth.service';
+import { LocalStorageKey } from '../../constant/local_storage.constant';
 
 @Component({
   selector: 'app-login',
@@ -18,9 +19,9 @@ import { AuthService } from '../../shared/service/api/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit, OnDestroy{
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm!: FormGroup;
-  isShowPassword: boolean = false;
+  hide = signal(true);
 
   subscription: Subscription = new Subscription();
   constructor(
@@ -42,18 +43,19 @@ export class LoginComponent implements OnInit, OnDestroy{
     })
   }
 
+  clickEvent(event: MouseEvent) {
+    this.hide.set(!this.hide());
+    event.stopPropagation();
+  }
+
   submit() {
     if (this.loginForm.valid) {
-      const username = this.loginForm.controls['username'].value;
-      const password = this.loginForm.controls['password'].value;
+      const { username, password } = this.loginForm.value;
       this.subscription.add(
-        this.authService.login(username, password).subscribe(res => {
-          if (res.statusCode === 200) {
-            const token = res.metaData;
-            localStorage.setItem('accessToken', token.accessToken);
-            localStorage.setItem('refreshToken', token.refreshToken);
-            this.router.navigate(['']);
-          }
+        this.authService.login(username, password).subscribe(token => {
+          localStorage.setItem(LocalStorageKey.ACCESSTOKEN, token.accessToken);
+          localStorage.setItem(LocalStorageKey.REFRESHTOKEN, token.refreshToken);
+          this.router.navigate(['']);
         })
       )
     }

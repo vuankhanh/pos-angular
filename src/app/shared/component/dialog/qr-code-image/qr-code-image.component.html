@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Qr Code</h2>
+<mat-dialog-content>
+  <h4>Mã Qr Code thanh toán {{data.supplier}}</h4>
+  <img [src]="imgQrCode$ | async" alt="Qr Code">
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Hủy</button>
+  <button mat-flat-button color="primary" (click)="shareQrCode()" cdkFocusInitial [disabled]="!(imgQrCode$ | async)">
+    <mat-icon>share</mat-icon>
+    <span>Chia sẻ</span>
+  </button>
+</mat-dialog-actions>
