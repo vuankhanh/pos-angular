@@ -1,11 +1,14 @@
 <div class="container vertical-container">
   <div mat-dialog-title>
-    <button [autofocus]="false" matIconButton (click)="dialogRef.close()">
+    <button [autofocus]="false" mat-icon-button mat-dialog-close>
       <mat-icon>close</mat-icon>
     </button>
     <h2>Quét mã QR</h2>
+    <button [autofocus]="false" mat-icon-button (click)="toggleFlash()">
+      <mat-icon>{{scanner?.isTorch ? 'flash_off' : 'flash_on'}}</mat-icon>
+    </button>
   </div>
-  <div class="camera-container">
+  <div class="camera-container" #cameraContainer>
     <ngx-scanner-qrcode #scanner="scanner" [config]="config"></ngx-scanner-qrcode>
   </div>
 </div>

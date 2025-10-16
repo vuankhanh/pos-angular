@@ -1,10 +1,11 @@
-.container{
-  div[mat-dialog-title]{
+.container {
+  div[mat-dialog-title] {
     width: 100%;
     display: flex;
     align-items: center;
     padding: 0;
-    button[matIconButton]{
+
+    button[matIconButton] {
       position: absolute;
       display: flex;
       justify-content: center;
@@ -16,12 +17,14 @@
       min-width: 50px;
       min-height: 50px;
     }
-    h2{
+
+    h2 {
       width: 100%;
       text-align: center;
     }
   }
-  .camera-container{
-    
+
+  .camera-container {
+    height: 100%;
   }
 }

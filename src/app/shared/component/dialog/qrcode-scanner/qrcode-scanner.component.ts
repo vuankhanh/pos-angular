@@ -22,13 +22,12 @@ export class QrcodeScannerComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('scanner') scanner!: NgxScannerQrcodeComponent;
   config: ScannerQRCodeConfig = {
-
-    // constraints: {
-    //   video: {
-    //     width: window.innerWidth,
-    //     height: 800
-    //   }
-    // }
+    constraints: {
+      video: {
+        width: window.innerWidth,
+        height: 600
+      }
+    }
   };
 
   private readonly subscription = new Subscription();
@@ -74,6 +73,10 @@ export class QrcodeScannerComponent implements AfterViewInit, OnDestroy {
       console.error("No camera devices found.");
     }
   };
+
+  toggleFlash() {
+    this.scanner.torcher();
+  }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
