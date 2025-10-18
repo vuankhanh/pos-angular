@@ -1,8 +1,7 @@
 import { AfterViewInit, Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { NgxScannerQrcodeComponent, NgxScannerQrcodeModule, ScannerQRCodeConfig, ScannerQRCodeDevice, ScannerQRCodeResult } from 'ngx-scanner-qrcode';
-import { filter, map, Subscription, take, tap } from 'rxjs';
+import { filter, map, Subscription, tap } from 'rxjs';
 import { Qr } from '../../../utitl/qr-code.util';
-import { IBaseBankPayment } from '../../../interface/bank-payment.interface';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MaterialModule } from '../../../module/material';
 
@@ -29,6 +28,8 @@ export class QrcodeScannerComponent implements AfterViewInit, OnDestroy {
       }
     }
   };
+
+  isTorch = false;
 
   private readonly subscription = new Subscription();
   ngAfterViewInit(): void {
@@ -75,7 +76,12 @@ export class QrcodeScannerComponent implements AfterViewInit, OnDestroy {
   };
 
   toggleFlash() {
-    this.scanner.torcher();
+    this.isTorch = !this.isTorch;
+    this.scanner.applyConstraints({
+      advanced: [{
+        torch: this.isTorch
+      }]
+    });
   }
 
   ngOnDestroy(): void {

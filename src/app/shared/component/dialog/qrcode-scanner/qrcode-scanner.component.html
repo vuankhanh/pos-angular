@@ -5,7 +5,7 @@
     </button>
     <h2>Quét mã QR</h2>
     <button [autofocus]="false" mat-icon-button (click)="toggleFlash()">
-      <mat-icon>{{scanner?.isTorch ? 'flash_off' : 'flash_on'}}</mat-icon>
+      <mat-icon>{{isTorch ? 'flash_off' : 'flash_on'}}</mat-icon>
     </button>
   </div>
   <div class="camera-container" #cameraContainer>

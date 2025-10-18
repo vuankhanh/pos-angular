@@ -32,13 +32,17 @@
             <mat-panel-title>
               <div>
                 {{ group.productSupplierName }}
-                <mat-icon style="display: none; font-size: unset;" [asyncDebtBadge]="group.productSupplierId">add_circle</mat-icon>
+                <mat-icon style="display: none; font-size: unset;"
+                  [asyncDebtBadge]="group.productSupplierId">add_circle</mat-icon>
               </div>
             </mat-panel-title>
-            <mat-panel-description appLongPress (longPress)="onTotalPriceLongPress($event, group)" (longTouch)="onTotalPriceLongTouch($event, group)">
+            <mat-panel-description>
               Tổng tiền: {{ group.totalPrice | vndCurrency }}
-              <button mat-icon-button (click)="onDownloadSingle($event, group)">
+              <!-- <button mat-icon-button (click)="onDownloadSingle($event, group)">
                 <mat-icon>download</mat-icon>
+              </button> -->
+              <button mat-icon-button (click)="onMenuClick($event, group)">
+                <mat-icon>menu</mat-icon>
               </button>
             </mat-panel-description>
           </mat-expansion-panel-header>
@@ -50,13 +54,13 @@
                 <th mat-header-cell *matHeaderCellDef> Tên sản phẩm </th>
                 <td mat-cell *matCellDef="let item"> {{ item.product.name }} </td>
               </ng-container>
-  
+
               <!-- Price Column -->
               <ng-container matColumnDef="price">
                 <th mat-header-cell *matHeaderCellDef> Đơn giá </th>
                 <td mat-cell *matCellDef="let item"> {{ item.product.price | vndCurrency }} </td>
               </ng-container>
-  
+
               <!-- Quantity Column -->
               <ng-container matColumnDef="quantity">
                 <th mat-header-cell *matHeaderCellDef> Số lượng </th>
@@ -64,13 +68,13 @@
                   {{ item.quantity }}
                 </td>
               </ng-container>
-  
+
               <!-- Total Column -->
               <ng-container matColumnDef="total">
                 <th mat-header-cell *matHeaderCellDef> Tổng </th>
                 <td mat-cell *matCellDef="let item"> {{ item.itemTotal | vndCurrency }} </td>
               </ng-container>
-  
+
               <!-- Header and Row Definitions -->
               <tr mat-header-row *matHeaderRowDef="['productName', 'price', 'quantity', 'total']"></tr>
               <tr mat-row *matRowDef="let row; columns: ['productName', 'price', 'quantity', 'total']"></tr>
@@ -108,12 +112,19 @@
 <mat-menu #appMenu="matMenu">
   <ng-template matMenuContent let-group="orderGroup">
     @if (group.bankTransfer) {
-      <button mat-menu-item (click)="onGenerateQrCode(group)">
-        {{'Tạo thanh toán '+ group.productSupplierName}}
-      </button>
+    <button mat-menu-item (click)="onGenerateQrCode(group)">
+      <mat-icon>qr_code_2</mat-icon>
+      {{'Tạo thanh toán '+ group.productSupplierName}}
+    </button>
     }
     <button mat-menu-item (click)="onScanQrCode(group)">
+      <mat-icon>qr_code_scanner</mat-icon>
       {{'Quét và tạo thanh toán '+ group.productSupplierName}}
+    </button>
+
+    <button mat-menu-item (click)="onDownloadSingle(group)">
+      <mat-icon>download</mat-icon>
+      Tải báo cáo
     </button>
   </ng-template>
 </mat-menu>

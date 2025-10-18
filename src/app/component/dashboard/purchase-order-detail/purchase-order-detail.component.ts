@@ -1,10 +1,10 @@
 import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PurchaseOrderItem, TPurchaseOrder } from '../../../shared/interface/purchase-order.interface';
-import { BehaviorSubject, catchError, defaultIfEmpty, filter, lastValueFrom, map, Observable, of, Subscription, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, defaultIfEmpty, filter, lastValueFrom, map, Observable, Subscription, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
 
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../shared/module/material';
 import { CurrencyCustomPipe } from '../../../shared/pipe/currency-custom.pipe';
 import { PurchaseOrderService } from '../../../shared/service/api/purchase-order.service';
@@ -16,7 +16,6 @@ import { Html2canvasService } from '../../../shared/service/html2canvas.service'
 import { StatusColorComponent } from '../../../shared/component/status-color/status-color.component';
 import { AsyncDebtBadgeDirective } from '../../../shared/directive/async-debt-badge.directive';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { LongPressDirective } from '../../../shared/directive/long-press.directive';
 import { BankTransferService } from '../../../shared/service/api/bank-transfer.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmComponent } from '../../../shared/component/dialog/confirm/confirm.component';
@@ -35,7 +34,6 @@ import { QrCodeImageComponent } from '../../../shared/component/dialog/qr-code-i
     StatusColorComponent,
     CurrencyCustomPipe,
     AsyncDebtBadgeDirective,
-    LongPressDirective,
 
     MaterialModule
   ],
@@ -112,10 +110,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/purchase-order']);
   }
 
-  async onDownloadSingle(event: MouseEvent | TouchEvent, groupedOrderItem: GroupedOrderItems) {
-    event.stopPropagation();
-    event.preventDefault();
-
+  async onDownloadSingle(groupedOrderItem: GroupedOrderItems) {
     const status = this.purchaseOrder!.status;
     const orderCode = this.purchaseOrder!.orderCode;
     const createdAt = this.purchaseOrder!.createdAt;
@@ -171,6 +166,14 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
   onTotalPriceLongTouch(event: TouchEvent, group: GroupedOrderItems) {
     event.preventDefault();
     this.openMenu(event.touches[0].clientX, event.touches[0].clientY, group);
+  }
+
+  onMenuClick(event: MouseEvent, group: GroupedOrderItems) {
+    console.log(event);
+    
+    event.preventDefault();
+    event.stopPropagation();
+    this.openMenu(event.clientX, event.clientY, group);
   }
 
   private openMenu(x: number, y: number, group: GroupedOrderItems) {

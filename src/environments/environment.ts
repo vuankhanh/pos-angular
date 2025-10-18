@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  backendApi: 'https://pos.bep4than.vn/api',
-  backendStatic: 'https://pos.bep4than.vn/static'
+  backendApi: 'https://unextractable-cora-messier.ngrok-free.dev/api',
+  backendStatic: 'https://unextractable-cora-messier.ngrok-free.dev/static'
 };

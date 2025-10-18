@@ -1,0 +1,14 @@
+{
+  "/api": {
+    "target": "https://192.168.1.5:3004",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/static": {
+    "target": "https://192.168.1.5:3004",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
