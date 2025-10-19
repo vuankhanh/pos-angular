@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MaterialModule } from '../../../../shared/module/material';
 import { TProductModel } from '../../../../shared/interface/product.interface';
@@ -11,7 +11,6 @@ import { MatTable } from '@angular/material/table';
 import { CurrencyCustomPipe } from '../../../../shared/pipe/currency-custom.pipe';
 import { NumberInputComponent } from '../../../../shared/component/number-input/number-input.component';
 import { numberValidator } from '../../../../shared/utitl/form-validator.util';
-import { MatDialog } from '@angular/material/dialog';
 import { FeeDiscountComponent } from '../../../../shared/component/dialog/fee-discount/fee-discount.component';
 import { IBill, IBillSubInfo } from '../../../../shared/interface/bill.interface';
 import { OrderStatus } from '../../../../constant/order.constant';
@@ -21,6 +20,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { BreakpointDetectionService } from '../../../../shared/service/breakpoint-detection.service';
 import { BillInfoUtil } from '../../../../shared/utitl/order.util';
 import { cloneDeep } from 'lodash';
+import { MyDialogService } from '../../../../shared/service/my-dialog.service';
 
 @Component({
   selector: 'order-bill-info',
@@ -44,6 +44,11 @@ import { cloneDeep } from 'lodash';
   styleUrl: './bill-info.component.scss'
 })
 export class BillInfoComponent implements OnChanges, OnInit, OnDestroy {
+  private readonly formBuilder: FormBuilder = inject(FormBuilder);
+  private readonly productService: ProductService = inject(ProductService);
+  private readonly breakpointDetectionService: BreakpointDetectionService = inject(BreakpointDetectionService);
+  private readonly myDialogService = inject(MyDialogService);
+
   @ViewChild(MatTable) table?: MatTable<any>;
 
   @Input() order?: TOrderDetailModel;
@@ -84,10 +89,7 @@ export class BillInfoComponent implements OnChanges, OnInit, OnDestroy {
 
   subscription: Subscription = new Subscription();
   constructor(
-    private formBuilder: FormBuilder,
-    private dialog: MatDialog,
-    private productService: ProductService,
-    private breakpointDetectionService: BreakpointDetectionService,
+
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -198,7 +200,7 @@ export class BillInfoComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   openDialog(label: string, field: string, suffix: 'percentage' | 'currency'): void {
-    const dialogRef = this.dialog.open(FeeDiscountComponent, {
+    const dialogRef = this.myDialogService.open(FeeDiscountComponent, {
       width: '250px',
       data: {
         label: label,

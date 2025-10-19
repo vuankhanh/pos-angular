@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../module/material';
 import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { IBank } from '../../interface/bank-transfer.interface';
-import { MatDialog } from '@angular/material/dialog';
 import { distinctUntilChanged, filter, Subscription, take } from 'rxjs';
 import { BankSelectorComponent } from '../bank-selector/bank-selector.component';
 import { isEqual } from 'lodash';
 import { IBankPayment } from '../../interface/bank-payment.interface';
+import { MyDialogService } from '../../service/my-dialog.service';
 
 @Component({
   selector: 'app-bank-transfer',
@@ -22,11 +22,11 @@ import { IBankPayment } from '../../interface/bank-payment.interface';
   styleUrl: './bank-transfer.component.scss'
 })
 export class BankTransferComponent implements OnInit, OnDestroy {
+  private readonly myDialogService = inject(MyDialogService);
+  private readonly formBuilder = inject(FormBuilder);
+
   @Input() bankTransfer?: IBankPayment;
   @Output() bankTransferChange = new EventEmitter<IBankPayment>();
-
-  private readonly matDialog = inject(MatDialog);
-  private readonly formBuilder = inject(FormBuilder);
 
   bankTransferForm: FormGroup = this.formBuilder.group({
     bankBin: ['', Validators.required],
@@ -62,7 +62,7 @@ export class BankTransferComponent implements OnInit, OnDestroy {
 
   selectBank() {
     this.subscription.add(
-      this.matDialog.open(BankSelectorComponent, {
+      this.myDialogService.open(BankSelectorComponent, {
         panelClass: 'bank-selector-dialog'
       }).afterClosed().pipe(
         take(1),

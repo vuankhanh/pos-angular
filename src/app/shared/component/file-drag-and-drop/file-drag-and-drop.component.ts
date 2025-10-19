@@ -3,7 +3,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgxFileDropEntry, NgxFileDropModule } from 'ngx-file-drop';
 import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { GalleryComponent } from '@daelmaak/ngx-gallery';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../module/material';
 import { MatchHeightDirective } from '../../directive/match-height.directive';
@@ -17,7 +16,6 @@ import { filesArrayValidator } from '../../utitl/form-validator.util';
     FormsModule,
     ReactiveFormsModule,
 
-    GalleryComponent,
     MatchHeightDirective,
 
     NgxFileDropModule,

@@ -1,14 +1,13 @@
-import { Component, inject, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { Component, inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IConfirmDialog, TConfirmDialogData } from '../../../interface/confirm_dialog.interface';
-import { MatButtonModule } from '@angular/material/button';
+import { MaterialModule } from '../../../module/material';
 
 @Component({
   selector: 'app-confirm',
   standalone: true,
   imports: [
-    MatDialogModule,
-    MatButtonModule
+    MaterialModule
   ],
   templateUrl: './confirm.component.html',
   styleUrl: './confirm.component.scss'

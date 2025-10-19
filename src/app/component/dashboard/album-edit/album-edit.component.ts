@@ -27,7 +27,6 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
     MaterialModule,
     SetBaseUrlPipe
   ],
-  providers: [SetBaseUrlPipe],
   templateUrl: './album-edit.component.html',
   styleUrl: './album-edit.component.scss'
 })

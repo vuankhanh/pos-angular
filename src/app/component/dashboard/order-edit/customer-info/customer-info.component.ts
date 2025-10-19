@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { TCustomerModel } from '../../../../shared/interface/customer.interface';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../../shared/module/material';
@@ -6,9 +6,9 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map, Observable, Subscription, switchMap } from 'rxjs';
 import { CustomerService } from '../../../../shared/service/api/customer.service';
 import { Customer, TOrderDetailModel } from '../../../../shared/interface/order.interface';
-import { MatDialog } from '@angular/material/dialog';
 import { CustomerAddressComponent } from '../../../../shared/component/dialog/customer-address/customer-address.component';
 import { PhoneNumberPipe } from '../../../../shared/pipe/phone-number.pipe';
+import { MyDialogService } from '../../../../shared/service/my-dialog.service';
 
 @Component({
   selector: 'order-customer-info',
@@ -16,8 +16,6 @@ import { PhoneNumberPipe } from '../../../../shared/pipe/phone-number.pipe';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-
-    CustomerAddressComponent,
 
     MaterialModule,
 
@@ -27,6 +25,9 @@ import { PhoneNumberPipe } from '../../../../shared/pipe/phone-number.pipe';
   styleUrl: './customer-info.component.scss'
 })
 export class CustomerInfoComponent implements OnChanges, OnInit, OnDestroy {
+  private readonly customerService: CustomerService = inject(CustomerService);
+  private readonly myDialogService = inject(MyDialogService)
+
   @Input() order?: TOrderDetailModel;
   @Output() emitCustomer = new EventEmitter<Customer>();
   cusNameSearchCtl = new FormControl('');
@@ -36,8 +37,7 @@ export class CustomerInfoComponent implements OnChanges, OnInit, OnDestroy {
 
   subscrioption: Subscription = new Subscription();
   constructor(
-    private customerService: CustomerService,
-    private dialog: MatDialog
+
   ) {
 
   }
@@ -96,7 +96,7 @@ export class CustomerInfoComponent implements OnChanges, OnInit, OnDestroy {
 
   editCustomerDeliveryAddress(deliveryAddress: string) {
     this.subscrioption.add(
-      this.dialog.open(CustomerAddressComponent, {
+      this.myDialogService.open(CustomerAddressComponent, {
         data: deliveryAddress,
         width: '500px',
       }).afterClosed().subscribe((data) => {

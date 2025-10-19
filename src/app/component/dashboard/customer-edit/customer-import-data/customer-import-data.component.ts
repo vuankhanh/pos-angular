@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
+import { MatDialogRef } from '@angular/material/dialog';
 import { NgxFileDropEntry, NgxFileDropModule } from 'ngx-file-drop';
 import { CustomerService } from '../../../../shared/service/api/customer.service';
 import { Subscription } from 'rxjs';
+import { MaterialModule } from '../../../../shared/module/material';
 
 @Component({
   selector: 'app-customer-import-data',
@@ -14,26 +12,24 @@ import { Subscription } from 'rxjs';
   imports: [
     CommonModule,
 
-    MatDialogModule,
     NgxFileDropModule,
-    MatIconModule,
-    MatButtonModule
+    MaterialModule
   ],
   templateUrl: './customer-import-data.component.html',
   styleUrl: './customer-import-data.component.scss'
 })
 export class CustomerImportDataComponent {
-  readonly dialogRef =  inject(MatDialogRef<CustomerImportDataComponent>);
+  readonly dialogRef = inject(MatDialogRef<CustomerImportDataComponent>);
 
   accept = 'text/csv';
   isMultiple = false;
 
   file: File | null = null;
 
-  subscription: Subscription = new Subscription();
+  private readonly subscription: Subscription = new Subscription();
   constructor(
     private readonly customerService: CustomerService,
-  ){}
+  ) { }
   public async dropped(files: Array<NgxFileDropEntry>) {
     if (!this.isMultiple && files.length > 1) {
       alert('Chỉ cho phép tải lên 1 file');
@@ -50,19 +46,19 @@ export class CustomerImportDataComponent {
       }
       this.file = file;
       console.log(this.file);
-      
+
     } else {
       alert('Mục được thả vào không phải là file');
     }
   }
 
-  edit(){
+  edit() {
     this.file = null;
   }
 
-  upload(){
+  upload() {
     this.subscription.add(
-      this.customerService.importFile(this.file as Blob).subscribe(res=>{
+      this.customerService.importFile(this.file as Blob).subscribe(res => {
         this.dialogRef.close(true);
       })
     )
@@ -72,7 +68,7 @@ export class CustomerImportDataComponent {
     return new Promise((resolve, reject) => {
       dropFile.file((file: File) => {
         resolve(file);
-      }, (error: Error)=>{
+      }, (error: Error) => {
         reject(error);
       })
     })

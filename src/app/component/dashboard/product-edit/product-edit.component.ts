@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { map, of, Subscription, switchMap } from 'rxjs';
 import { MaterialModule } from '../../../shared/module/material';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TProductModel } from '../../../shared/interface/product.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../../shared/service/api/product.service';
-import { MatDialog } from '@angular/material/dialog';
 import { AlbumShowComponent } from '../../../shared/component/album-show/album-show.component';
 import { TAlbumModel } from '../../../shared/interface/album.interface';
 import { AlbumService, DetailParams } from '../../../shared/service/api/album.service';
 import { GalleryComponent, GalleryItem } from '@daelmaak/ngx-gallery';
 import { SetBaseUrlPipe } from '../../../shared/pipe/set-base-url.pipe';
+import { MyDialogService } from '../../../shared/service/my-dialog.service';
 
 @Component({
   selector: 'app-product-edit',
@@ -25,11 +25,17 @@ import { SetBaseUrlPipe } from '../../../shared/pipe/set-base-url.pipe';
 
     SetBaseUrlPipe
   ],
-  providers: [SetBaseUrlPipe],
   templateUrl: './product-edit.component.html',
   styleUrl: './product-edit.component.scss'
 })
 export class ProductEditComponent implements OnInit, OnDestroy {
+  private readonly router: Router = inject(Router);
+  private readonly formBuilder: FormBuilder = inject(FormBuilder);
+  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly setBaseUrlPipe: SetBaseUrlPipe = inject(SetBaseUrlPipe);
+  private readonly productService: ProductService = inject(ProductService);
+  private readonly albumService: AlbumService = inject(AlbumService);
+  private readonly myDialogService = inject(MyDialogService);
   title!: string;
   formGroup!: FormGroup;
 
@@ -38,23 +44,14 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 
   product?: TProductModel;
 
-  subscription: Subscription = new Subscription();
-  constructor(
-    private router: Router,
-    private formBuilder: FormBuilder,
-    private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog,
-    private setBaseUrlPipe: SetBaseUrlPipe,
-    private productService: ProductService,
-    private albumService: AlbumService
-  ) { }
+  private readonly subscription: Subscription = new Subscription();
 
   ngOnInit() {
     this.subscription.add(
       this.activatedRoute.queryParamMap.pipe(
         map(params => {
           const customerId = params.get('_id');
-          
+
           return customerId;
         }),
         switchMap(customerId => {
@@ -65,9 +62,9 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         })
       ).subscribe({
         next: (res) => {
-          if (res){
+          if (res) {
             this.product = res;
-            if(this.product.albumId) {
+            if (this.product.albumId) {
               this.getAlbumDetail(this.product.albumId);
             }
           }
@@ -128,7 +125,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   }
 
   openAlbumDialog() {
-    const dialogRef = this.dialog.open(AlbumShowComponent, {
+    const dialogRef = this.myDialogService.open(AlbumShowComponent, {
       width: '800px'
     });
     this.subscription.add(

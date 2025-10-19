@@ -4,7 +4,6 @@ import { MaterialModule } from '../../../../shared/module/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TSupplierLocationModel } from '../shared/interface/supplier-location.interface';
 import { TConfirmDialogData } from '../../../../shared/interface/confirm_dialog.interface';
-import { MatDialog } from '@angular/material/dialog';
 import { ConfirmComponent } from '../../../../shared/component/dialog/confirm/confirm.component';
 
 import { filter, map, Subscription, switchMap } from 'rxjs';
@@ -16,6 +15,7 @@ import { UpdateSupplierDebtComponent } from '../../../../shared/component/dialog
 import { ReplaceNewLinePipe } from '../../../../shared/pipe/replace-new-line.pipe';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { ToastrService } from 'ngx-toastr';
+import { MyDialogService } from '../../../../shared/service/my-dialog.service';
 
 @Component({
   selector: 'app-supplier-location-detail',
@@ -35,9 +35,9 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './supplier-location-detail.component.scss'
 })
 export class SupplierLocationDetailComponent implements OnInit, OnDestroy {
-  private readonly router: Router = inject(Router);
-  private readonly dialog: MatDialog = inject(MatDialog);
-  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly myDialogService = inject(MyDialogService);
+  private readonly activatedRoute = inject(ActivatedRoute);
   private readonly locationService = inject(LocationService);
   private readonly toastService = inject(ToastrService);
 
@@ -73,7 +73,7 @@ export class SupplierLocationDetailComponent implements OnInit, OnDestroy {
   }
 
   updateDebt() {
-    const dialogRef = this.dialog.open(UpdateSupplierDebtComponent, {
+    const dialogRef = this.myDialogService.open(UpdateSupplierDebtComponent, {
       data: this.supplier
     });
 
@@ -106,7 +106,7 @@ export class SupplierLocationDetailComponent implements OnInit, OnDestroy {
       cancelText: 'Hủy',
       confirmText: 'Xóa'
     }
-    const dialogRef = this.dialog.open(ConfirmComponent, {
+    const dialogRef = this.myDialogService.open(ConfirmComponent, {
       data
     });
 

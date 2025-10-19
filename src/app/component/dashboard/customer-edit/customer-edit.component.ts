@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, of, Subscription, switchMap } from 'rxjs';
 import { CustomerService } from '../../../shared/service/api/customer.service';
@@ -6,8 +6,8 @@ import { TCustomerModel } from '../../../shared/interface/customer.interface';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../shared/module/material';
-import { MatDialog } from '@angular/material/dialog';
 import { CustomerImportDataComponent } from './customer-import-data/customer-import-data.component';
+import { MyDialogService } from '../../../shared/service/my-dialog.service';
 
 @Component({
   selector: 'app-customer-edit',
@@ -22,19 +22,21 @@ import { CustomerImportDataComponent } from './customer-import-data/customer-imp
   styleUrl: './customer-edit.component.scss'
 })
 export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
+  private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly cdRef = inject(ChangeDetectorRef);
+  private readonly customerService = inject(CustomerService);
+  private readonly myDialogService = inject(MyDialogService);
+
   @ViewChildren('formElement') formElements!: QueryList<ElementRef>;
   customer?: TCustomerModel;
 
   formGroup!: FormGroup;
-  
+
   subscription: Subscription = new Subscription();
   constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog,
-    private formBuilder: FormBuilder,
-    private cdRef: ChangeDetectorRef,
-    private customerService: CustomerService
+
   ) { }
 
   ngOnInit() { }
@@ -136,7 +138,7 @@ export class CustomerEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openImportDataDialog() {
-    const dialogRef = this.dialog.open(CustomerImportDataComponent);
+    const dialogRef = this.myDialogService.open(CustomerImportDataComponent);
     this.subscription.add(
       dialogRef.afterClosed().subscribe(result => {
         if (result) {

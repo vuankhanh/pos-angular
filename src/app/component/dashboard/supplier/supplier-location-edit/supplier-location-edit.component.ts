@@ -47,8 +47,6 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
   private readonly controlFormChanged$: Observable<{ [key: string]: any }> = this.bControlFormChanged.asObservable();
   isFormChanged$: Observable<boolean> = this.controlFormChanged$.pipe(
     map((value: { [key: string]: any }) => {
-      console.log(value);
-
       return Object.keys(value).length > 0;
     }),
   );

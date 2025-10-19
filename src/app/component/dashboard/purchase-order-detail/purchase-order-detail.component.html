@@ -14,6 +14,12 @@
     <mat-card-content>
       <div class="info-list">
         <div class="info-list__item">
+          <div class="info-list__item__label">Ngày tạo:</div>
+          <div class="info-list__item__value">
+            {{purchaseOrder.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}}
+          </div>
+        </div>
+        <div class="info-list__item">
           <div class="info-list__item__label">Trạng thái:</div>
           <div class="info-list__item__value">
             <app-status-color [status]="purchaseOrder.status"></app-status-color>
@@ -112,14 +118,16 @@
 <mat-menu #appMenu="matMenu">
   <ng-template matMenuContent let-group="orderGroup">
     @if (group.bankTransfer) {
+    <h4 [align]="'center'">{{group.productSupplierName}}</h4>
+    <mat-divider></mat-divider>
     <button mat-menu-item (click)="onGenerateQrCode(group)">
       <mat-icon>qr_code_2</mat-icon>
-      {{'Tạo thanh toán '+ group.productSupplierName}}
+      {{'Tạo thanh toán'}}
     </button>
     }
     <button mat-menu-item (click)="onScanQrCode(group)">
       <mat-icon>qr_code_scanner</mat-icon>
-      {{'Quét và tạo thanh toán '+ group.productSupplierName}}
+      {{'Quét và tạo thanh toán'}}
     </button>
 
     <button mat-menu-item (click)="onDownloadSingle(group)">

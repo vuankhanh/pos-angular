@@ -1,23 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { TCustomerModel } from '../../../shared/interface/customer.interface';
 import { CustomerService } from '../../../shared/service/api/customer.service';
 import { filter, map, Subscription, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MaterialModule } from '../../../shared/module/material';
-import { MatDialog } from '@angular/material/dialog';
 import { ConfirmComponent } from '../../../shared/component/dialog/confirm/confirm.component';
 import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.interface';
 import { PhoneNumberPipe } from '../../../shared/pipe/phone-number.pipe';
+import { MyDialogService } from '../../../shared/service/my-dialog.service';
 
 @Component({
   selector: 'app-customer-detail',
   standalone: true,
   imports: [
     CommonModule,
-
-    ConfirmComponent,
 
     MaterialModule,
 
@@ -27,16 +24,18 @@ import { PhoneNumberPipe } from '../../../shared/pipe/phone-number.pipe';
   styleUrl: './customer-detail.component.scss'
 })
 export class CustomerDetailComponent implements OnInit, OnDestroy {
+  private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly customerService = inject(CustomerService);
+  private readonly myDialogService = inject(MyDialogService);
+
   customer?: TCustomerModel;
 
   subscription: Subscription = new Subscription();
   constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog,
-    private customerService: CustomerService
+
   ) { }
-  
+
   ngOnInit() {
     const customerDetail$ = this.activatedRoute.params.pipe(
       map(params => {
@@ -51,7 +50,7 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
         next: res => {
           this.customer = res;
           console.log(this.customer);
-          
+
         },
         error: error => {
           this.goBackCustomerList();
@@ -73,21 +72,23 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       cancelText: 'Hủy',
       confirmText: 'Xóa'
     }
-    const dialogRef = this.dialog.open(ConfirmComponent, {
+    const dialogRef = this.myDialogService.open(ConfirmComponent, {
       data
     });
 
-    dialogRef.afterClosed().pipe(
-      filter(result => result),
-      switchMap(() => this.customerService.remove(this.customer!._id))
-    ).subscribe({
-      next: res => {
-        this.goBackCustomerList();
-      },
-      error: error => {
-        console.error(error);
-      }
-    });
+    this.subscription.add(
+      dialogRef.afterClosed().pipe(
+        filter(result => result),
+        switchMap(() => this.customerService.remove(this.customer!._id))
+      ).subscribe({
+        next: res => {
+          this.goBackCustomerList();
+        },
+        error: error => {
+          console.error(error);
+        }
+      })
+    )
   }
 
   goBackCustomerList() {

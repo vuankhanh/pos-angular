@@ -17,13 +17,13 @@ import { StatusColorComponent } from '../../../shared/component/status-color/sta
 import { AsyncDebtBadgeDirective } from '../../../shared/directive/async-debt-badge.directive';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { BankTransferService } from '../../../shared/service/api/bank-transfer.service';
-import { MatDialog } from '@angular/material/dialog';
 import { ConfirmComponent } from '../../../shared/component/dialog/confirm/confirm.component';
 import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.interface';
 import { ToastrService } from 'ngx-toastr';
 import { QrcodeScannerComponent } from '../../../shared/component/dialog/qrcode-scanner/qrcode-scanner.component';
 import { IBaseBankPayment } from '../../../shared/interface/bank-payment.interface';
 import { QrCodeImageComponent } from '../../../shared/component/dialog/qr-code-image/qr-code-image.component';
+import { MyDialogService } from '../../../shared/service/my-dialog.service';
 
 @Component({
   selector: 'app-purchase-order-detail',
@@ -48,8 +48,8 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
   private readonly purchaseOrderService: PurchaseOrderService = inject(PurchaseOrderService);
   private readonly html2canvasService = inject(Html2canvasService);
   private readonly bankTransferService = inject(BankTransferService);
-  private readonly matDialog = inject(MatDialog);
   private readonly toastService = inject(ToastrService)
+  private readonly myDialogService = inject(MyDialogService);
 
   @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
   @ViewChild('menuTrigger', { read: ElementRef }) triggerElementRef!: ElementRef<HTMLDivElement>;
@@ -204,7 +204,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
   }
 
   async onScanQrCode(group: GroupedOrderItems) {
-    const dialogRef = this.matDialog.open(QrcodeScannerComponent, {
+    const dialogRef = this.myDialogService.open(QrcodeScannerComponent, {
       panelClass: ['responsive-design-dialog', 'qrcode-scanner-dialog']
     });
 
@@ -228,7 +228,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
 
   private async generateQrCodeAndShare(supplier: string, bankBin: string, accountNumber: string, accountName: string, amount: number, addInfo: string) {
     const blob: Blob = await lastValueFrom(this.bankTransferService.generateQrCode(bankBin, accountNumber, accountName, amount, addInfo));
-    this.matDialog.open(QrCodeImageComponent, {
+    this.myDialogService.open(QrCodeImageComponent, {
       data: {  supplier: supplier, blob: blob},
       panelClass: ['responsive-design-dialog']
     });
@@ -252,7 +252,7 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
       confirmColor: 'warn',
       confirmText: 'Xóa'
     }
-    this.matDialog.open(ConfirmComponent, {
+    this.myDialogService.open(ConfirmComponent, {
       data
     }).afterClosed().pipe(
       filter(result => result),

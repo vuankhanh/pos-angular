@@ -1,19 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { MaterialModule } from '../../../shared/module/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { AlbumService, DetailParams } from '../../../shared/service/api/album.service';
 import { SetBaseUrlPipe } from '../../../shared/pipe/set-base-url.pipe';
 import { TAlbumModel, TMediaModel } from '../../../shared/interface/album.interface';
-import { filter, map, Observable, Subscription, switchMap, tap } from 'rxjs';
+import { filter, map, Subscription, switchMap, tap } from 'rxjs';
 import { IGalleryItem } from '../../../shared/interface/gallery.interface';
-import { GalleryCustomThumbsComponent } from '../../../shared/component/gallery-custom-thumbs/gallery-custom-thumbs.component';
-import { GalleryItemTemporarilyDeletedComponent } from '../../../shared/component/gallery-item-temporarily-deleted/gallery-item-temporarily-deleted.component';
 import { ConfirmComponent } from '../../../shared/component/dialog/confirm/confirm.component';
 import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.interface';
 import { FileDragAndDropComponent } from '../../../shared/component/file-drag-and-drop/file-drag-and-drop.component';
 import { GalleryComponent } from '@daelmaak/ngx-gallery';
+import { MyDialogService } from '../../../shared/service/my-dialog.service';
 
 @Component({
   selector: 'app-album-detail',
@@ -23,34 +21,34 @@ import { GalleryComponent } from '@daelmaak/ngx-gallery';
 
     GalleryComponent,
 
-    MaterialModule,
-    SetBaseUrlPipe
+    MaterialModule
   ],
-  providers: [SetBaseUrlPipe],
   templateUrl: './album-detail.component.html',
   styleUrl: './album-detail.component.scss'
 })
 export class AlbumDetailComponent {
+  private readonly router = inject(Router);
+  private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private albumService: AlbumService = inject(AlbumService);
+  private setBaseUrlPipe: SetBaseUrlPipe = inject(SetBaseUrlPipe);
+  private myaDialogService = inject(MyDialogService);
+
   @ViewChild(FileDragAndDropComponent) childComponentRef!: FileDragAndDropComponent;
   albumDetail?: TAlbumModel;
   galleryItems: IGalleryItem[] = [];
 
   private subscription: Subscription = new Subscription();
   constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog,
-    private albumService: AlbumService,
-    private setBaseUrlPipe: SetBaseUrlPipe
+
   ) {
 
   }
 
   ngOnInit() {
     let albumDetail$ = this.activatedRoute.params.pipe(
-      tap(res=>console.log(res)),
+      tap(res => console.log(res)),
       map(params => {
-        const detailParams: DetailParams = {route: params['route'] as string};
+        const detailParams: DetailParams = { route: params['route'] as string };
         return detailParams
       }),
       switchMap(detailParams => this.albumService.getDetail(detailParams))
@@ -64,7 +62,7 @@ export class AlbumDetailComponent {
         },
         error: error => {
           console.log(error);
-          
+
           this.goBackAlbumList();
         }
       })
@@ -89,7 +87,7 @@ export class AlbumDetailComponent {
     return this.galleryItems;
   }
 
-  edit(){
+  edit() {
     this.router.navigate(['/album-edit'], {
       queryParams: {
         route: this.albumDetail?.route
@@ -97,7 +95,7 @@ export class AlbumDetailComponent {
     });
   }
 
-  remove(){
+  remove() {
     const dialogData: TConfirmDialogData = {
       title: 'Xóa Album',
       message: 'Bạn có chắc chắn muốn xóa album này?',
@@ -105,21 +103,26 @@ export class AlbumDetailComponent {
       cancelText: 'Hủy',
     }
 
-    const dialogRef = this.dialog.open(ConfirmComponent, {
+    const dialogRef = this.myaDialogService.open(ConfirmComponent, {
       data: dialogData
     });
 
-    dialogRef.afterClosed().pipe(
-      filter(result => result),
-      switchMap(() => this.albumService.delete(this.albumDetail!._id))
-    ).subscribe({
-      next: res => {
-        this.goBackAlbumList();
-      },
-      error: error => {
-        console.error(error);
-      }
-    });
+    this.subscription.add(
+      dialogRef.afterClosed().pipe(
+        filter(result => result),
+        switchMap(() => this.albumService.delete(this.albumDetail!._id))
+      ).subscribe({
+        next: res => {
+          this.goBackAlbumList();
+        },
+        error: error => {
+          console.error(error);
+        },
+        complete: () => {
+          console.log('complete');
+        }
+      })
+    )
   }
 
   goBackAlbumList() {

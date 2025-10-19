@@ -2,13 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MaterialModule } from '../../../../shared/module/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { TSupplierProductModel } from '../shared/interface/supplier-product.interface';
 import { filter, map, Subscription, switchMap } from 'rxjs';
 import { ConfirmComponent } from '../../../../shared/component/dialog/confirm/confirm.component';
 import { TConfirmDialogData } from '../../../../shared/interface/confirm_dialog.interface';
 import { ProductService } from '../shared/service/api/product.service';
 import { CurrencyCustomPipe } from '../../../../shared/pipe/currency-custom.pipe';
+import { MyDialogService } from '../../../../shared/service/my-dialog.service';
 
 @Component({
   selector: 'app-supplier-product-detail',
@@ -26,7 +26,7 @@ import { CurrencyCustomPipe } from '../../../../shared/pipe/currency-custom.pipe
 })
 export class SupplierProductDetailComponent implements OnInit, OnDestroy {
   private readonly router: Router = inject(Router);
-  private readonly dialog: MatDialog = inject(MatDialog);
+  private readonly myDialogService = inject(MyDialogService);
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
 
   private readonly supplierProductService: ProductService = inject(ProductService);
@@ -70,7 +70,7 @@ export class SupplierProductDetailComponent implements OnInit, OnDestroy {
       cancelText: 'Hủy',
       confirmText: 'Xóa'
     }
-    const dialogRef = this.dialog.open(ConfirmComponent, {
+    const dialogRef = this.myDialogService.open(ConfirmComponent, {
       data
     });
 

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MaterialModule } from '../../shared/module/material';
-import { Observable, of } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { BreakpointDetectionService } from '../../shared/service/breakpoint-detection.service';
 import { RouterEventService } from '../../shared/service/router-event.service';
 import { AuthStateService } from '../../shared/service/auth_state.service';
@@ -21,8 +21,13 @@ import { AuthStateService } from '../../shared/service/auth_state.service';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent implements OnInit {
-  breakpointDetection$: Observable<boolean> = of(false);
+export class DashboardComponent implements OnInit, OnDestroy {
+  private readonly router: Router = inject(Router);
+  private readonly breakpointDetectionService: BreakpointDetectionService = inject(BreakpointDetectionService);
+  private readonly authStateService: AuthStateService = inject(AuthStateService);
+  private readonly routerEventService: RouterEventService = inject(RouterEventService);
+
+  breakpointDetection$: Observable<boolean> = this.breakpointDetectionService.detection$();
   menu = [
     { name: 'Album', route: 'album' },
     { name: 'Khách hàng', route: 'customer' },
@@ -43,14 +48,7 @@ export class DashboardComponent implements OnInit {
 
   isActiveMap: { [key: string]: boolean } = {};
 
-  constructor(
-    private router: Router,
-    private breakpointDetectionService: BreakpointDetectionService,
-    private authStateService: AuthStateService,
-    private routerEventService: RouterEventService,
-  ) {
-    this.breakpointDetection$ = this.breakpointDetectionService.detection$()
-  }
+  private readonly subscription = new Subscription();
 
   ngOnInit() {
     this.updateActiveRoutes();
@@ -65,5 +63,9 @@ export class DashboardComponent implements OnInit {
 
   logout() {
     this.authStateService.logout();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

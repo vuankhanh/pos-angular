@@ -5,8 +5,7 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { MatTable } from '@angular/material/table';
 import { PurchaseOrderItem, TPurchaseOrder } from '../../../shared/interface/purchase-order.interface';
 import { TSupplierProductModel } from '../supplier/shared/interface/supplier-product.interface';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, of, Subscription, switchMap, tap } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, map, Observable, of, Subscription, switchMap, take, tap } from 'rxjs';
 import { ProductService } from '../supplier/shared/service/api/product.service';
 import { BreakpointDetectionService } from '../../../shared/service/breakpoint-detection.service';
 import { CurrencyCustomPipe } from '../../../shared/pipe/currency-custom.pipe';
@@ -27,6 +26,7 @@ import { IInputFeeDialogData } from '../../../shared/interface/input-fee-dialog.
 import { CanComponentDeactivate } from '../../../shared/interface/can-component-deactivate.interface';
 import { ConfirmComponent } from '../../../shared/component/dialog/confirm/confirm.component';
 import { TConfirmDialogData } from '../../../shared/interface/confirm_dialog.interface';
+import { MyDialogService } from '../../../shared/service/my-dialog.service';
 
 @Component({
   selector: 'app-purchase-order-edit',
@@ -52,7 +52,7 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
 
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
-  private readonly dialog = inject(MatDialog);
+  private readonly myDialogService = inject(MyDialogService);
   private readonly renderer = inject(Renderer2);
   private readonly purchaseOrderService = inject(PurchaseOrderService);
   private readonly productService = inject(ProductService);
@@ -212,7 +212,7 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
       message: 'Cập nhật giá mới',
       fee: orderItem.product.price
     }
-    const dialogRef = this.dialog.open(InputFeeComponent, {
+    const dialogRef = this.myDialogService.open(InputFeeComponent, {
       data
     });
 
@@ -244,12 +244,27 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
   }
 
   removeItemQuantity(orderItem: PurchaseOrderItem) {
-    const orderItems = this.bPurchaseOrderItems.value;
-    const index = orderItems.findIndex(item => item.product._id === orderItem.product._id);
-    if (index === -1) return; // Không tìm thấy sản phẩm trong danh sách
-    orderItems.splice(index, 1);
-    this.bPurchaseOrderItems.next(orderItems);
-    this.purchaseOrderItemsControl.setValue(orderItems);
+    const data: TConfirmDialogData = {
+      title: 'Xoá sản phẩm',
+      message: `Bạn có chắc muốn xóa ${orderItem.product.name}?`,
+      cancelText: 'Hủy',
+      confirmText: 'Xoá',
+      confirmColor: 'warn'
+    }
+    
+    this.subscription.add(
+      this.myDialogService.open(ConfirmComponent, { data }).afterClosed().pipe(
+        take(1),
+        filter(result => !!result)
+      ).subscribe(() => {
+        const orderItems = this.bPurchaseOrderItems.value;
+        const index = orderItems.findIndex(item => item.product._id === orderItem.product._id);
+        if (index === -1) return; // Không tìm thấy sản phẩm trong danh sách
+        orderItems.splice(index, 1);
+        this.bPurchaseOrderItems.next(orderItems);
+        this.purchaseOrderItemsControl.setValue(orderItems);
+      })
+    )
   }
 
   onStatusChange(event: `${PurchaseOrderStatus}`) {
@@ -321,7 +336,7 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
       confirmText: 'Vẫn thoát'
     }
 
-    return this.dialog.open(ConfirmComponent, { data }).afterClosed().pipe(
+    return this.myDialogService.open(ConfirmComponent, { data }).afterClosed().pipe(
       map(result => !!result),
       tap((result) => console.log(result))
     ); 
