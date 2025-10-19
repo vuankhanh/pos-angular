@@ -66,6 +66,14 @@
                 }
               ]
             },
+            "development-mobile": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.development.ts",
+                  "with": "src/environments/environment.development-mobile.ts"
+                }
+              ]
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -79,6 +87,9 @@
           "configurations": {
             "production": {
               "buildTarget": "pos-angular:build:production"
+            },
+            "development-mobile": {
+              "buildTarget": "pos-angular:build:development-mobile"
             },
             "development": {
               "buildTarget": "pos-angular:build:development"
