@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -10,18 +10,18 @@ import { Observable, catchError, switchMap, throwError } from 'rxjs';
 import { AuthStateService } from '../../service/auth_state.service';
 import { AuthService } from '../../service/api/auth.service';
 import { LocalStorageKey } from '../../../constant/local_storage.constant';
+import { LocalStorageService } from '../../service/local-storage.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  private readonly localStorageService = inject(LocalStorageService);
+  private authStateService: AuthStateService = inject(AuthStateService);
+  private authService: AuthService = inject(AuthService);
+
   private isRefreshing = false;
-  constructor(
-    private authStateService: AuthStateService,
-    private authService: AuthService
-  ) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-    const accessToken = localStorage.getItem(LocalStorageKey.ACCESSTOKEN);
+    const accessToken = this.localStorageService.get(LocalStorageKey.ACCESSTOKEN);
     if (accessToken) {
       const cloned = request.clone({
         headers: request.headers.set("authorization", "Bearer " + accessToken)
@@ -43,13 +43,13 @@ export class AuthInterceptor implements HttpInterceptor {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
 
-      const refreshToken = localStorage.getItem(LocalStorageKey.REFRESHTOKEN);
+      const refreshToken = this.localStorageService.get(LocalStorageKey.REFRESHTOKEN);
       const isLogin = this.authStateService.isLogin;
       if (isLogin) {
         const refreshTokenRequest = this.authService.refreshToken(refreshToken!)
         return refreshTokenRequest.pipe(
           switchMap((accessToken) => {
-            localStorage.setItem(LocalStorageKey.ACCESSTOKEN, accessToken);
+            this.localStorageService.set(LocalStorageKey.ACCESSTOKEN, accessToken);
             this.isRefreshing = false;
             const cloned = request.clone({
               headers: request.headers.set("authorization", "Bearer " + accessToken)
