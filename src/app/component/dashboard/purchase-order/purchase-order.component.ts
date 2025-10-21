@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { PurchaseOrderService } from '../../../shared/service/api/purchase-order.service';
 import { CurrencyCustomPipe } from '../../../shared/pipe/currency-custom.pipe';
 import { StatusColorComponent } from '../../../shared/component/status-color/status-color.component';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-purchase-order',
@@ -31,21 +32,21 @@ export class PurchaseOrderComponent implements OnInit, OnDestroy {
   private readonly purchaseOrderService = inject(PurchaseOrderService);
   purchaseOrders: TPurchaseOrder[] = [];
   displayedColumns = ['status', 'createdAt', 'code', 'totalPrice', 'action'];
-  paging: IPagination = paginationConstant;
   breakpointDetection$ = this.breakpointDetectionService.detection$();
+  pagination: IPagination = paginationConstant;
+  pageSizeOptions: number[] = [10, 25, 100];
 
   private readonly subscription: Subscription = new Subscription();
 
   ngOnInit(): void {
-    this.getAll('', this.paging.page, this.paging.size);
+    this.getAll('', this.pagination.page, this.pagination.size);
   }
 
-  getAll(nameSearch: string, page: number, size: number){
+  getAll(nameSearch: string, page: number, size: number) {
     this.subscription.add(this.purchaseOrderService.getAll(nameSearch, page, size).subscribe({
       next: (res) => {
         this.purchaseOrders = res.data;
-        
-        console.log(this.purchaseOrders);
+        this.pagination = res.paging;
       }
     }))
   }
@@ -64,6 +65,13 @@ export class PurchaseOrderComponent implements OnInit, OnDestroy {
         _id: purchaseOrder._id
       }
     });
+  }
+
+  handlePageEvent(event: PageEvent) {
+    this.pagination.page = event.pageIndex + 1;
+    this.pagination.size = event.pageSize;
+
+    this.getAll('', this.pagination.page, this.pagination.size);
   }
 
   ngOnDestroy(): void {

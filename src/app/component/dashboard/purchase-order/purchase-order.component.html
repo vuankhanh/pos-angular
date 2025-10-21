@@ -53,4 +53,8 @@
       </table>
     </section>
   }
+  @if(pagination.totalItems){
+  <mat-paginator [length]="pagination.totalItems" [pageIndex]="pagination.page - 1" [pageSize]="pagination.size"
+    [pageSizeOptions]="pageSizeOptions" (page)="handlePageEvent($event)"></mat-paginator>
+  }
 </div>

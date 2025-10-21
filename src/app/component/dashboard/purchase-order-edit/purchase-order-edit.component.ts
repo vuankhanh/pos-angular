@@ -312,8 +312,7 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
     if (!this.purchaseOrder){
       const purchaseOrderItemsLength = this.formGroup.get('purchaseOrderItems')?.value.length;
-      console.log(purchaseOrderItemsLength);
-      
+
       if(purchaseOrderItemsLength === 0) return true;
 
       return this.openConfirmDialog();

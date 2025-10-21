@@ -38,7 +38,7 @@ export class AlbumShowComponent implements OnInit, OnDestroy {
   pageSizeOptions: number[] = [2, 5, 10, 25, 100];
   breakpointDetection$ = this.breakpointDetectionService.detection$();
   
-  subscription: Subscription = new Subscription();
+  private readonly subscription: Subscription = new Subscription();
   constructor(
     @Optional() private readonly dialogRef: MatDialogRef<AlbumShowComponent>,
     private albumService: AlbumService,
