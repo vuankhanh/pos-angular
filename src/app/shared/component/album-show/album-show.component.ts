@@ -7,7 +7,6 @@ import { SetBaseUrlPipe } from '../../pipe/set-base-url.pipe';
 import { paginationConstant } from '../../../constant/pagination.constant';
 import { IPagination } from '../../interface/pagination.interface';
 import { PageEvent } from '@angular/material/paginator';
-import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlbumService } from '../../service/api/album.service';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -18,7 +17,6 @@ import { SearchComponent } from '../search/search.component';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
 
     SearchComponent,
 
