@@ -26,28 +26,33 @@ export class BankTransferComponent implements OnInit, OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
 
   @Input() bankTransfer?: IBankPayment;
-  @Output() bankTransferChange = new EventEmitter<IBankPayment>();
+  @Output() bankTransferChange = new EventEmitter<IBankPayment | null>();
+  @Output() bankTransferIsValidChange = new EventEmitter<boolean>();
 
   bankTransferForm: FormGroup = this.formBuilder.group({
     bankBin: ['', Validators.required],
-    bankAvatar: ['', Validators.required],
+    bankAvatar: ['assets/svg/house-with-dollar-sign-svgrepo-com.svg', Validators.required],
     bankShortName: ['', Validators.required],
     bankName: ['', Validators.required],
     accountNumber: ['', Validators.required],
     accountName: [''],
   });
 
+  rawFormValue = this.bankTransferForm.getRawValue();
+
   private readonly subscription = new Subscription();
 
   ngOnInit(): void {
-    this.bankTransferForm.patchValue({
-      bankBin: this.bankTransfer?.bankBin,
-      bankAvatar: this.bankTransfer?.bankAvatar ?? 'assets/svg/house-with-dollar-sign-svgrepo-com.svg',
-      bankShortName: this.bankTransfer?.bankShortName ?? 'Chọn ngân hàng',
-      bankName: this.bankTransfer?.bankName,
-      accountNumber: this.bankTransfer?.accountNumber,
-      accountName: this.bankTransfer?.accountName
-    });
+    if (this.bankTransfer) {
+      this.bankTransferForm.patchValue({
+        bankBin: this.bankTransfer?.bankBin,
+        bankAvatar: this.bankTransfer?.bankAvatar,
+        bankShortName: this.bankTransfer?.bankShortName ?? 'Chọn ngân hàng',
+        bankName: this.bankTransfer?.bankName,
+        accountNumber: this.bankTransfer?.accountNumber,
+        accountName: this.bankTransfer?.accountName
+      });
+    }
 
     this.subscription.add(
       this.bankTransferForm.valueChanges.pipe(
@@ -55,7 +60,10 @@ export class BankTransferComponent implements OnInit, OnDestroy {
           return isEqual(prev, curr)
         })
       ).subscribe(value => {
+        console.log(value);
+        
         this.bankTransferChange.emit(value);
+        this.bankTransferIsValidChange.emit(this.bankTransferForm.valid);
       })
     )
   }
@@ -74,6 +82,19 @@ export class BankTransferComponent implements OnInit, OnDestroy {
         this.bankTransferForm.get('bankName')?.setValue(bank.name);
       })
     )
+  }
+
+  resetForm() {
+    this.bankTransferForm.reset(this.rawFormValue);
+    this.bankTransferForm.controls['accountNumber'].clearValidators();
+    this.bankTransferForm.controls['accountNumber'].updateValueAndValidity();
+    
+    this.bankTransferForm.controls['accountNumber'].setValidators(Validators.required);
+    this.bankTransferForm.markAsPristine();
+    this.bankTransferForm.markAsTouched();
+
+    this.bankTransferChange.emit(null);
+    this.bankTransferIsValidChange.emit(true);
   }
 
   ngOnDestroy(): void {

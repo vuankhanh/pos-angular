@@ -1,5 +1,5 @@
 <form [formGroup]="bankTransferForm" class="vertical-container">
-  <fieldset>
+  <fieldset class="vertical-container">
     <legend class="horizontal-container">
       <mat-icon>account_balance</mat-icon>
       <span>Ngân hàng</span>
@@ -14,9 +14,15 @@
       </div>
     </mat-list-item>
 
-    <mat-form-field>
+    <mat-form-field subscriptSizing="dynamic">
       <mat-label>Số tài khoản</mat-label>
       <input type="text" matInput formControlName="accountNumber">
     </mat-form-field>
+
+    <div class="button-container horizontal-container">
+      <button mat-icon-button (click)="resetForm()">
+        <mat-icon color="warn">clear</mat-icon>
+      </button>
+    </div>
   </fieldset>
 </form>

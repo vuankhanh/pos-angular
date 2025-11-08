@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { MaterialModule } from '../../../../shared/module/material';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TSupplierLocationModel } from '../shared/interface/supplier-location.interface';
 import { BehaviorSubject, distinctUntilChanged, filter, map, Observable, of, skipUntil, skipWhile, Subscription, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -103,15 +103,6 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
       lng: [this.supplierLocation?.position?.lng || '0']
     });
 
-    const bankTransferForm: FormGroup = this.formBuilder.group({
-      bankBin: [this.supplierLocation?.bankTransfer?.bankBin, Validators.required],
-      bankAvatar: [this.supplierLocation?.bankTransfer?.bankAvatar, Validators.required],
-      bankShortName: [this.supplierLocation?.bankTransfer?.bankShortName, Validators.required],
-      bankName: [this.supplierLocation?.bankTransfer?.bankName, Validators.required],
-      accountNumber: [this.supplierLocation?.bankTransfer?.accountNumber, Validators.required],
-      accountName: [this.supplierLocation?.bankTransfer?.accountName],
-    });
-
     this.formGroup = this.formBuilder.group({
       name: [this.supplierLocation?.name, Validators.required],
       address: [
@@ -122,7 +113,7 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
       telephone: [this.supplierLocation?.telephone, Validators.required],
       email: [this.supplierLocation?.email],
       position: positionGroup,
-      bankTransfer: bankTransferForm
+      bankTransfer: this.supplierLocation?.bankTransfer
     });
 
     const initialFormValue = this.formGroup.getRawValue();
@@ -158,7 +149,7 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
   }
 
   get bankTransferControl() {
-    return this.formGroup.get('bankTransfer') as FormGroup;
+    return this.formGroup.get('bankTransfer') as FormControl;
   }
 
   onAddressValueChange(value: IAddress) {
@@ -180,8 +171,15 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
     }
   }
 
-  onBankTransferChange(value: IBankPayment) {
-    this.bankTransferControl.patchValue(value);
+  onBankTransferChange(value: IBankPayment | null) {
+    
+    this.bankTransferControl?.setValue(value);
+    console.log(this.formGroup);
+  }
+
+  onBankTransferIsValidChange(isValid: boolean) {
+    this.bankTransferControl?.setErrors(isValid ? null : { invalid: true });
+    console.log(this.formGroup.value);
   }
 
   onSubmit() {

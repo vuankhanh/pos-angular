@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  backendApi: 'http://localhost:3004/api',
-  backendStatic: 'http://localhost:3004/static'
+  backendApi: 'http://localhost:4200/api',
+  backendStatic: 'http://localhost:4200/static'
 };

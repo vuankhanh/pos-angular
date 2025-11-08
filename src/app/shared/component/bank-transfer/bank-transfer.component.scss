@@ -3,6 +3,7 @@ form {
     min-width: 0;
     width: 100%;
     box-sizing: border-box;
+    gap: 10px;
 
     legend {
       width: fit-content;
@@ -12,15 +13,12 @@ form {
       }
     }
 
-    padding-bottom: 0px;
-    margin-bottom: 15px;
-
-    mat-form-field:not(:last-child) {
-      margin-right: 10px;
-    }
-
     mat-form-field {
       width: 100%;
+    }
+
+    .button-container {
+      justify-content: flex-end;
     }
   }
 }

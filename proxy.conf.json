@@ -1,11 +1,23 @@
 {
   "/api": {
-    "target": "https://192.168.1.5:3004",
+    "target": "http://localhost:3004",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
   },
   "/static": {
+    "target": "http://localhost:3004",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/apis": {
+    "target": "https://192.168.1.5:3004",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/statics": {
     "target": "https://192.168.1.5:3004",
     "secure": false,
     "changeOrigin": true,
