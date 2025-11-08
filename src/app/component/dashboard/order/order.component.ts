@@ -49,8 +49,6 @@ export class OrderComponent implements OnInit, OnDestroy {
     this.subscription.add(this.orderService.getAll(nameSearch, page, size).subscribe({
       next: (res) => {
         this.orders = res.data;
-        console.log(this.orders);
-        
       }
     }))
   }

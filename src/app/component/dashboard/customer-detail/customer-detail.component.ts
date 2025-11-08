@@ -49,8 +49,6 @@ export class CustomerDetailComponent implements OnInit, OnDestroy {
       customerDetail$.subscribe({
         next: res => {
           this.customer = res;
-          console.log(this.customer);
-
         },
         error: error => {
           this.goBackCustomerList();

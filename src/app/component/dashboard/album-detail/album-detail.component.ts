@@ -46,7 +46,6 @@ export class AlbumDetailComponent {
 
   ngOnInit() {
     let albumDetail$ = this.activatedRoute.params.pipe(
-      tap(res => console.log(res)),
       map(params => {
         const detailParams: DetailParams = { route: params['route'] as string };
         return detailParams
@@ -60,9 +59,7 @@ export class AlbumDetailComponent {
           this.albumDetail = res;
           this.initImages(this.albumDetail.media)
         },
-        error: error => {
-          console.log(error);
-
+        error: () => {
           this.goBackAlbumList();
         }
       })

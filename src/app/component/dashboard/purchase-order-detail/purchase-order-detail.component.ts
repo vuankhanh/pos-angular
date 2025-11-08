@@ -169,8 +169,6 @@ export class PurchaseOrderDetailComponent implements OnInit, OnDestroy {
   }
 
   onMenuClick(event: MouseEvent, group: GroupedOrderItems) {
-    console.log(event);
-    
     event.preventDefault();
     event.stopPropagation();
     this.openMenu(event.clientX, event.clientY, group);

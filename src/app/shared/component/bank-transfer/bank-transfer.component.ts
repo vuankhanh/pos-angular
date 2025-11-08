@@ -60,8 +60,6 @@ export class BankTransferComponent implements OnInit, OnDestroy {
           return isEqual(prev, curr)
         })
       ).subscribe(value => {
-        console.log(value);
-        
         this.bankTransferChange.emit(value);
         this.bankTransferIsValidChange.emit(this.bankTransferForm.valid);
       })

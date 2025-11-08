@@ -47,8 +47,6 @@ export class SupplierProductDetailComponent implements OnInit, OnDestroy {
       supplierProductDetail$.subscribe({
         next: res => {
           this.supplierProduct = res;
-          console.log(this.supplierProduct);
-
         },
         error: error => {
           this.goBackSupplierProductList();

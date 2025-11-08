@@ -87,7 +87,6 @@ export class UpdateSupplierDebtComponent implements OnInit, OnDestroy {
         filter(value=> !!value),
         switchMap(_ => this.locationService.updateDebt(this.data._id, this.formGroup.value))
       ).subscribe(res=>{
-        console.log(res);
         this.dialogRef.close(res);
       })
 

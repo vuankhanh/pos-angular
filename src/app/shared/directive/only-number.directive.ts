@@ -25,8 +25,7 @@ export class OnlyNumberDirective implements ControlValueAccessor {
   @HostListener('input', ['$event']) onInputChange(event: Event) {
     const target = event.target as HTMLInputElement;
     let value = target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-    console.log(value);
-    
+
     // Remove leading zeros
     value = value.replace(/^0+/, '');
     // if(!this.allowZero){
@@ -50,9 +49,7 @@ export class OnlyNumberDirective implements ControlValueAccessor {
   @HostListener('blur', ['$event']) onBlur(event: FocusEvent) {
     const target = event.target as HTMLInputElement;
     let value = target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-    console.log('Blur event triggered');
-    console.log(value);
-    
+
     if(!this.allowZero){
       if (value === '' || value === '0') {
         value = '1'; // Auto fill 1 if empty or 0

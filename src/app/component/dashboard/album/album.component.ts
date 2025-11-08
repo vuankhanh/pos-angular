@@ -29,10 +29,6 @@ export class AlbumComponent {
     private readonly router: Router
   ) { }
 
-  ngOnInit() {
-    console.log('AlbumComponent');
-  }
-
   onCreateAlbum(){
     this.router.navigate(['/album-edit']);
   }

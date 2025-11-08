@@ -131,7 +131,6 @@ export class ProductEditComponent implements OnInit, OnDestroy {
     this.subscription.add(
       dialogRef.afterClosed().subscribe((result: TAlbumModel) => {
         if (result) {
-          console.log(result);
           this.formGroup.get('albumId')?.setValue(result._id);
           this.formGroup.get('albumId')?.markAsDirty();
           this.getAlbumDetail(result._id);
@@ -157,7 +156,6 @@ export class ProductEditComponent implements OnInit, OnDestroy {
             }
           })
           this.galleryItems = galleryItems;
-          console.log(this.galleryItems);
 
         },
         error: error => {

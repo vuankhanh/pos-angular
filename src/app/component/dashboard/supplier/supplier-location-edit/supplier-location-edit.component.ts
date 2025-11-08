@@ -172,14 +172,11 @@ export class SupplierLocationEditComponent implements OnInit, AfterViewInit, OnD
   }
 
   onBankTransferChange(value: IBankPayment | null) {
-    
     this.bankTransferControl?.setValue(value);
-    console.log(this.formGroup);
   }
 
   onBankTransferIsValidChange(isValid: boolean) {
     this.bankTransferControl?.setErrors(isValid ? null : { invalid: true });
-    console.log(this.formGroup.value);
   }
 
   onSubmit() {

@@ -222,7 +222,6 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
         switchMap((price: number) => this.productService.update(orderItem.product._id, { price }))
       ).subscribe(result => {
         if (result) {
-          console.log(result);
           orderItem.product.price = result.price;
           orderItem.itemTotal = orderItem.product.price * orderItem.quantity;
           const orderItems = this.bPurchaseOrderItems.value;
@@ -336,8 +335,7 @@ export class PurchaseOrderEditComponent implements OnInit, AfterViewInit, OnDest
     }
 
     return this.myDialogService.open(ConfirmComponent, { data }).afterClosed().pipe(
-      map(result => !!result),
-      tap((result) => console.log(result))
+      map(result => !!result)
     ); 
   }
 

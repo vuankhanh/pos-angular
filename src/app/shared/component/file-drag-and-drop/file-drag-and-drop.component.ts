@@ -95,7 +95,6 @@ export class FileDragAndDropComponent implements OnInit {
   }
 
   public fileLeave(event: DragEvent) {
-    // console.log(event);
     this.isFileOverLimit = false;
   }
 

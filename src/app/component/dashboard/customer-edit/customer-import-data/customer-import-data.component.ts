@@ -45,8 +45,6 @@ export class CustomerImportDataComponent {
         return;
       }
       this.file = file;
-      console.log(this.file);
-
     } else {
       alert('Mục được thả vào không phải là file');
     }
